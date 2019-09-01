@@ -98,10 +98,13 @@ client.on('message', message => {
           message.channel.send(voiceRoomName + ' 에 연결했어요');
           client.user.setActivity(voiceRoomName);
         });
+        return;
     } else if(!(voiceRoomName == 'None')) { // 이미 참가함
       message.channel.send('이미 ' + voiceRoomName + ' 에 연결되어 있어요');
+      return;
     } else {  // 사용자 없음
       message.reply('어디에 들어가야 할지 모르겠어요');
+      return;
     }
   }
 
@@ -114,6 +117,7 @@ client.on('message', message => {
     return;
   } else if ((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가')) && voiceRoomName == 'None'){
     message.reply('들어가 있는 방이 없어요');
+    return;
   }
 
   if(message.content.startsWith(prefix + '상태') || message.content.startsWith(prefix + 'status')) {
