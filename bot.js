@@ -41,11 +41,13 @@ function music_search (search_target, message) {
         const accounts = r.accounts;
 
         const firstResult = videos[0];
-        var URL = "https://www.youtube.com/" + firstResult.url;
-        let info = await ytdl.getInfo(URL);
-        let dispatcher = await connection.play(ytdl(URL, { filter: 'audioonly'}));
+        async (client, message, args, ops) => {
+          var URL = "https://www.youtube.com/" + firstResult.url;
+          let info = await ytdl.getInfo(URL);
+          let dispatcher = await connection.play(ytdl(URL, { filter: 'audioonly'}));
 
-        message.channel.send(message.member.nickname + ' :  ${info.title}  ' + firstResult.duration.timestamp);
+          message.channel.send(message.member.nickname + ' :  ${info.title}  ' + firstResult.duration.timestamp);
+        }
         //console.log(videos);
         return firstResult;
     })
