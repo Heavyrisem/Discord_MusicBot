@@ -3,7 +3,6 @@ const Discord = require('discord.js');
 const config = require('./config.js');
  
 const client = new Discord.Client();
-console.log('bot.js running');
 
 var prefix = config.prefix;
 var voiceRoomName = 'None';
@@ -14,6 +13,8 @@ client.on('ready', () => {
   console.log(client.user.tag + ' 봇 실행');
   client.user.setActivity(activity);
 })
+
+console.log('bot.js running');
  
 
 
