@@ -7,7 +7,12 @@
     "version": "0.0.0",
   
     "main": "bot.js",
-  
+    
+    "engines": {
+        "node": "10.X",
+        "npm": "*"
+    },
+
     "scripts": {
   
       "start": "node bot.js"
