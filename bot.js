@@ -43,6 +43,7 @@ function music_search (search_target, message) {
         const firstResult = videos[0];
         async (client, message, args, ops) => {
           var URL = "https://www.youtube.com/" + firstResult.url;
+          console.log(URL);
           let info = await ytdl.getInfo(URL);
           let dispatcher = await connection.play(ytdl(URL, { filter: 'audioonly'}));
 
