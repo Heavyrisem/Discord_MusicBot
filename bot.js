@@ -1,9 +1,9 @@
-console.log('bot.js running');
+
 const Discord = require('discord.js');
 const config = require('./config.js');
  
 const client = new Discord.Client();
- 
+console.log('bot.js running');
 
 var prefix = config.prefix;
 var voiceRoomName = 'None';
