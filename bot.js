@@ -61,4 +61,4 @@ client.on('message', message => {
   }
 });
  
-client.login(config.token);
+client.login(BOT_TOKEN);
