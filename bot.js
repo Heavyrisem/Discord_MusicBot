@@ -8,11 +8,15 @@ const client = new Discord.Client({
   autoReconnect: true,
   max_message_cache: 0
 });
-const youtube = new DM.DiscordMusic(client);
+/*const youtube = new DM.DiscordMusic(client);
+youtube.setup({
+  token_key: config.toker,
+
+})*/
 
 var prefix = config.prefix;
 var voiceRoomName = 'None';
-var voiceRoomTemp;  // 연결된 방 정보를 저장
+var voiceRoom;  // 연결된 방 정보를 저장
 var activity = '명령어 beta';
 
 client.on('ready', () => {
@@ -66,38 +70,40 @@ client.on('message', message => {
 
   if(message.content.startsWith(prefix + '테스트')) {
     var test = message.channel.type;
-    message.reply(client.user.id);
-    console.log(test);
+    //message.reply(servers[message.guild.id]);
+    if (message.content == 'tt') message.reply('undefined 확인');
+    console.log(voiceRoom.channel.name);
   }
 
 
 
 
   if(message.content.startsWith(prefix + 'join') || message.content.startsWith(prefix + '참가') || message.content.startsWith(prefix + 'ㅓㅐㅑㅜ')) {
-     if(message.member.voiceChannel && voiceRoomName == 'None' || !(message.member.voiceChannel == voiceRoomTemp)) { // 이미 참가했는지 확인
+     if(message.member.voiceChannel && voiceRoomName == 'None' || !(message.member.voiceChannel == voiceRoom.channel)) { // 이미 참가했는지 확인
       //roomName = message.member.voiceChannel;
       message.member.voiceChannel.join()
         .then(connection => {
-          voiceRoomTemp = connection.channel; //연결과 동시에 방 정보 저장
-          voiceRoomName = connection.channel.name;
+          voiceRoom = connection; //연결과 동시에 방 정보 저장
+          voiceRoomName = voiceRoom.channel.name;
           message.channel.send(voiceRoomName + ' 에 연결했어요');
           client.user.setActivity(voiceRoomName);
         });
-
-      client.user.setActivity(voiceRoomName);
     } else if(!(voiceRoomName == 'None')) { // 이미 참가함
       message.channel.send('이미 ' + voiceRoomName + ' 에 연결되어 있어요');
     } else {  // 사용자 없음
-      message.channel.send('어디에 들어가야 할지 모르겠어요');
+      message.reply('어디에 들어가야 할지 모르겠어요');
     }
   }
 
-  if(message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가')) {
-    voiceRoomTemp = ''; //나갈때 방 정보 초기화
-    voiceRoomName = 'None';
-    message.member.voiceChannel.leave();
+  if((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가')) && !(voiceRoomName == 'None')) {
+    voiceRoom.disconnect();
     message.channel.send('방에서 나갔어요');
+    voiceRoom = ''; //나갈때 방 정보 초기화
+    voiceRoomName = 'None';
     client.user.setActivity(activity);
+    return;
+  } else if ((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가')) && voiceRoomName == 'None'){
+    message.reply('들어가 있는 방이 없어요');
   }
 
   if(message.content.startsWith(prefix + '상태') || message.content.startsWith(prefix + 'status')) {

@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "discord-youtube-api": "^0.1.0",
+    "discord-yt-player": "^1.1.1",
     "discord.js": "^11.5.1",
     "ffmpeg": "0.0.4",
     "request": "^2.81.0",
