@@ -62,4 +62,4 @@ client.on('message', message => {
     message.channel.send('지박령은 지금 ' + voiceRoomName + ' 에 연결되어 있고 핑 : '+ client.ping + 'ms, ' + activity + ' 플레이 중 입니다.');
   }
 });
-client.login(process.env.BOT_TOKEN);
+client.login(config.token);
