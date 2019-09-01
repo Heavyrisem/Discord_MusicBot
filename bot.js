@@ -1,7 +1,14 @@
 const Discord = require('discord.js');
 const config = require('./config.js');
- 
-const client = new Discord.Client();
+const YouTube = require('discord-youtube-api');
+const search = require('yt-search');
+const DM = require('discord-yt-player');
+
+const client = new Discord.Client({
+  autoReconnect: true,
+  max_message_cache: 0
+});
+const youtube = new DM.DiscordMusic(client);
 
 var prefix = config.prefix;
 var voiceRoomName = 'None';
@@ -15,9 +22,30 @@ client.on('ready', () => {
  
 
 
+function music_search (search_target, message) {
+    message.reply(search_target + ' 을(를) 검색합니다.');
+
+    search(search_target, function (err, r) {
+        if (err) throw err;
+
+        const videos = r.videos;
+        const playlists = r.playlists;
+        const accounts = r.accounts;
+
+        const firstResult = videos[0];
+
+
+        message.delete();
+        console.log(firstResult);
+        message.channel.send(firstResult.title + ' - ' + firstResult.duration.timestamp);
+        return firstResult;
+    })
+}
+
+
 
 client.on('message', message => {
-  if(message.channel.type == 'dm') return;
+  if(message.channel.type == 'dm')  return;
 
   if(message.content == '삐이이') {
     message.channel.send('요오오오오옹');
@@ -30,6 +58,20 @@ client.on('message', message => {
   if(message.content.startsWith(prefix + '핑')) {
     message.channel.send('현재 지박령 핑 상태에요 : ' + client.ping);
   }
+
+
+  if(message.content.startsWith(prefix + '노래')) {
+    music_search(message.content.substring(3, message.content.length), message);
+  }
+
+  if(message.content.startsWith(prefix + '테스트')) {
+    var test = message.channel.type;
+    message.reply(client.user.id);
+    console.log(test);
+  }
+
+
+
 
   if(message.content.startsWith(prefix + 'join') || message.content.startsWith(prefix + '참가') || message.content.startsWith(prefix + 'ㅓㅐㅑㅜ')) {
      if(message.member.voiceChannel && voiceRoomName == 'None' || !(message.member.voiceChannel == voiceRoomTemp)) { // 이미 참가했는지 확인
@@ -62,4 +104,4 @@ client.on('message', message => {
     message.channel.send('지박령은 지금 ' + voiceRoomName + ' 에 연결되어 있고 핑 : '+ client.ping + 'ms, ' + activity + ' 플레이 중 입니다.');
   }
 });
-client.login(process.env.DISCORD_TOKEN);
+client.login(config.token);
