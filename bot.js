@@ -17,13 +17,13 @@ client.on('ready', () => {
 
 
 client.on('message', message => {
-  if(message.channel.type == 'dm') return;
+  //if(message.channel.type == 'dm') return;
 
   if(message.content == '삐이이') {
     message.channel.send('요오오오오옹');
   }
 
-  if(!message.content.startsWith(prefix)) return;
+  //if(!message.content.startsWith(prefix)) return;
 
 
  
