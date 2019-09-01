@@ -1,4 +1,3 @@
-
 const Discord = require('discord.js');
 const config = require('./config.js');
  
@@ -13,8 +12,6 @@ client.on('ready', () => {
   console.log(client.user.tag + ' 봇 실행');
   client.user.setActivity(activity);
 })
-
-console.log('bot.js running');
  
 
 
@@ -65,5 +62,5 @@ client.on('message', message => {
     message.channel.send('지박령은 지금 ' + voiceRoomName + ' 에 연결되어 있고 핑 : '+ client.ping + 'ms, ' + activity + ' 플레이 중 입니다.');
   }
 });
- 
+console.log('bot.js running');
 client.login(config.token);
