@@ -50,12 +50,8 @@ function music_search (search_target, message) {
         const accounts = r.accounts;
 
         const firstResult = videos[0];
-       // message..fetchMessage('617310365918822421')
-//          .then(message => console.log(message.content));
 
-        message.edit(message.member.id + ' : ' + firstResult.title + ' - ' + firstResult.duration.timestamp);
-
-
+        message.channel.send(message.member.nickname + ' : ' + firstResult.title + ' - ' + firstResult.duration.timestamp);
         //console.log(videos);
         return firstResult;
     })
