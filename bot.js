@@ -17,7 +17,7 @@ youtube.setup({
 var prefix = config.prefix;
 var voiceRoomName = 'None';
 var voiceRoom;  // 연결된 방 정보를 저장
-var activity = '명령어 beta';
+var activity = '명령어 alpha';
 
 client.on('ready', () => {
   console.log(client.user.tag + ' 봇 실행');
@@ -27,6 +27,19 @@ client.on('ready', () => {
 
 
 function music_search (search_target, message) {
+    if (search_target == '') {
+      message.reply('!노래 <검색할 이름> 으로 사용할수 있어요');
+      return;
+    }
+    if (voiceRoomName == 'None') {
+      message.member.voiceChannel.join()
+        .then(connection => {
+          voiceRoom = connection; //연결과 동시에 방 정보 저장
+          voiceRoomName = voiceRoom.channel.name;
+          message.channel.send(voiceRoomName + ' 에 연결했어요');
+          client.user.setActivity(voiceRoomName);
+        });
+    }
     message.reply(search_target + ' 을(를) 검색합니다.');
 
     search(search_target, function (err, r) {
@@ -37,11 +50,13 @@ function music_search (search_target, message) {
         const accounts = r.accounts;
 
         const firstResult = videos[0];
+       // message..fetchMessage('617310365918822421')
+//          .then(message => console.log(message.content));
+
+        message.edit(message.member.id + ' : ' + firstResult.title + ' - ' + firstResult.duration.timestamp);
 
 
-        message.delete();
-        console.log(firstResult);
-        message.channel.send(firstResult.title + ' - ' + firstResult.duration.timestamp);
+        //console.log(videos);
         return firstResult;
     })
 }
@@ -49,30 +64,29 @@ function music_search (search_target, message) {
 
 
 client.on('message', message => {
-  if(message.channel.type == 'dm')  return;
+  if(message.channel.type == 'dm') return;
 
   if(message.content == '삐이이') {
-    message.channel.send('요오오오오옹');
+    message.channel.send('요오오오오오오오오오오오오오옹');
   }
 
   if(!message.content.startsWith(prefix)) return;
-
-
  
   if(message.content.startsWith(prefix + '핑')) {
     message.channel.send('현재 지박령 핑 상태에요 : ' + client.ping);
   }
 
-
   if(message.content.startsWith(prefix + '노래')) {
     music_search(message.content.substring(3, message.content.length), message);
   }
 
+
+  // 오류 발생
   if(message.content.startsWith(prefix + '테스트')) {
     var test = message.channel.type;
     //message.reply(servers[message.guild.id]);
-    if (message.content == 'tt') message.reply('undefined 확인');
-    console.log(voiceRoom.channel.name);
+    //if (message.content == 'tt') message.reply('undefined 확인');
+   // console.log(voiceRoom.channel.name);
   }
 
 
