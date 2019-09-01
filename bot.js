@@ -10,7 +10,7 @@ var voiceRoomTemp;  // 연결된 방 정보를 저장
 var activity = '명령어 beta';
 
 client.on('ready', () => {
-  console.log(client.user.tag + ' 봇이 켜졌습니다. ');
+  console.log(client.user.tag + ' Bot On. ');
   client.user.setActivity(activity);
 })
  
