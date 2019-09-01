@@ -1,3 +1,4 @@
+console.log('bot.js running');
 const Discord = require('discord.js');
 const config = require('./config.js');
  
