@@ -10,7 +10,7 @@ var voiceRoomTemp;  // 연결된 방 정보를 저장
 var activity = '명령어 beta';
 
 client.on('ready', () => {
-  console.log(client.user.tag + ' Bot On. ');
+  console.log(client.user.tag + ' 봇 실행');
   client.user.setActivity(activity);
 })
  
@@ -64,4 +64,4 @@ client.on('message', message => {
   }
 });
  
-client.login('NjE3MzEwMzY1OTE4ODIyNDIx.XWsqsw.drpq0G7e9qYfpUhp4nB1TDs_o54');
+client.login(process.env.Token);
