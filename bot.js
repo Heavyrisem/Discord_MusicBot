@@ -6,6 +6,7 @@ const client = new Discord.Client();
 
 var prefix = config.prefix;
 var voiceRoomName = 'None';
+var voiceRoomTemp;  // 연결된 방 정보를 저장
 var activity = '명령어 beta';
 
 client.on('ready', () => {
@@ -23,7 +24,7 @@ client.on('message', message => {
     message.channel.send('요오오오오옹');
   }
 
-  //if(!message.content.startsWith(prefix)) return;
+  if(!message.content.startsWith(prefix)) return;
 
 
  
@@ -32,24 +33,26 @@ client.on('message', message => {
   }
 
   if(message.content.startsWith(prefix + 'join') || message.content.startsWith(prefix + '참가') || message.content.startsWith(prefix + 'ㅓㅐㅑㅜ')) {
-     if(message.member.voiceChannel && voiceRoomName == 'None' || !(message.member.voiceChannel == voiceRoomName)) {
+     if(message.member.voiceChannel && voiceRoomName == 'None' || !(message.member.voiceChannel == voiceRoomTemp)) { // 이미 참가했는지 확인
       //roomName = message.member.voiceChannel;
       message.member.voiceChannel.join()
         .then(connection => {
+          voiceRoomTemp = connection.channel; //연결과 동시에 방 정보 저장
           voiceRoomName = connection.channel.name;
           message.channel.send(voiceRoomName + ' 에 연결했어요');
           client.user.setActivity(voiceRoomName);
         });
 
       client.user.setActivity(voiceRoomName);
-    } else if(!(voiceRoomName == 'None')) {
+    } else if(!(voiceRoomName == 'None')) { // 이미 참가함
       message.channel.send('이미 ' + voiceRoomName + ' 에 연결되어 있어요');
-    } else {
+    } else {  // 사용자 없음
       message.channel.send('어디에 들어가야 할지 모르겠어요');
     }
   }
 
   if(message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가')) {
+    voiceRoomTemp = ''; //나갈때 방 정보 초기화
     voiceRoomName = 'None';
     message.member.voiceChannel.leave();
     message.channel.send('방에서 나갔어요');
@@ -61,4 +64,4 @@ client.on('message', message => {
   }
 });
  
-client.login(BOT_TOKEN);
+client.login(config.token);
