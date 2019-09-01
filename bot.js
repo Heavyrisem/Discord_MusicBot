@@ -1,18 +1,9 @@
 const Discord = require('discord.js');
 const config = require('./config.js');
-const YouTube = require('discord-youtube-api');
 const search = require('yt-search');
-const DM = require('discord-yt-player');
+const ytdl = require('ytdl-core');
 
-const client = new Discord.Client({
-  autoReconnect: true,
-  max_message_cache: 0
-});
-/*const youtube = new DM.DiscordMusic(client);
-youtube.setup({
-  token_key: config.toker,
-
-})*/
+const client = new Discord.Client();
 
 var prefix = config.prefix;
 var voiceRoomName = 'None';
@@ -40,7 +31,7 @@ function music_search (search_target, message) {
           client.user.setActivity(voiceRoomName);
         });
     }
-    message.reply(search_target + ' 을(를) 검색합니다.');
+    message.reply(search_target + ' 을(를) 검색해요');
 
     search(search_target, function (err, r) {
         if (err) throw err;
@@ -50,8 +41,11 @@ function music_search (search_target, message) {
         const accounts = r.accounts;
 
         const firstResult = videos[0];
+        var URL = "https://www.youtube.com/" + firstResult.url;
+        let info = await ytdl.getInfo(URL);
+        let dispatcher = await connection.play(ytdl(URL, { filter: 'audioonly'}));
 
-        message.channel.send(message.member.nickname + ' : ' + firstResult.title + ' - ' + firstResult.duration.timestamp);
+        message.channel.send(message.member.nickname + ' :  ${info.title}  ' + firstResult.duration.timestamp);
         //console.log(videos);
         return firstResult;
     })
