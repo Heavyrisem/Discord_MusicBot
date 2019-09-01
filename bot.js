@@ -62,5 +62,5 @@ client.on('message', message => {
     message.channel.send('지박령은 지금 ' + voiceRoomName + ' 에 연결되어 있고 핑 : '+ client.ping + 'ms, ' + activity + ' 플레이 중 입니다.');
   }
 });
-console.log("NjE3MzEwMzY1OTE4ODIyNDIx.XWtNlQ._UGjzi5E-Ko7K4VOCZAiByeT18w");
+console.log("토큰 : " + config.token);
 client.login("NjE3MzEwMzY1OTE4ODIyNDIx.XWtNlQ._UGjzi5E-Ko7K4VOCZAiByeT18w");
