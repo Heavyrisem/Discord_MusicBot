@@ -9,7 +9,7 @@
     "main": "bot.js",
     
     "engines": {
-        "node": "10.X",
+        "node": "8.X",
         "npm": "*"
     },
 
