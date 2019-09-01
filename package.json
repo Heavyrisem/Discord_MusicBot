@@ -10,7 +10,7 @@
     
     "engines": {
         "node": "10.X",
-        "npm": "*"
+        "npm": "6.X"
     },
 
     "scripts": {
