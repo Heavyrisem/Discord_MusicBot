@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const config = require('./config.js');
-c
+const musicPlayer = require('./music.js');
+
 const client = new Discord.Client();
 
 var prefix = config.prefix;
@@ -32,8 +33,24 @@ client.on('message', message => {
     message.channel.send('현재 지박령 핑 상태에요 : ' + client.ping);
   }
 
-  if(message.content.startsWith(prefix + '노래')) {
-    music_search(message.content.substring(3, message.content.length), message);
+
+
+  if(message.content.startsWith(prefix + '노래')) { // 노래 플레이
+    var search_target = message.content.substring(3, message.content.length);
+    if (search_target == '') {
+      message.reply('```!노래 <검색할 이름> 으로 사용할수 있어요```');
+      return;
+    }
+      message.member.voiceChannel.join()
+       .then(connection => {
+        voiceRoom = connection; //연결과 동시에 방 정보 저장
+        voiceRoomName = voiceRoom.channel.name;
+        message.channel.send('```' + voiceRoomName + ' 에 연결했어요```');
+        client.user.setActivity(voiceRoomName);
+        musicPlayer.music_play(search_target, message, connection);
+      });
+    
+
   }
 
 
@@ -51,7 +68,7 @@ client.on('message', message => {
   if(message.content.startsWith(prefix + 'join') || message.content.startsWith(prefix + '참가') || message.content.startsWith(prefix + 'ㅓㅐㅑㅜ')) {
      if(message.member.voiceChannel && voiceRoomName == 'None' || !(message.member.voiceChannel == voiceRoom.channel)) { // 이미 참가했는지 확인
       //roomName = message.member.voiceChannel;
-      message.channel.send(message.memver.voiceChannel + ' 에 연결해요');
+      message.channel.send('```' + message.member.voiceChannel.name + ' 에 연결해요```');
       message.member.voiceChannel.join()
         .then(connection => {
           voiceRoom = connection; //연결과 동시에 방 정보 저장
@@ -60,7 +77,7 @@ client.on('message', message => {
         });
         return;
     } else if(!(voiceRoomName == 'None')) { // 이미 참가함
-      message.channel.send('이미 ' + voiceRoomName + ' 에 연결되어 있어요');
+      message.channel.send('```이미 ' + voiceRoomName + ' 에 연결되어 있어요```');
       return;
     } else {  // 사용자 없음
       message.reply('어디에 들어가야 할지 모르겠어요');
@@ -70,18 +87,18 @@ client.on('message', message => {
 
   if((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가')) && !(voiceRoomName == 'None')) {
     voiceRoom.disconnect();
-    message.channel.send('방에서 나갔어요');
+    message.channel.send('```방에서 나갔어요```');
     voiceRoom = ''; //나갈때 방 정보 초기화
     voiceRoomName = 'None';
     client.user.setActivity(activity);
     return;
   } else if ((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가')) && voiceRoomName == 'None'){
-    message.reply('들어가 있는 방이 없어요');
+    message.reply('```들어가 있는 방이 없어요```');
     return;
   }
 
   if(message.content.startsWith(prefix + '상태') || message.content.startsWith(prefix + 'status')) {
-    message.channel.send('지박령은 지금 ' + voiceRoomName + ' 에 연결되어 있고 핑 : '+ client.ping + 'ms, ' + activity + ' 플레이 중 입니다.');
+    message.channel.send('```지박령은 지금 ' + voiceRoomName + ' 에 연결되어 있고 핑 : '+ client.ping + 'ms, ' + activity + ' 플레이 중 입니다.```');
   }
 });
 client.login(config.token);
