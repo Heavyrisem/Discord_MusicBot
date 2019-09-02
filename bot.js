@@ -18,8 +18,6 @@ client.on('ready', () => {
 
 
 
-
-
 client.on('message', message => {
   if(message.channel.type == 'dm') return;
 
@@ -49,8 +47,11 @@ client.on('message', message => {
         client.user.setActivity(voiceRoomName);
         musicPlayer.music_play(search_target, message, connection);
       });
-    
-
+  } else if (!isNaN(message.content.substring(1, message.content.length))) {
+    message.reply('뮤직 확인 : ' + message.content.substring(1, message.content.length));
+    musicPlayer.userPick(message, message.content.substring(1, message.content.length));
+  } else {
+    message.reply('거부됨 ' + message.content.substring(1, message.content.length));
   }
 
 
