@@ -70,7 +70,8 @@ client.on('message', message => {
   }
 
   if(message.content.startsWith(prefix + '노래')) {
-    music_search(message.content.substring(3, message.content.length), message);
+    //music_search(message.content.substring(3, message.content.length), message);\
+    message.reply('아직 음악 기능이 활성화 되지 않았어요, 개발자한테 돈주면 더빨리해요');
   }
 
 
