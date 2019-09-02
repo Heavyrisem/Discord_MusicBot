@@ -65,6 +65,14 @@ exports.music_play = function music_play(search_target, message, connection) {
                 message.reply('선택 확인 : ' + addPick);
                 clearInterval(Interval);
                 clearTimeout(Timeout);
+                start =  parseInt(start);
+                tmp = parseInt(tmp);
+                addPick = parseInt(addPick);
+                var tmp2 = (start + tmp + addPick);
+                console.log(start + ' ' + tmp + ' ' + addPick);
+                var URL = videos[tmp2].title;
+                console.log('선택곡 제목 : ' + URL + ', tmp2 : ' + tmp2);
+                console.log('선택 후 종료');
             } else {
                 //message.channel.send('미지정');
                 console.log("선택안됨");
@@ -76,9 +84,7 @@ exports.music_play = function music_play(search_target, message, connection) {
             console.log("종료");
         },6000);
 
-        
-        var URL = musiclist[start + tmp].title;
-        console.log(URL);
+
         
         //play(connection, URL, message);
         //const dispatcher = connection.playSteram(stream, steramOpitons);
