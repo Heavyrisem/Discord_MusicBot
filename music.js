@@ -14,12 +14,16 @@ exports.music_play = function music_play(search_target, message, connection) {
         const videos = r.videos;
         const playlists = r.playlists;
         const accounts = r.accounts;
-        var musiclist;
+        var musiclist = ' ';
         var music;
+        var start = 0;
+        var tmp = 1;
 
         for (var i=0; i<5; i++){
             if (videos[i].seconds == 0) {
                 message.reply('광고를 건너뛰었어요');
+                start++;
+                tmp--;
                 videos[i] = ' ';
                 continue;
             } else {
@@ -28,21 +32,26 @@ exports.music_play = function music_play(search_target, message, connection) {
             }
         }
 
-        for (var i=0; i<=5; i++) {
+
+        var loop = 5;
+        for (var i=start; i<=loop; i++) {
             if (!(videos[i] == ' ')) {
-                if (i == 0) musiclist = i + 1 + ': ' + videos[i].title + ' <' + videos[i].duration.timestamp + '>';
+                if (musiclist == ' ') {
+                    musiclist = (i + tmp) + ': ' + videos[i].title + ' <' + videos[i].duration.timestamp + '>';
+                    console.log(musiclist);
+                }
 
                 
                 if (!(i == 0)) { 
-                    musiclist = musiclist +  i + ': ' + videos[i].title + ' <' + videos[i].duration.timestamp + '>';
-                    musiclist = musiclist + '\n';
+                    musiclist = musiclist +  (i + tmp) + ': ' + videos[i].title + ' <' + videos[i].duration.timestamp + '>';
+                    musiclist = musiclist + '\n'; 
                 }
             }
         }
         message.channel.send('```' + musiclist + '```');
 
-        for (var i=0; i<5; i++)
-            console.log(videos[i]);
+        //for (var i=0; i<5; i++)
+           // console.log(videos[i]);
         
         var URL = "https://www.youtube.com/" + music.url;
         console.log(URL);
