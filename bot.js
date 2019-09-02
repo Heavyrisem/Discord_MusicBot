@@ -1,7 +1,5 @@
 const Discord = require('discord.js');
 const config = require('./config.js');
-const search = require('yt-search');
-const ytdl = require('ytdl-core');
 
 const client = new Discord.Client();
 
@@ -17,42 +15,7 @@ client.on('ready', () => {
  
 
 
-function music_search (search_target, message) {
-    if (search_target == '') {
-      message.reply('!노래 <검색할 이름> 으로 사용할수 있어요');
-      return;
-    }
-    if (voiceRoomName == 'None') {
-      message.member.voiceChannel.join()
-        .then(connection => {
-          voiceRoom = connection; //연결과 동시에 방 정보 저장
-          voiceRoomName = voiceRoom.channel.name;
-          message.channel.send(voiceRoomName + ' 에 연결했어요');
-          client.user.setActivity(voiceRoomName);
-        });
-    }
-    message.reply(search_target + ' 을(를) 검색해요');
 
-    search(search_target, function (err, r) {
-        if (err) throw err;
-
-        const videos = r.videos;
-        const playlists = r.playlists;
-        const accounts = r.accounts;
-
-        const firstResult = videos[0];
-        async (client, message, args, ops) => {
-          var URL = "https://www.youtube.com/" + firstResult.url;
-          console.log(URL);
-          let info = await ytdl.getInfo(URL);
-          let dispatcher = await connection.play(ytdl(URL, { filter: 'audioonly'}));
-
-          message.channel.send(message.member.nickname + ' :  ${info.title}  ' + firstResult.duration.timestamp);
-        }
-        //console.log(videos);
-        return firstResult;
-    })
-}
 
 
 
@@ -88,11 +51,11 @@ client.on('message', message => {
   if(message.content.startsWith(prefix + 'join') || message.content.startsWith(prefix + '참가') || message.content.startsWith(prefix + 'ㅓㅐㅑㅜ')) {
      if(message.member.voiceChannel && voiceRoomName == 'None' || !(message.member.voiceChannel == voiceRoom.channel)) { // 이미 참가했는지 확인
       //roomName = message.member.voiceChannel;
+      message.channel.send(message.memver.voiceChannel + ' 에 연결해요');
       message.member.voiceChannel.join()
         .then(connection => {
           voiceRoom = connection; //연결과 동시에 방 정보 저장
           voiceRoomName = voiceRoom.channel.name;
-          message.channel.send(voiceRoomName + ' 에 연결했어요');
           client.user.setActivity(voiceRoomName);
         });
         return;
