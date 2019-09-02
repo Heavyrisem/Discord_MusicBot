@@ -68,11 +68,13 @@ exports.music_play = function music_play(search_target, message, connection) {
                 start =  parseInt(start);
                 tmp = parseInt(tmp);
                 addPick = parseInt(addPick);
-                var tmp2 = (start + tmp + addPick);
-                console.log(start + ' ' + tmp + ' ' + addPick);
-                var URL = videos[tmp2].title;
+                var tmp2 = (tmp + addPick);
+                var URL = 'https://www.youtube.com/' + videos[tmp2].url;
+                var title = videos[tmp2].title;
+                var time = videos[tmp2].duration.timestamp;
+                play(connection, URL, message, title, time);
                 console.log('선택곡 제목 : ' + URL + ', tmp2 : ' + tmp2);
-                console.log('선택 후 종료');
+
             } else {
                 //message.channel.send('미지정');
                 console.log("선택안됨");
@@ -82,23 +84,26 @@ exports.music_play = function music_play(search_target, message, connection) {
         var Timeout = setTimeout(function() {
             clearTimeout(Interval);
             console.log("종료");
-        },6000);
+        },10000);
 
 
         
-        //play(connection, URL, message);
+
         //const dispatcher = connection.playSteram(stream, steramOpitons);
 
     
-        message.channel.send('```' + message.member.nickname + ' - ' + music.title + ' ' + music.duration.timestamp + '```');
+
     });
 
         
 }
 
-async function play(connection, URL, message) {
+async function play(connection, URL, message, title, time) {
     const music = ytdl(URL, { filter: 'audioonly' });
     const dispatcher = connection.playStream(music, steramOpitons);
+
+    message.channel.send('```' + message.member.nickname + ' - ' + title + ' ' + time + '```');
+
     dispatcher.on('error', () => message.channel.send('에러가 발생했어요'));
     dispatcher.on('end', () => message.channel.send('음악이 끝났어요'));
 }
