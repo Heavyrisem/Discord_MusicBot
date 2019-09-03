@@ -1,8 +1,13 @@
+// https://gabrieltanner.org/blog/dicord-music-bot
+
 const Discord = require('discord.js');
 const config = require('./config.js');
 const musicPlayer = require('./music.js');
+const ytdl = require('ytdl-core');
 
 const client = new Discord.Client();
+
+const queue = new Map();
 
 var prefix = config.prefix;
 var voiceRoomName = 'None';
@@ -35,6 +40,15 @@ client.on('message', message => {
 
 
 
+
+
+
+
+
+
+
+
+
   if(message.content.startsWith(prefix + '노래')) { // 노래 플레이
     var search_target = message.content.substring(3, message.content.length);
     if (search_target == '') {
@@ -50,7 +64,14 @@ client.on('message', message => {
         musicPlayer.music_play(search_target, message, connection);
         return;
       });
+    return;
   }
+
+
+
+
+
+
 
 
   // 오류 발생
@@ -97,12 +118,12 @@ client.on('message', message => {
   }
 
   if(message.content.startsWith(prefix + '상태') || message.content.startsWith(prefix + 'status')) {
-    message.channel.send('```지박령은 지금 ' + voiceRoomName + ' 에 연결되어 있고 핑 : '+ client.ping + 'ms, ' + activity + ' 플레이 중 입니다.```');
+    message.reply('지박령은 지금 ' + voiceRoomName + ' 에 연결되어 있고 핑 : '+ client.ping + 'ms, ' + activity + ' 플레이 중 입니다.');
     return;
   }
 
-  else if (!isNaN(message.content.substring(1, message.content.length))) {
-    message.reply('뮤직 확인 : ' + message.content.substring(1, message.content.length));
+  if (!isNaN(message.content.substring(1, message.content.length))) {
+    //message.reply('뮤직 확인 : ' + message.content.substring(1, message.content.length));
     musicPlayer.userPick(message, message.content.substring(1, message.content.length));
   } else {
     message.reply('거부됨 ' + message.content.substring(1, message.content.length));
