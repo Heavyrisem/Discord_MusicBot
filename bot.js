@@ -145,14 +145,18 @@ client.on('message', message => {
 
 // 노래 함수 시작
 
+
+
+
+
 async function execute(message, serverQueue) {
 	const args = message.content.split(' ');
 
 	const voiceChannel = message.member.voiceChannel;
-	if (!voiceChannel) return message.channel.send('You need to be in a voice channel to play music!');
+	if (!voiceChannel) return message.channel.send('먼저 음성 채널에 들어가 주세요');
 	const permissions = voiceChannel.permissionsFor(message.client.user);
 	if (!permissions.has('CONNECT') || !permissions.has('SPEAK')) {
-		return message.channel.send('I need the permissions to join and speak in your voice channel!');
+		return message.channel.send('참여하고 말할수 있는 권한이 없어요');
 	}
 
 	const songInfo = await ytdl.getInfo(args[1]);
@@ -187,19 +191,19 @@ async function execute(message, serverQueue) {
 	} else {
 		serverQueue.songs.push(song);
 		console.log(serverQueue.songs);
-		return message.channel.send(`${song.title} has been added to the queue!`);
+		return message.channel.send(`${song.title} 을(를) 재생목록에 추가했어요`);
 	}
 
 }
 
 function skip(message, serverQueue) {
-	if (!message.member.voiceChannel) return message.channel.send('You have to be in a voice channel to stop the music!');
-	if (!serverQueue) return message.channel.send('There is no song that I could skip!');
+	if (!message.member.voiceChannel) return message.channel.send('노래를 스킵하려면 음성 채널에 있어야 해요');
+	if (!serverQueue) return message.channel.send('스킵할 노래가 없어요');
 	serverQueue.connection.dispatcher.end();
 }
 
 function stop(message, serverQueue) {
-	if (!message.member.voiceChannel) return message.channel.send('You have to be in a voice channel to stop the music!');
+	if (!message.member.voiceChannel) return message.channel.send('노래를 멈추려면 음성 채널에 있어야 해요');
 	serverQueue.songs = [];
 	serverQueue.connection.dispatcher.end();
 }
@@ -221,8 +225,9 @@ function play(guild, song) {
 		})
 		.on('error', error => {
 			console.error(error);
-		});
-	dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
+    });
+  message.channel.send(`${song.title} 을(를) 재생합니다.`);
+	dispatcher.serVolume(0.05);
 }
 
 client.login(config.token);
