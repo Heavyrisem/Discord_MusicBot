@@ -25,12 +25,10 @@ client.on('ready', () => {
 
 client.on('message', message => {
   if(message.channel.type == 'dm') return;
-
   if(message.content == '삐이이') {
     message.channel.send('요오오오오오오오오오오오오오옹');
     return;
   }
-
   if(!message.content.startsWith(prefix)) return;
  
   if(message.content.startsWith(prefix + '핑')) {
@@ -38,6 +36,18 @@ client.on('message', message => {
     return;
   }
 
+  const serverQueue = queue.get(message.guild.id);
+
+  if (message.content.startsWith(prefix + '노래')) {
+    execute(message, serverQueue);
+    return;
+  } else if (message.content.startsWith(prefix + 'skip') || message.content.startsWith(prefix + '스킵')) {
+    skip(message, serverQueue);
+    return;
+  } else if (message.content.startsWith(prefix + 'stop') || message.content.startsWith(prefix + '정지')) {
+    stop(message, serverQueue);
+    return;
+  }
 
 
 
@@ -49,7 +59,7 @@ client.on('message', message => {
 
 
 
-  if(message.content.startsWith(prefix + '노래')) { // 노래 플레이
+  /*if(message.content.startsWith(prefix + '노래')) { // 노래 플레이
     var search_target = message.content.substring(3, message.content.length);
     if (search_target == '') {
       message.reply('```!노래 <검색할 이름> 으로 사용할수 있어요```');
@@ -65,7 +75,7 @@ client.on('message', message => {
         return;
       });
     return;
-  }
+  }*/
 
 
 
