@@ -7,7 +7,7 @@ const client = new Discord.Client();
 var prefix = config.prefix;
 var voiceRoomName = 'None';
 var voiceRoom;  // 연결된 방 정보를 저장
-var activity = '명령어 alpha';
+var activity = '명령어 beta';
 
 client.on('ready', () => {
   console.log(client.user.tag + ' 봇 실행');
@@ -23,12 +23,14 @@ client.on('message', message => {
 
   if(message.content == '삐이이') {
     message.channel.send('요오오오오오오오오오오오오오옹');
+    return;
   }
 
   if(!message.content.startsWith(prefix)) return;
  
   if(message.content.startsWith(prefix + '핑')) {
     message.channel.send('현재 지박령 핑 상태에요 : ' + client.ping);
+    return;
   }
 
 
@@ -46,12 +48,8 @@ client.on('message', message => {
         message.channel.send('```' + voiceRoomName + ' 에 연결했어요```');
         client.user.setActivity(voiceRoomName);
         musicPlayer.music_play(search_target, message, connection);
+        return;
       });
-  } else if (!isNaN(message.content.substring(1, message.content.length))) {
-    message.reply('뮤직 확인 : ' + message.content.substring(1, message.content.length));
-    musicPlayer.userPick(message, message.content.substring(1, message.content.length));
-  } else {
-    message.reply('거부됨 ' + message.content.substring(1, message.content.length));
   }
 
 
@@ -100,6 +98,14 @@ client.on('message', message => {
 
   if(message.content.startsWith(prefix + '상태') || message.content.startsWith(prefix + 'status')) {
     message.channel.send('```지박령은 지금 ' + voiceRoomName + ' 에 연결되어 있고 핑 : '+ client.ping + 'ms, ' + activity + ' 플레이 중 입니다.```');
+    return;
+  }
+
+  else if (!isNaN(message.content.substring(1, message.content.length))) {
+    message.reply('뮤직 확인 : ' + message.content.substring(1, message.content.length));
+    musicPlayer.userPick(message, message.content.substring(1, message.content.length));
+  } else {
+    message.reply('거부됨 ' + message.content.substring(1, message.content.length));
   }
 });
 client.login(config.token);

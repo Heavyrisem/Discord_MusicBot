@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const search = require('yt-search');
 const ytdl = require('ytdl-core');
-const steramOpitons = { seek: 0, volume: 0.04, quality: "highest"};
+const steramOpitons = { seek: 0, volume: 0.05, quality: "highest"};
 
 //const client = new Discord.Client();
 
@@ -73,6 +73,7 @@ exports.music_play = function music_play(search_target, message, connection) {
                 var title = videos[tmp2].title;
                 var time = videos[tmp2].duration.timestamp;
                 play(connection, URL, message, title, time);
+                
                 console.log('선택곡 제목 : ' + URL + ', tmp2 : ' + tmp2);
 
             } else {
