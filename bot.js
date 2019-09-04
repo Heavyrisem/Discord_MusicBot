@@ -229,7 +229,7 @@ async function execute(message, serverQueue) {
 			voiceChannel: voiceChannel,
 			connection: null,
 			songs: [],
-			volume: 5,
+			volume: 0.05,
 			playing: true,
 		};
 
