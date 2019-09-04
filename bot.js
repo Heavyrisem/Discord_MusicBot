@@ -273,7 +273,9 @@ function play(guild, song, message) {
 		serverQueue.voiceChannel.leave();
 		queue.delete(guild.id);
 		return;
-	}
+  }
+  
+  message.channel.send(`${song.title} 을(를) 재생합니다.`);
 
 	const dispatcher = serverQueue.connection.playStream(ytdl(song.url))
 		.on('end', () => {
@@ -284,8 +286,7 @@ function play(guild, song, message) {
 		.on('error', error => {
 			console.error(error);
     });
-  message.channel.send(`${song.title} 을(를) 재생합니다.`);
-	dispatcher.setVolume(0.05);
+	dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
 }
 
 client.login(config.token);
