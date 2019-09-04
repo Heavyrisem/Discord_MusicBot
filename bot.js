@@ -35,7 +35,7 @@ client.on('message', message => {
   if(!message.content.startsWith(prefix)) return;
  
   if(message.content.startsWith(prefix + '핑')) {
-    message.channel.send('현재 지박령 핑 상태에요 : ``' + client.ping + 'ms``');
+    message.channel.send('현재 지박령 핑 상태에요 : ``' + client.ping + 'ms``❤️ 🧡 💛 💚 💙 💜');
     return;
   }
 
@@ -51,40 +51,6 @@ client.on('message', message => {
     stop(message, serverQueue);
     return;
   }
-
-
-
-
-
-
-
-
-
-
-
-  /*if(message.content.startsWith(prefix + '노래')) { // 노래 플레이
-    var search_target = message.content.substring(3, message.content.length);
-    if (search_target == '') {
-      message.reply('```!노래 <검색할 이름> 으로 사용할수 있어요```');
-      return;
-    }
-      message.member.voiceChannel.join()
-       .then(connection => {
-        voiceRoom = connection; //연결과 동시에 방 정보 저장
-        voiceRoomName = voiceRoom.channel.name;
-        message.channel.send('```' + voiceRoomName + ' 에 연결했어요```');
-        client.user.setActivity(voiceRoomName);
-        musicPlayer.music_play(search_target, message, connection);
-        return;
-      });
-    return;
-  }*/
-
-
-
-
-
-
 
 
   // 오류 발생
