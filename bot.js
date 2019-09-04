@@ -12,7 +12,7 @@ const queue = new Map();
 var prefix = config.prefix;
 var voiceRoomName = 'None';
 var voiceRoom;  // 연결된 방 정보를 저장
-var activity = '명령어 beta';
+var activity = '🎗명령어 beta';
 var userInputId = ' ';
 var userInput;
 var playState = false;
@@ -35,7 +35,7 @@ client.on('message', message => {
   if(!message.content.startsWith(prefix)) return;
  
   if(message.content.startsWith(prefix + '핑')) {
-    message.channel.send('현재 지박령 핑 상태에요 : ' + client.ping);
+    message.channel.send('현재 지박령 핑 상태에요 : ``' + client.ping + 'ms``');
     return;
   }
 
@@ -101,7 +101,7 @@ client.on('message', message => {
   if(message.content.startsWith(prefix + 'join') || message.content.startsWith(prefix + '참가') || message.content.startsWith(prefix + 'ㅓㅐㅑㅜ')) {
      if(message.member.voiceChannel && voiceRoomName == 'None' || !(message.member.voiceChannel == voiceRoom.channel)) { // 이미 참가했는지 확인
       //roomName = message.member.voiceChannel;
-      message.channel.send('```' + message.member.voiceChannel.name + ' 에 연결해요```');
+      message.channel.send('➡️``' + message.member.voiceChannel.name + '`` 에 연결해요');
       message.member.voiceChannel.join()
         .then(connection => {
           voiceRoom = connection; //연결과 동시에 방 정보 저장
@@ -110,7 +110,7 @@ client.on('message', message => {
         });
         return;
     } else if(!(voiceRoomName == 'None')) { // 이미 참가함
-      message.channel.send('```이미 ' + voiceRoomName + ' 에 연결되어 있어요```');
+      message.channel.send('❌이미 ``' + voiceRoomName + '`` 에 연결되어 있어요');
       return;
     } else {  // 사용자 없음
       message.reply('어디에 들어가야 할지 모르겠어요');
@@ -120,18 +120,18 @@ client.on('message', message => {
 
   if((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가')) && !(voiceRoomName == 'None')) {
     voiceRoom.disconnect();
-    message.channel.send('```방에서 나갔어요```');
+    message.channel.send('⬅️방에서 나갔어요');
     voiceRoom = ''; //나갈때 방 정보 초기화
     voiceRoomName = 'None';
     client.user.setActivity(activity);
     return;
   } else if ((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가')) && voiceRoomName == 'None'){
-    message.reply('```들어가 있는 방이 없어요```');
+    message.reply('❌들어가 있는 방이 없어요');
     return;
   }
 
   if(message.content.startsWith(prefix + '상태') || message.content.startsWith(prefix + 'status')) {
-    message.reply('지박령은 지금 ' + voiceRoomName + ' 에 연결되어 있고 핑 : '+ client.ping + 'ms, ' + activity + ' 플레이 중 입니다.');
+    message.reply('🏳️‍🌈지박령은 지금 ``' + voiceRoomName + '`` 에 연결되어 있고 핑 : ``'+ client.ping + 'ms``, ``' + activity + '`` 플레이 중 입니다.');
     return;
   }
 
@@ -142,7 +142,7 @@ client.on('message', message => {
     userInput = message.content.substring(1, 2);
     return;
   } else {
-    message.reply('거부됨 ' + message.content.substring(1, message.content.length));
+    message.reply('❌거부됨 ' + message.content.substring(1, message.content.length));
     return;
   }
 });
@@ -181,7 +181,7 @@ function getVideoId(search_name, message) {
     userInputId = '';
     var interval = setInterval(function() {
       if (!isNaN(userInput) && message.member.id == userInputId) {
-        message.reply(userInput + ' 번이 선택되었어요');
+        message.reply('✅' + userInput + ' 번이 선택되었어요');
         userInput--;
         clearInterval(interval);
         clearTimeout(timeout);
@@ -195,7 +195,7 @@ function getVideoId(search_name, message) {
     var timeout = setTimeout(function() {
       clearTimeout(interval);
       console.log('시간 만료');
-      message.reply('노래는 5초 안에 선택해야 해요 <!번호> 로 선택할수 있어요');
+      message.reply('🛑노래는 5초 안에 선택해야 해요 ``!번호`` 로 선택할수 있어요');
     }, 6000);
 
 
@@ -209,10 +209,10 @@ async function execute(message, serverQueue) {
   //const args = message.content.split(' ');
 
 	const voiceChannel = message.member.voiceChannel;
-	if (!voiceChannel) return message.channel.send('먼저 음성 채널에 들어가 주세요');
+	if (!voiceChannel) return message.channel.send('❌먼저 음성 채널에 들어가 주세요');
 	const permissions = voiceChannel.permissionsFor(message.client.user);
 	if (!permissions.has('CONNECT') || !permissions.has('SPEAK')) {
-		return message.channel.send('참여하고 말할수 있는 권한이 없어요');
+		return message.channel.send('🆘참여하고 말할수 있는 권한이 없어요');
   }
   
   const videoId = await getVideoId(message.content.substring(3, message.content.length), message);
@@ -250,22 +250,24 @@ async function execute(message, serverQueue) {
 	} else {
 		serverQueue.songs.push(song);
 		console.log(serverQueue.songs);
-		return message.channel.send(`${song.title} 을(를) 재생목록에 추가했어요`);
+		return message.channel.send('✅``' + song.title + '``' + ' 을(를) 재생목록에 추가했어요 🎵');
 	}
 
 }
 
 function skip(message, serverQueue) {
-	if (!message.member.voiceChannel) return message.channel.send('노래를 스킵하려면 음성 채널에 있어야 해요');
-	if (!serverQueue) return message.channel.send('스킵할 노래가 없어요');
+	if (!message.member.voiceChannel) return message.channel.send('⚠️노래를 스킵하려면 음성 채널에 있어야 해요');
+	if (!serverQueue) return message.channel.send('⚠️스킵할 노래가 없어요');
 	serverQueue.connection.dispatcher.end();
+  message.channe.send('⏩노래를 스킵했어요');
 }
 
 function stop(message, serverQueue) {
-  if (!message.member.voiceChannel) return message.channel.send('노래를 멈추려면 음성 채널에 있어야 해요');
-  if (!playState) return message.channel.send('노래 재생중이 아니에요');
+  if (!message.member.voiceChannel) return message.channel.send('⚠️노래를 멈추려면 음성 채널에 있어야 해요');
+  if (!playState) return message.channel.send('⚠️노래 재생중이 아니에요');
 	serverQueue.songs = [];
-	serverQueue.connection.dispatcher.end();
+  serverQueue.connection.dispatcher.end();
+  message.channe.send('⏹노래 재생을 끝냈어요');
 }
 
 function play(guild, song, message) {
@@ -281,7 +283,7 @@ function play(guild, song, message) {
 
 
   const dispatcher = serverQueue.connection.playStream(ytdl(song.url));
-  message.channel.send('``' + song.title + '``' + ' 을(를) 재생해요');
+  message.channel.send('▶️``' + song.title + '``' + ' 을(를) 재생해요 🎵');
   client.user.setActivity(song.title);
   playstate = true;
 
