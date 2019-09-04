@@ -2,8 +2,8 @@
 
 const Discord = require('discord.js');
 const config = require('./config.js');
-const musicPlayer = require('./music.js');
 const ytdl = require('ytdl-core');
+const search = require('yt-search');
 
 const client = new Discord.Client();
 
@@ -13,6 +13,8 @@ var prefix = config.prefix;
 var voiceRoomName = 'None';
 var voiceRoom;  // 연결된 방 정보를 저장
 var activity = '명령어 beta';
+var userInputId = ' ';
+var userInput;
 
 client.on('ready', () => {
   console.log(client.user.tag + ' 봇 실행');
@@ -44,7 +46,7 @@ client.on('message', message => {
   } else if (message.content.startsWith(prefix + 'skip') || message.content.startsWith(prefix + '스킵')) {
     skip(message, serverQueue);
     return;
-  } else if (message.content.startsWith(prefix + 'stop') || message.content.startsWith(prefix + '정지')) {
+  } else if (message.content.startsWith(prefix + 'stop') || message.content.startsWith(prefix + '정지') || message.content.startsWith(prefix + '큐 비우기')) {
     stop(message, serverQueue);
     return;
   }
@@ -132,11 +134,15 @@ client.on('message', message => {
     return;
   }
 
-  if (!isNaN(message.content.substring(1, message.content.length))) {
+  if (!isNaN(message.content.substring(1, message.content.length)) && !(message.content.substring(1, message.content.length) == '')) {
     //message.reply('뮤직 확인 : ' + message.content.substring(1, message.content.length));
-    musicPlayer.userPick(message, message.content.substring(1, message.content.length));
+    //musicPlayer.userPick(message, message.content.substring(1, message.content.length));
+    userInputId = message.member.id;
+    userInput = message.content.substring(1, 2);
+    return;
   } else {
     message.reply('거부됨 ' + message.content.substring(1, message.content.length));
+    return;
   }
 });
 
@@ -145,21 +151,73 @@ client.on('message', message => {
 
 // 노래 함수 시작
 
+function getVideoId(search_name, message) {
+  var musicID;
+  return new Promise (function(resolve, reject) { search(search_name, function (err, r) {
+    const videos = r.videos;
+    const list = new Array();
+    var tmp = 0;
+    var chooselist = '';
+
+    for (var i = 0; i < 5; i++) {
+      if (videos[i].seconds == 0) {
+        tmp++;
+        list[i] = videos[i + tmp];
+        console.log('광고를 건너뛰었어요');
+      } else {
+        list[i] = videos[i + tmp];
+      }
+    }
+    console.log('----------');
+    for (var i = 0; i < 5; i++) {
+      chooselist = chooselist + (i + 1) + ': ' + list[i].title + ' <' + list[i].duration.timestamp + '>' + '\n';
+    }
+    message.reply('```' + chooselist + '```');
+    console.log(chooselist);
+
+
+    userInput = '';
+    userInputId = '';
+    var interval = setInterval(function() {
+      if (!isNaN(userInput) && message.member.id == userInputId) {
+        message.reply(userInput + ' 번이 선택되었어요');
+        userInput--;
+        clearInterval(interval);
+        clearTimeout(timeout);
+        musicID = list[userInput].videoId;
+        userInput = '';
+        userInputId = '';
+        resolve(musicID);
+      }
+    }, 500);
+
+    var timeout = setTimeout(function() {
+      clearTimeout(interval);
+      console.log('시간 만료');
+      message.reply('노래는 5초 안에 선택해야 해요 <!번호> 로 선택할수 있어요');
+    }, 6000);
+
+
+  })});
+}
 
 
 
 
 async function execute(message, serverQueue) {
-	const args = message.content.split(' ');
+  //const args = message.content.split(' ');
 
 	const voiceChannel = message.member.voiceChannel;
 	if (!voiceChannel) return message.channel.send('먼저 음성 채널에 들어가 주세요');
 	const permissions = voiceChannel.permissionsFor(message.client.user);
 	if (!permissions.has('CONNECT') || !permissions.has('SPEAK')) {
 		return message.channel.send('참여하고 말할수 있는 권한이 없어요');
-	}
+  }
+  
+  const videoId = await getVideoId(message.content.substring(3, message.content.length), message);
+  console.log('videoId : ' + videoId);
 
-	const songInfo = await ytdl.getInfo(args[1]);
+	const songInfo = await ytdl.getInfo(videoId);
 	const song = {
 		title: songInfo.title,
 		url: songInfo.video_url,
@@ -182,7 +240,7 @@ async function execute(message, serverQueue) {
 		try {
 			var connection = await voiceChannel.join();
 			queueContruct.connection = connection;
-			play(message.guild, queueContruct.songs[0]);
+			play(message.guild, queueContruct.songs[0], message);
 		} catch (err) {
 			console.log(err);
 			queue.delete(message.guild.id);
@@ -208,7 +266,7 @@ function stop(message, serverQueue) {
 	serverQueue.connection.dispatcher.end();
 }
 
-function play(guild, song) {
+function play(guild, song, message) {
 	const serverQueue = queue.get(guild.id);
 
 	if (!song) {
@@ -227,7 +285,7 @@ function play(guild, song) {
 			console.error(error);
     });
   message.channel.send(`${song.title} 을(를) 재생합니다.`);
-	dispatcher.serVolume(0.05);
+	dispatcher.setVolume(0.05);
 }
 
 client.login(config.token);
