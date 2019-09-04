@@ -225,7 +225,7 @@ function skip(message, serverQueue) {
 	if (!message.member.voiceChannel) return message.channel.send('⚠️노래를 스킵하려면 음성 채널에 있어야 해요');
 	if (!serverQueue) return message.channel.send('⚠️스킵할 노래가 없어요');
 	serverQueue.connection.dispatcher.end();
-  message.channe.send('⏩노래를 스킵했어요');
+  message.channel.send('⏩노래를 스킵했어요');
 }
 
 function stop(message, serverQueue) {
