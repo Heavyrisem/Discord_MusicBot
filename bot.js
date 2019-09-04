@@ -12,7 +12,7 @@ const queue = new Map();
 var prefix = config.prefix;
 var voiceRoomName = 'None';
 var voiceRoom;  // 연결된 방 정보를 저장
-var activity = '🎗명령어 beta';
+var activity = '🎗명령어 beta 🖤';
 var userInputId = ' ';
 var userInput;
 var playState = false;
