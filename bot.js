@@ -15,11 +15,12 @@ var voiceRoom;  // 연결된 방 정보를 저장
 var activity = '명령어 beta';
 var userInputId = ' ';
 var userInput;
+var playState = false;
 
 client.on('ready', () => {
   console.log(client.user.tag + ' 봇 실행');
   client.user.setActivity(activity);
-})
+});
  
 
 
@@ -229,7 +230,7 @@ async function execute(message, serverQueue) {
 			voiceChannel: voiceChannel,
 			connection: null,
 			songs: [],
-			volume: 0.05,
+			volume: 0.45,
 			playing: true,
 		};
 
@@ -261,7 +262,8 @@ function skip(message, serverQueue) {
 }
 
 function stop(message, serverQueue) {
-	if (!message.member.voiceChannel) return message.channel.send('노래를 멈추려면 음성 채널에 있어야 해요');
+  if (!message.member.voiceChannel) return message.channel.send('노래를 멈추려면 음성 채널에 있어야 해요');
+  if (!playState) return message.channel.send('노래 재생중이 아니에요');
 	serverQueue.songs = [];
 	serverQueue.connection.dispatcher.end();
 }
@@ -271,21 +273,28 @@ function play(guild, song, message) {
 
 	if (!song) {
 		serverQueue.voiceChannel.leave();
-		queue.delete(guild.id);
+    queue.delete(guild.id);
+    playstate = false;
 		return;
   }
   
-  message.channel.send(`${song.title} 을(를) 재생합니다.`);
 
-	const dispatcher = serverQueue.connection.playStream(ytdl(song.url))
-		.on('end', () => {
-			console.log('Music ended!');
-			serverQueue.songs.shift();
-			play(guild, serverQueue.songs[0]);
-		})
-		.on('error', error => {
-			console.error(error);
-    });
+
+  const dispatcher = serverQueue.connection.playStream(ytdl(song.url));
+  message.channel.send(`${song.title} 을(를) 재생합니다.`);
+  client.user.setActivity(song.title);
+  playstate = true;
+
+	dispatcher.on('end', () => {
+		console.log('Music ended!');
+    serverQueue.songs.shift();
+    playstate = false;
+    client.user.setActivity(activity);
+		play(guild, serverQueue.songs[0], message);
+	});
+	dispatcher.on('error', error => {
+		console.error(error);
+  });
 	dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
 }
 
