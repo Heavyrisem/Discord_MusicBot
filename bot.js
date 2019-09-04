@@ -281,7 +281,7 @@ function play(guild, song, message) {
 
 
   const dispatcher = serverQueue.connection.playStream(ytdl(song.url));
-  message.channel.send(`${song.title} 을(를) 재생합니다.`);
+  message.channel.send('``' + song.title + '``' + ' 을(를) 재생해요');
   client.user.setActivity(song.title);
   playstate = true;
 
