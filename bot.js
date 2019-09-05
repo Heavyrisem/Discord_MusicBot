@@ -250,14 +250,12 @@ function play(guild, song, message) {
 
   const dispatcher = serverQueue.connection.playStream(ytdl(song.url));
   message.channel.send('▶️`' + song.title + '`' + ' 을(를) 재생해요 🎵');
-  client.user.setActivity(song.title);
   playState = true;
 
 	dispatcher.on('end', () => {
 		console.log('Music ended!');
     serverQueue.songs.shift();
     playState = false;
-    client.user.setActivity(activity);
 		play(guild, serverQueue.songs[0], message);
 	});
 	dispatcher.on('error', error => {
