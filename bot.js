@@ -139,7 +139,7 @@ function getVideoId(search_name, message) {
     for (var i = 0; i < 5; i++) {
       chooselist = chooselist + (i + 1) + ': ' + list[i].title + ' <' + list[i].duration.timestamp + '>' + '\n';
     }
-    message.reply('`\n' + chooselist + '`');
+    message.reply('\n`' + chooselist + '`');
     console.log(chooselist);
 
 
