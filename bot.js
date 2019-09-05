@@ -12,7 +12,7 @@ const queue = new Map();
 var prefix = config.prefix;
 var voiceRoomName = 'None';
 var voiceRoom;  // 연결된 방 정보를 저장
-var activity = '🎗명령어 beta 🖤';
+var activity = '명령어 beta 🖤 ||  ' + prefix + '도움';
 var userInputId = ' ';
 var userInput;
 var playState = false;
@@ -54,9 +54,9 @@ client.on('message', message => {
   }
 
 
-  // 오류 발생
-  if(message.content.startsWith(prefix + '테스트')) {
-    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 이에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기`\n\n**유틸**\n`핑` `상태`\n\n';
+
+  if(message.content.startsWith(prefix + '도움')) {
+    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 이에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기`\n\n**유틸**\n`핑` `상태` `도움`\n\n';
     message.channel.send(helpMsg);
     return;
   }
