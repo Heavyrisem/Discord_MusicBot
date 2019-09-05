@@ -153,8 +153,8 @@ function getVideoId(search_name, message) {
     var timeout = setTimeout(function() {
       clearTimeout(interval);
       console.log('시간 만료');
-      message.reply('🛑노래는 5초 안에 선택해야 해요 `!번호` 로 선택할수 있어요');
-    }, 6000);
+      message.reply('🛑노래는 8초 안에 선택해야 해요 `!번호` 로 선택할수 있어요');
+    }, 8500);
 
 
   })});
