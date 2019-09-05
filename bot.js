@@ -65,7 +65,7 @@ client.on('message', message => {
 
 
   if(message.content.startsWith(prefix + 'join') || message.content.startsWith(prefix + '참가')) {
-     if(message.member.voiceChannel && voiceRoomName == 'None') { // 이미 참가했는지 확인
+     if(message.member.voiceChannel) { // 이미 참가했는지 확인
       //roomName = message.member.voiceChannel;
       message.channel.send('➡️`' + message.member.voiceChannel.name + '` 에 연결해요');
       message.member.voiceChannel.join();
@@ -76,8 +76,8 @@ client.on('message', message => {
     }
   }
 
-  if((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가'))) {
-    voiceRoom.disconnect();
+  if((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가')) && message.member.voiceChannel) {
+    message.member.voiceChannel.leave();
     message.channel.send('⬅️방에서 나갔어요');
     voiceRoom = ''; //나갈때 방 정보 초기화
     voiceRoomName = 'None';
@@ -188,7 +188,7 @@ async function execute(message, serverQueue) {
 			voiceChannel: voiceChannel,
 			connection: null,
 			songs: [],
-			volume: 0.5,
+			volume: 1,
 			playing: true,
 		};
 
