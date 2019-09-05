@@ -65,19 +65,11 @@ client.on('message', message => {
 
 
   if(message.content.startsWith(prefix + 'join') || message.content.startsWith(prefix + '참가')) {
-     if(message.member.voiceChannel && voiceRoomName == 'None' || !(message.member.voiceChannel == voiceRoom.channel)) { // 이미 참가했는지 확인
+     if(message.member.voiceChannel && voiceRoomName == 'None') { // 이미 참가했는지 확인
       //roomName = message.member.voiceChannel;
       message.channel.send('➡️`' + message.member.voiceChannel.name + '` 에 연결해요');
-      message.member.voiceChannel.join()
-        .then(connection => {
-          voiceRoom = connection; //연결과 동시에 방 정보 저장
-          voiceRoomName = voiceRoom.channel.name;
-          client.user.setActivity(voiceRoomName);
-        });
+      message.member.voiceChannel.join();
         return;
-    } else if(!(voiceRoomName == 'None')) { // 이미 참가함
-      message.channel.send('❌이미 ' + voiceRoomName + '` 에 연결되어 있어요');
-      return;
     } else {  // 사용자 없음
       message.reply('⚠️어디에 들어가야 할지 모르겠어요');
       return;
