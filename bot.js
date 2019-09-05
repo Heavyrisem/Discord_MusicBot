@@ -11,7 +11,6 @@ const queue = new Map();
 
 var prefix = config.prefix;
 var voiceRoomName = 'None';
-var voiceRoom;  // 연결된 방 정보를 저장
 var activity = '명령어 beta 🖤 ||  ' + prefix + '도움';
 var userInputId = ' ';
 var userInput;
@@ -80,7 +79,6 @@ client.on('message', message => {
     message.member.voiceChannel.leave();
     message.channel.send('⬅️방에서 나갔어요');
     voiceRoom = ''; //나갈때 방 정보 초기화
-    voiceRoomName = 'None';
     client.user.setActivity(activity);
     return;
   } else if ((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가'))){
