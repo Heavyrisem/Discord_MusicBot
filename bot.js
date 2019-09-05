@@ -76,14 +76,14 @@ client.on('message', message => {
     }
   }
 
-  if((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가')) && !(voiceRoomName == 'None')) {
+  if((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가'))) {
     voiceRoom.disconnect();
     message.channel.send('⬅️방에서 나갔어요');
     voiceRoom = ''; //나갈때 방 정보 초기화
     voiceRoomName = 'None';
     client.user.setActivity(activity);
     return;
-  } else if ((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가')) && voiceRoomName == 'None'){
+  } else if ((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가'))){
     message.reply('❌들어가 있는 방이 없어요');
     return;
   }
