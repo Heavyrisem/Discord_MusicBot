@@ -35,13 +35,14 @@ client.on('message', message => {
   if(!message.content.startsWith(prefix)) return;
  
   if(message.content.startsWith(prefix + '핑')) {
-    message.channel.send('현재 지박령 핑 상태에요 : ``' + client.ping + 'ms``❤️ 🧡 💛 💚 💙 💜');
+    message.channel.send('현재 지박령 핑 상태에요 : `' + client.ping + 'ms`');
     return;
   }
 
   const serverQueue = queue.get(message.guild.id);
 
   if (message.content.startsWith(prefix + '노래')) {
+    if (message.content.substring(3, message.content.length) == '') return message.reply('사용법 : `' + prefix + '노래 제목`');
     execute(message, serverQueue);
     return;
   } else if (message.content.startsWith(prefix + 'skip') || message.content.startsWith(prefix + '스킵')) {
@@ -55,19 +56,18 @@ client.on('message', message => {
 
   // 오류 발생
   if(message.content.startsWith(prefix + '테스트')) {
-    var test = message.channel.type;
-    //message.reply(servers[message.guild.id]);
-    //if (message.content == 'tt') message.reply('undefined 확인');
-   // console.log(voiceRoom.channel.name);
+    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 이에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기`\n\n**유틸**\n`핑` `상태`\n\n';
+    message.channel.send(helpMsg);
+    return;
   }
 
 
 
 
-  if(message.content.startsWith(prefix + 'join') || message.content.startsWith(prefix + '참가') || message.content.startsWith(prefix + 'ㅓㅐㅑㅜ')) {
+  if(message.content.startsWith(prefix + 'join') || message.content.startsWith(prefix + '참가')) {
      if(message.member.voiceChannel && voiceRoomName == 'None' || !(message.member.voiceChannel == voiceRoom.channel)) { // 이미 참가했는지 확인
       //roomName = message.member.voiceChannel;
-      message.channel.send('➡️``' + message.member.voiceChannel.name + '`` 에 연결해요');
+      message.channel.send('➡️`' + message.member.voiceChannel.name + '` 에 연결해요');
       message.member.voiceChannel.join()
         .then(connection => {
           voiceRoom = connection; //연결과 동시에 방 정보 저장
@@ -76,10 +76,10 @@ client.on('message', message => {
         });
         return;
     } else if(!(voiceRoomName == 'None')) { // 이미 참가함
-      message.channel.send('❌이미 ``' + voiceRoomName + '`` 에 연결되어 있어요');
+      message.channel.send('❌이미 ' + voiceRoomName + '` 에 연결되어 있어요');
       return;
     } else {  // 사용자 없음
-      message.reply('어디에 들어가야 할지 모르겠어요');
+      message.reply('⚠️어디에 들어가야 할지 모르겠어요');
       return;
     }
   }
@@ -97,7 +97,7 @@ client.on('message', message => {
   }
 
   if(message.content.startsWith(prefix + '상태') || message.content.startsWith(prefix + 'status')) {
-    message.reply('🏳️‍🌈지박령은 지금 ``' + voiceRoomName + '`` 에 연결되어 있고 핑 : ``'+ client.ping + 'ms``, ``' + activity + '`` 플레이 중 입니다.');
+    message.reply('🏳️‍🌈지박령은 지금 `' + voiceRoomName + '` 에 연결되어 있고 핑 : `'+ client.ping + 'ms`, `' + activity + '` 플레이 중 입니다.');
     return;
   }
 
@@ -139,7 +139,7 @@ function getVideoId(search_name, message) {
     for (var i = 0; i < 5; i++) {
       chooselist = chooselist + (i + 1) + ': ' + list[i].title + ' <' + list[i].duration.timestamp + '>' + '\n';
     }
-    message.reply('```' + chooselist + '```');
+    message.reply('`\n' + chooselist + '`');
     console.log(chooselist);
 
 
@@ -147,7 +147,7 @@ function getVideoId(search_name, message) {
     userInputId = '';
     var interval = setInterval(function() {
       if (!isNaN(userInput) && message.member.id == userInputId) {
-        message.reply('✅' + userInput + ' 번이 선택되었어요');
+        message.reply('✅`' + userInput + '` 번이 선택되었어요');
         userInput--;
         clearInterval(interval);
         clearTimeout(timeout);
@@ -161,7 +161,7 @@ function getVideoId(search_name, message) {
     var timeout = setTimeout(function() {
       clearTimeout(interval);
       console.log('시간 만료');
-      message.reply('🛑노래는 5초 안에 선택해야 해요 ``!번호`` 로 선택할수 있어요');
+      message.reply('🛑노래는 5초 안에 선택해야 해요 `!번호` 로 선택할수 있어요');
     }, 6000);
 
 
@@ -174,7 +174,7 @@ function getVideoId(search_name, message) {
 async function execute(message, serverQueue) {
   //const args = message.content.split(' ');
 
-	const voiceChannel = message.member.voiceChannel;
+  const voiceChannel = message.member.voiceChannel;
 	if (!voiceChannel) return message.channel.send('❌먼저 음성 채널에 들어가 주세요');
 	const permissions = voiceChannel.permissionsFor(message.client.user);
 	if (!permissions.has('CONNECT') || !permissions.has('SPEAK')) {
@@ -196,7 +196,7 @@ async function execute(message, serverQueue) {
 			voiceChannel: voiceChannel,
 			connection: null,
 			songs: [],
-			volume: 0.45,
+			volume: 0.5,
 			playing: true,
 		};
 
@@ -216,7 +216,7 @@ async function execute(message, serverQueue) {
 	} else {
 		serverQueue.songs.push(song);
 		console.log(serverQueue.songs);
-		return message.channel.send('✅``' + song.title + '``' + ' 을(를) 재생목록에 추가했어요 🎵');
+		return message.channel.send('✅`' + song.title + '`' + ' 을(를) 재생목록에 추가했어요 🎵');
 	}
 
 }
@@ -233,7 +233,7 @@ function stop(message, serverQueue) {
   if (!playState) return message.channel.send('⚠️노래 재생중이 아니에요');
 	serverQueue.songs = [];
   serverQueue.connection.dispatcher.end();
-  message.channe.send('⏹노래 재생을 끝냈어요');
+  message.channel.send('⏹노래 재생을 끝냈어요');
 }
 
 function play(guild, song, message) {
@@ -242,21 +242,21 @@ function play(guild, song, message) {
 	if (!song) {
 		serverQueue.voiceChannel.leave();
     queue.delete(guild.id);
-    playstate = false;
+    playState = false;
 		return;
   }
   
 
 
   const dispatcher = serverQueue.connection.playStream(ytdl(song.url));
-  message.channel.send('▶️``' + song.title + '``' + ' 을(를) 재생해요 🎵');
+  message.channel.send('▶️`' + song.title + '`' + ' 을(를) 재생해요 🎵');
   client.user.setActivity(song.title);
-  playstate = true;
+  playState = true;
 
 	dispatcher.on('end', () => {
 		console.log('Music ended!');
     serverQueue.songs.shift();
-    playstate = false;
+    playState = false;
     client.user.setActivity(activity);
 		play(guild, serverQueue.songs[0], message);
 	});
