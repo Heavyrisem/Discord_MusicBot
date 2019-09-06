@@ -51,7 +51,6 @@ client.on('message', message => {
     stop(message, serverQueue);
     return;
   } else if (message.content.startsWith(prefix + '큐 목록') || message.content.startsWith(prefix + '큐목록') || message.content.startsWith(prefix + '큐')) {
-    return message.reply('⚠️ 큐 기능이 아직 완성되지 않았어요! 나중에 다시 시도해주세요');
     songlist(message, serverQueue);
     return;
   }
@@ -231,13 +230,13 @@ function stop(message, serverQueue) {
 }
 
 function songlist(message, serverQueue) {
-  //console.log(serverQueue.songlist);
-  /*if (!serverQueue) return message.channel.send('⚠️큐가 비었어요');
-  var queue = '';
-  for(var i = 0; i < serverQueue.songs.length; i++) {
-    queue = queue +  '\n`' + serverQueue[i].songs.title + '`';
-  }
-  return message.reply(queue);*/
+  if (!serverQueue) return message.channel.send('⚠️큐가 비었어요');
+  //console.log(serverQueue);
+  /*var queue = '';
+  for(var i = 0; i < serverQueue.songs.length; i++)
+    queue = queue +  '\n`' + serverQueue.songs.title + '`';*/
+  var queue = serverQueue.songs.song;
+  return message.reply('큐 : ' + queue);
 }
 
 
