@@ -50,12 +50,16 @@ client.on('message', message => {
   } else if (message.content.startsWith(prefix + 'stop') || message.content.startsWith(prefix + '정지') || message.content.startsWith(prefix + '큐 비우기')) {
     stop(message, serverQueue);
     return;
+  } else if (message.content.startsWith(prefix + '큐 목록') || message.content.startsWith(prefix + '큐목록') || message.content.startsWith(prefix + '큐')) {
+    return message.reply('⚠️ 큐 기능이 아직 완성되지 않았어요! 나중에 다시 시도해주세요');
+    songlist(message, serverQueue);
+    return;
   }
 
 
 
   if(message.content.startsWith(prefix + '도움')) {
-    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 이에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기`\n\n**유틸**\n`핑` `상태` `도움`\n\n';
+    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 이에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기` `큐`\n\n**유틸**\n`핑` `상태` `도움`\n\n';
     message.channel.send(helpMsg);
     return;
   }
@@ -225,6 +229,18 @@ function stop(message, serverQueue) {
   serverQueue.connection.dispatcher.end();
   message.channel.send('⏹노래 재생을 끝냈어요');
 }
+
+function songlist(message, serverQueue) {
+  //console.log(serverQueue.songlist);
+  /*if (!serverQueue) return message.channel.send('⚠️큐가 비었어요');
+  var queue = '';
+  for(var i = 0; i < serverQueue.songs.length; i++) {
+    queue = queue +  '\n`' + serverQueue[i].songs.title + '`';
+  }
+  return message.reply(queue);*/
+}
+
+
 
 function play(guild, song, message) {
 	const serverQueue = queue.get(guild.id);
