@@ -51,6 +51,7 @@ client.on('message', message => {
     stop(message, serverQueue);
     return;
   } else if (message.content.startsWith(prefix + '큐 목록') || message.content.startsWith(prefix + '큐목록') || message.content.startsWith(prefix + '큐')) {
+    return message.reply('⚠️ 큐 기능이 아직 완성되지 않았어요! 나중에 다시 시도해주세요');
     songlist(message, serverQueue);
     return;
   }
