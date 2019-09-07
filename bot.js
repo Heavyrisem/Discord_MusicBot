@@ -58,7 +58,7 @@ client.on('message', message => {
 
 
   if(message.content.startsWith(prefix + '도움')) {
-    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 이에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기` `큐`\n\n**유틸**\n`핑` `상태` `도움`\n\n';
+    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 이에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기` `큐`\n\n**유틸**\n`핑` `상태` `도움`\n\n\n\n**도움**\n`알파카맨`';
     message.channel.send(helpMsg);
     return;
   }
@@ -152,9 +152,13 @@ function getVideoId(search_name, message) {
         clearInterval(interval);
         clearTimeout(timeout);
         musicID = list[userInput].videoId;
+        const info = {
+          ID: musicID,
+          duration: list[userInput].duration.timestamp,
+        }
         userInput = '';
         userInputId = '';
-        resolve(musicID);
+        resolve(info);
       }
     }, 500);
 
@@ -181,14 +185,16 @@ async function execute(message, serverQueue) {
 		return message.channel.send('🆘참여하고 말할수 있는 권한이 없어요');
   }
   
-  const videoId = await getVideoId(message.content.substring(4, message.content.length), message);
-  console.log('videoId : ' + videoId);
+  const videoInfo = await getVideoId(message.content.substring(4, message.content.length), message);
+  console.log('videoId : ' + videoInfo.ID);
 
-	const songInfo = await ytdl.getInfo(videoId);
+  const songInfo = await ytdl.getInfo(videoInfo.ID);
+  var timestamp = getTimestamp(songInfo.player_response.videoDetails.lengthSeconds);
 	const song = {
 		title: songInfo.title,
     url: songInfo.video_url,
     author: message.member.nickname,
+    duration: timestamp,
   };
 
 	if (!serverQueue) {
@@ -199,7 +205,6 @@ async function execute(message, serverQueue) {
 			songs: [],
 			volume: 1,
       playing: true,
-      list: Array(),
 		};
 
 		queue.set(message.guild.id, queueContruct);
@@ -217,7 +222,6 @@ async function execute(message, serverQueue) {
 		}
 	} else {
 		serverQueue.songs.push(song);
-		console.log(serverQueue.songs);
 		return message.channel.send('✅`' + song.title + '`' + ' 을(를) 재생목록에 추가했어요 🎵');
 	}
 
@@ -243,7 +247,7 @@ function songlist(message, serverQueue) {
   var list = serverQueue.songs[0].title;
   var list = '';
   for(var i = 0; i < serverQueue.songs.length; i++)
-    list = list +  '\n`<' + serverQueue.songs[i].author + '> - ' + serverQueue.songs[i].title + '`';
+    list = list +  '\n`<' + serverQueue.songs[i].author + '> - ' + serverQueue.songs[i].title + ' (' + serverQueue.songs[i].duration + ')' + '`';
   return message.reply(list);
 }
 
@@ -277,4 +281,29 @@ function play(guild, song, message) {
 	dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
 }
 
+
+
+function getTimestamp(second) {
+  var sec = second;
+  var min;
+  var hour;
+  var timestamp;
+
+  if (sec >= 60) {
+     min = parseInt(sec / 60);
+     sec = sec % 60;
+     if (sec < 10) sec = "0" + sec;
+
+     if (min >= 60) {
+        hour = parseInt(min / 60);
+        min = min % 60;
+        if (min < 10) { min = "0" + min; }
+        timestamp = hour + ':' + min + ':' + sec;
+     }
+     else if (min >= 1) timestamp = min + ':' + sec;
+     else timestamp = '00:' + sec;
+
+  }
+  return timestamp;
+}
 client.login(config.token);
