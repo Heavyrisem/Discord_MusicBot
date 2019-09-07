@@ -41,7 +41,7 @@ client.on('message', message => {
   const serverQueue = queue.get(message.guild.id);
 
   if (message.content.startsWith(prefix + '노래')) {
-    if (message.content.substring(3, message.content.length) == '') return message.reply('사용법 : `' + prefix + '노래 제목`');
+    if (message.content.substring(4, message.content.length) == '') return message.reply('사용법 : `' + prefix + '노래 제목`');
     execute(message, serverQueue);
     return;
   } else if (message.content.startsWith(prefix + 'skip') || message.content.startsWith(prefix + '스킵')) {
@@ -114,6 +114,13 @@ client.on('message', message => {
 function getVideoId(search_name, message) {
   var musicID;
   return new Promise (function(resolve, reject) { search(search_name, function (err, r) {
+
+    if (search_name.startsWith('https://www.youtube.com') || search_name.startsWith('http://www.youtube.com')) {
+      musicID = search_name.substring(32, search_name.length);
+      console.log('URL 감지됨 : ' + musicID);
+      resolve(musicID);
+      return;
+    }
     const videos = r.videos;
     const list = new Array();
     var tmp = 0;
@@ -174,7 +181,7 @@ async function execute(message, serverQueue) {
 		return message.channel.send('🆘참여하고 말할수 있는 권한이 없어요');
   }
   
-  const videoId = await getVideoId(message.content.substring(3, message.content.length), message);
+  const videoId = await getVideoId(message.content.substring(4, message.content.length), message);
   console.log('videoId : ' + videoId);
 
 	const songInfo = await ytdl.getInfo(videoId);
@@ -235,7 +242,8 @@ function songlist(message, serverQueue) {
   /*var queue = '';
   for(var i = 0; i < serverQueue.songs.length; i++)
     queue = queue +  '\n`' + serverQueue.songs.title + '`';*/
-  var queue = serverQueue.songs.song;
+  var queue = serverQueue.songs;
+  console.log(queue);
   return message.reply('큐 : ' + queue);
 }
 
