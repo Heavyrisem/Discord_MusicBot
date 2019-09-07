@@ -41,7 +41,7 @@ client.on('message', message => {
   const serverQueue = queue.get(message.guild.id);
 
   if (message.content.startsWith(prefix + '노래')) {
-    if (message.content.substring(3, message.content.length) == '') return message.reply('사용법 : `' + prefix + '노래 제목`');
+    if (message.content.substring(3, message.content.length) == '') return message.reply('⚠️ 사용법 : `' + prefix + '노래 제목`, `노래 Youtube URL`');
     execute(message, serverQueue);
     return;
   } else if (message.content.startsWith(prefix + 'skip') || message.content.startsWith(prefix + '스킵')) {
