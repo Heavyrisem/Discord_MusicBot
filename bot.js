@@ -41,7 +41,7 @@ client.on('message', message => {
   const serverQueue = queue.get(message.guild.id);
 
   if (message.content.startsWith(prefix + '노래')) {
-    if (message.content.substring(3, message.content.length) == '') return message.reply('⚠️ 사용법 : `' + prefix + '노래 제목`, `노래 Youtube URL`');
+    if (message.content.substring(4, message.content.length) == '') return message.reply('사용법 : `' + prefix + '노래 제목`');
     execute(message, serverQueue);
     return;
   } else if (message.content.startsWith(prefix + 'skip') || message.content.startsWith(prefix + '스킵')) {
@@ -51,7 +51,6 @@ client.on('message', message => {
     stop(message, serverQueue);
     return;
   } else if (message.content.startsWith(prefix + '큐 목록') || message.content.startsWith(prefix + '큐목록') || message.content.startsWith(prefix + '큐')) {
-    return message.reply('⚠️ 큐 기능이 아직 완성되지 않았어요! 나중에 다시 시도해주세요');
     songlist(message, serverQueue);
     return;
   }
@@ -115,6 +114,7 @@ client.on('message', message => {
 function getVideoId(search_name, message) {
   var musicID;
   return new Promise (function(resolve, reject) { search(search_name, function (err, r) {
+
     if (search_name.startsWith('https://www.youtube.com') || search_name.startsWith('http://www.youtube.com')) {
       musicID = search_name.substring(32, search_name.length);
       console.log('URL 감지됨 : ' + musicID);
@@ -187,8 +187,9 @@ async function execute(message, serverQueue) {
 	const songInfo = await ytdl.getInfo(videoId);
 	const song = {
 		title: songInfo.title,
-		url: songInfo.video_url,
-	};
+    url: songInfo.video_url,
+    author: message.member.nickname,
+  };
 
 	if (!serverQueue) {
 		const queueContruct = {
@@ -197,7 +198,8 @@ async function execute(message, serverQueue) {
 			connection: null,
 			songs: [],
 			volume: 1,
-			playing: true,
+      playing: true,
+      list: Array(),
 		};
 
 		queue.set(message.guild.id, queueContruct);
@@ -237,13 +239,12 @@ function stop(message, serverQueue) {
 }
 
 function songlist(message, serverQueue) {
-  //console.log(serverQueue.songlist);
-  /*if (!serverQueue) return message.channel.send('⚠️큐가 비었어요');
-  var queue = '';
-  for(var i = 0; i < serverQueue.songs.length; i++) {
-    queue = queue +  '\n`' + serverQueue[i].songs.title + '`';
-  }
-  return message.reply(queue);*/
+  if (!serverQueue) return message.channel.send('⚠️큐가 비었어요');
+  var list = serverQueue.songs[0].title;
+  var list = '';
+  for(var i = 0; i < serverQueue.songs.length; i++)
+    list = list +  '\n`<' + serverQueue.songs[i].author + '> - ' + serverQueue.songs[i].title + '`';
+  return message.reply(list);
 }
 
 
