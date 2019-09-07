@@ -115,6 +115,12 @@ client.on('message', message => {
 function getVideoId(search_name, message) {
   var musicID;
   return new Promise (function(resolve, reject) { search(search_name, function (err, r) {
+    if (search_name.startsWith('https://www.youtube.com') || search_name.startsWith('http://www.youtube.com')) {
+      musicID = search_name.substring(32, search_name.length);
+      console.log('URL 감지됨 : ' + musicID);
+      resolve(musicID);
+      return;
+    }
     const videos = r.videos;
     const list = new Array();
     var tmp = 0;
@@ -175,7 +181,7 @@ async function execute(message, serverQueue) {
 		return message.channel.send('🆘참여하고 말할수 있는 권한이 없어요');
   }
   
-  const videoId = await getVideoId(message.content.substring(3, message.content.length), message);
+  const videoId = await getVideoId(message.content.substring(4, message.content.length), message);
   console.log('videoId : ' + videoId);
 
 	const songInfo = await ytdl.getInfo(videoId);
