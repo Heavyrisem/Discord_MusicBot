@@ -152,13 +152,9 @@ function getVideoId(search_name, message) {
         clearInterval(interval);
         clearTimeout(timeout);
         musicID = list[userInput].videoId;
-        const info = {
-          ID: musicID,
-          duration: list[userInput].duration.timestamp,
-        }
         userInput = '';
         userInputId = '';
-        resolve(info);
+        resolve(musicID);
       }
     }, 500);
 
@@ -186,9 +182,10 @@ async function execute(message, serverQueue) {
   }
   
   const videoInfo = await getVideoId(message.content.substring(4, message.content.length), message);
-  console.log('videoId : ' + videoInfo.ID);
 
-  const songInfo = await ytdl.getInfo(videoInfo.ID);
+  console.log('videoId : ' + videoInfo);
+
+  const songInfo = await ytdl.getInfo(videoInfo);
   var timestamp = getTimestamp(songInfo.player_response.videoDetails.lengthSeconds);
 	const song = {
 		title: songInfo.title,
