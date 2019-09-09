@@ -15,6 +15,7 @@ var activity = '명령어 beta 🖤 ||  ' + prefix + '도움';
 var userInputId = ' ';
 var userInput;
 var playState = false;
+var musicLoop = false;
 
 client.on('ready', () => {
   console.log(client.user.tag + ' 봇 실행');
@@ -53,6 +54,14 @@ client.on('message', message => {
   } else if (message.content.startsWith(prefix + '큐 목록') || message.content.startsWith(prefix + '큐목록') || message.content.startsWith(prefix + '큐')) {
     songlist(message, serverQueue);
     return;
+  } else if (message.content.startsWith(prefix + '반복') || message.content.startsWith(prefix + 'loop')) {
+    musicLoop = !musicLoop;
+    if (musicLoop) {
+      message.reply('🔁 노래 반복을 켰어요');
+    } else {
+      message.reply('🔁 노래 반복을 껐어요');
+    }
+    return;
   }
 
 
@@ -77,6 +86,14 @@ client.on('message', message => {
       return;
     }
   }
+
+
+
+  if (message.content.startsWith(prefix + '테스트')) {
+    message.reply('테스트 기능이 없어요');
+    return;
+  }
+
 
   if((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가')) && message.member.voiceChannel) {
     message.member.voiceChannel.leave();
@@ -263,12 +280,16 @@ function play(guild, song, message) {
 
 
   const dispatcher = serverQueue.connection.playStream(ytdl(song.url));
-  message.channel.send('▶️`' + song.title + '`' + ' 을(를) 재생해요 🎵');
+  var loop = '';
+  if (musicLoop)
+    loop = '🔁';
+  message.channel.send(loop + '▶️`' + song.title + '`' + ' 을(를) 재생해요 🎵');
   playState = true;
 
 	dispatcher.on('end', () => {
-		console.log('Music ended!');
-    serverQueue.songs.shift();
+    console.log('Music ended!');
+    if (!musicLoop)
+      serverQueue.songs.shift();
     playState = false;
 		play(guild, serverQueue.songs[0], message);
 	});
