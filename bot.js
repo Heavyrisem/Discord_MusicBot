@@ -5,8 +5,6 @@ const config = require('./config.js');
 const ytdl = require('ytdl-core');
 const search = require('yt-search');
 
-const msgtest = require('./test.js');
-
 const client = new Discord.Client();
 
 const queue = new Map();
