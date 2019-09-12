@@ -161,7 +161,7 @@ function getVideoId(search_name, message) {
     for (var i = 0; i < 5; i++) {
       chooselist = chooselist + (i + 1) + ': ' + list[i].title + ' <' + list[i].duration.timestamp + '>' + '\n';
     }
-    chooselist = chooselist + '취소\n';
+    chooselist = chooselist + '취소 : 선택을 하지않고 종료해요\n';
     message.reply('\n`' + chooselist + '`');
     console.log(chooselist);
 
