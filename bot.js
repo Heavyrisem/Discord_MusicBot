@@ -264,6 +264,7 @@ async function execute(message, serverQueue) {
 function skip(message, serverQueue) {
 	if (!message.member.voiceChannel) return message.channel.send('⚠️노래를 스킵하려면 음성 채널에 있어야 해요');
 	if (!serverQueue) return message.channel.send('⚠️스킵할 노래가 없어요');
+  serverQueue.songs.shift();
 	serverQueue.connection.dispatcher.end();
   message.channel.send('⏩노래를 스킵했어요');
 }
