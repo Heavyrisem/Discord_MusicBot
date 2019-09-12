@@ -11,7 +11,7 @@ const queue = new Map();
 
 var prefix = config.prefix;
 var voiceRoomName = 'None';
-var activity = '명령어 beta 🖤 ||  ' + prefix + '도움';
+var activity = '명령어 안정화 🖤 ||  ' + prefix + '도움';
 var userInputId = ' ';
 var userInput;
 var playState = false;
