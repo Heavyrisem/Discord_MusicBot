@@ -58,6 +58,7 @@ client.on('message', message => {
     songlist(message, serverQueue);
     return;
   } else if (message.content.startsWith(prefix + '반복') || message.content.startsWith(prefix + 'loop')) {
+    message.reply('반복 기능의 오류로 아직 활성화되지 않았어요');
     musicLoop = !musicLoop;
     if (musicLoop) {
       message.reply('🔁 노래 반복을 켰어요');
@@ -283,7 +284,9 @@ function stop(message, serverQueue) {
 function songlist(message, serverQueue) {
   if (!serverQueue) return message.channel.send('⚠️큐가 비었어요');
   var list = serverQueue.songs[0].title;
-  var list = '';
+  var list = '🔁 ';
+  if (musicLoop)
+    list = list + '';
   for(var i = 0; i < serverQueue.songs.length; i++)
     list = list +  '\n`<' + serverQueue.songs[i].author + '> - ' + serverQueue.songs[i].title + ' (' + serverQueue.songs[i].duration + ')' + '`';
   return message.reply(list);
