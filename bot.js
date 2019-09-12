@@ -5,6 +5,8 @@ const config = require('./config.js');
 const ytdl = require('ytdl-core');
 const search = require('yt-search');
 
+const msgtest = require('./test.js');
+
 const client = new Discord.Client();
 
 const queue = new Map();
@@ -16,6 +18,8 @@ var userInputId = ' ';
 var userInput;
 var playState = false;
 var musicLoop = false;
+var test = 'default';
+
 
 client.on('ready', () => {
   console.log(client.user.tag + ' 봇 실행');
@@ -111,9 +115,10 @@ client.on('message', message => {
     return;
   }
 
-  if (!isNaN(message.content.substring(1, message.content.length)) && !(message.content.substring(1, message.content.length) == '') || message.content.startsWith(prefix) + '취소') {
+  if (!isNaN(message.content.substring(1, message.content.length)) && !(message.content.substring(1, message.content.length) == '') || message.content.startsWith(prefix + '취소')) {
     //message.reply('뮤직 확인 : ' + message.content.substring(1, message.content.length));
     //musicPlayer.userPick(message, message.content.substring(1, message.content.length));
+    console.log('test');
     userInputId = message.member.id;
 
     if (message.content.startsWith(prefix + '취소') || message.content.startsWith(prefix + 'cancel')) {
@@ -123,6 +128,9 @@ client.on('message', message => {
     }
     return;
   } else {
+    console.log('확인 안됨');
+    test = message.content.substring(1, message.content.length);
+    msgtest.tsfun(message);
     message.reply('❌거부됨 ' + message.content.substring(1, message.content.length));
     return;
   }
