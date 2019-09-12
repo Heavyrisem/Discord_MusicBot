@@ -67,7 +67,7 @@ client.on('message', message => {
 
 
   if(message.content.startsWith(prefix + '도움')) {
-    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 이에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기` `큐`\n\n**유틸**\n`핑` `상태` `도움`\n\n\n\n**도움**\n`알파카맨`';
+    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 이에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기` `큐` `취소`\n\n**유틸**\n`핑` `상태` `도움`\n\n\n\n**도움**\n`알파카맨`';
     message.channel.send(helpMsg);
     return;
   }
@@ -111,11 +111,16 @@ client.on('message', message => {
     return;
   }
 
-  if (!isNaN(message.content.substring(1, message.content.length)) && !(message.content.substring(1, message.content.length) == '')) {
+  if (!isNaN(message.content.substring(1, message.content.length)) && !(message.content.substring(1, message.content.length) == '') || message.content.startsWith(prefix) + '취소') {
     //message.reply('뮤직 확인 : ' + message.content.substring(1, message.content.length));
     //musicPlayer.userPick(message, message.content.substring(1, message.content.length));
     userInputId = message.member.id;
-    userInput = message.content.substring(1, 2);
+
+    if (message.content.startsWith(prefix + '취소') || message.content.startsWith(prefix + 'cancel')) {
+      userInput = 0;
+    } else if (message.content.substring(1, 2) <= 5 || message.content.substring(1, 2) >= 1) {
+      userInput = message.content.substring(1, 2);
+    }
     return;
   } else {
     message.reply('❌거부됨 ' + message.content.substring(1, message.content.length));
@@ -156,6 +161,7 @@ function getVideoId(search_name, message) {
     for (var i = 0; i < 5; i++) {
       chooselist = chooselist + (i + 1) + ': ' + list[i].title + ' <' + list[i].duration.timestamp + '>' + '\n';
     }
+    chooselist = chooselist + '취소\n';
     message.reply('\n`' + chooselist + '`');
     console.log(chooselist);
 
@@ -164,6 +170,13 @@ function getVideoId(search_name, message) {
     userInputId = '';
     var interval = setInterval(function() {
       if (!isNaN(userInput) && message.member.id == userInputId) {
+        if (userInput == 0) {
+          console.log('취소 확인');
+          clearInterval(interval);
+          clearTimeout(timeout);
+          resolve('취소됨');
+          return;
+        }
         message.reply('✅`' + userInput + '` 번이 선택되었어요');
         userInput--;
         clearInterval(interval);
@@ -200,7 +213,13 @@ async function execute(message, serverQueue) {
   
   const videoInfo = await getVideoId(message.content.substring(4, message.content.length), message);
 
+
   console.log('videoId : ' + videoInfo);
+
+  if (videoInfo == '취소됨') {
+    message.reply('선택을 취소했어요');
+    return;
+  }
 
   const songInfo = await ytdl.getInfo(videoInfo);
   var timestamp = getTimestamp(songInfo.player_response.videoDetails.lengthSeconds);
@@ -274,7 +293,7 @@ function play(guild, song, message) {
 		serverQueue.voiceChannel.leave();
     queue.delete(guild.id);
     playState = false;
-		return;
+    return;
   }
   
 
