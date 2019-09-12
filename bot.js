@@ -111,7 +111,7 @@ client.on('message', message => {
     return;
   }
 
-  if (!isNaN(message.content.substring(1, message.content.length)) && !(message.content.substring(1, message.content.length) == '') || message.content.startsWith(prefix) + '취소') {
+  if (!isNaN(message.content.substring(1, message.content.length)) && !(message.content.substring(1, message.content.length) == '') || message.content.startsWith(prefix + '취소')) {
     //message.reply('뮤직 확인 : ' + message.content.substring(1, message.content.length));
     //musicPlayer.userPick(message, message.content.substring(1, message.content.length));
     userInputId = message.member.id;
