@@ -171,7 +171,6 @@ function getVideoId(search_name, message) {
     var interval = setInterval(function() {
       if (!isNaN(userInput) && message.member.id == userInputId) {
         if (userInput == 0) {
-          console.log('취소 확인');
           clearInterval(interval);
           clearTimeout(timeout);
           resolve('취소됨');
