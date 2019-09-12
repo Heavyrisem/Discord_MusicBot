@@ -33,6 +33,9 @@ client.on('message', message => {
   if(message.content == '삐이이') {
     message.channel.send('요오오오오오오오오오오오오오옹');
     return;
+  } else if(message.content == '오리') {
+    message.channel.send('꽤애액🦆🦆🦆🦆🦆🦆');
+    return;
   }
   if(!message.content.startsWith(prefix)) return;
  
@@ -239,6 +242,7 @@ async function execute(message, serverQueue) {
 			songs: [],
 			volume: 1,
       playing: true,
+      playingSong: 0
 		};
 
 		queue.set(message.guild.id, queueContruct);
@@ -255,7 +259,7 @@ async function execute(message, serverQueue) {
 			return message.channel.send(err);
 		}
 	} else {
-		serverQueue.songs.push(song);
+    serverQueue.songs.push(song);
 		return message.channel.send('✅`' + song.title + '`' + ' 을(를) 재생목록에 추가했어요 🎵');
 	}
 
@@ -263,8 +267,9 @@ async function execute(message, serverQueue) {
 
 function skip(message, serverQueue) {
 	if (!message.member.voiceChannel) return message.channel.send('⚠️노래를 스킵하려면 음성 채널에 있어야 해요');
-	if (!serverQueue) return message.channel.send('⚠️스킵할 노래가 없어요');
-  serverQueue.songs.shift();
+  if (!serverQueue) return message.channel.send('⚠️스킵할 노래가 없어요');
+  if (musicLoop)
+    serverQueue.songs.shift();
 	serverQueue.connection.dispatcher.end();
   message.channel.send('⏩노래를 스킵했어요');
 }
@@ -305,6 +310,7 @@ function play(guild, song, message) {
   if (musicLoop)
     loop = '🔁';
   message.channel.send(loop + '▶️`' + song.title + '`' + ' 을(를) 재생해요 🎵');
+  //console.log(serverQueue.songs);
   playState = true;
 
 	dispatcher.on('end', () => {
@@ -313,6 +319,17 @@ function play(guild, song, message) {
     if (!musicLoop)
       serverQueue.songs.shift();
     playState = false;
+
+    var nextNum;
+    serverQueue.playingSong++;
+    nextNum = serverQueue.playingSong;
+    if (serverQueue.songs[nextNum]) {
+      serverQueue.playingSong = 0;
+    }
+    console.log('nextNum : ' + nextNum);
+    console.log('next Song Info : ');
+    console.log(serverQueue.songs[0]);
+
 		play(guild, serverQueue.songs[0], message);
 	});
 	dispatcher.on('error', error => {
