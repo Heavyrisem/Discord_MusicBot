@@ -306,6 +306,7 @@ function play(guild, song, message) {
 
 	dispatcher.on('end', () => {
     console.log('Music ended!');
+    message.channel.send('⏹노래가 끝났어요');
     if (!musicLoop)
       serverQueue.songs.shift();
     playState = false;
