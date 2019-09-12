@@ -18,12 +18,6 @@ var userInputId = ' ';
 var userInput;
 var playState = false;
 var musicLoop = false;
-var test = 'default';
-
-
-const testinterval = setInterval(function() {
-  exports.msg = test;
-}, 100);
 
 client.on('ready', () => {
   console.log(client.user.tag + ' 봇 실행');
@@ -131,8 +125,6 @@ client.on('message', message => {
     }
     return;
   } else {
-    test = message.content.substring(1, message.content.length);
-    msgtest.tsfun(message);
     message.reply('❌거부됨 ' + message.content.substring(1, message.content.length));
     return;
   }
