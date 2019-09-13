@@ -369,7 +369,6 @@ function play(guild, song, message) {
         queue.get(guild.id).playingSong.set(0);
       }
       console.log('nextNum : ' + nextNum);
-      console.log('next Song Info : ');
       console.log(serverQueue.songs[nextNum]);
     }
   
