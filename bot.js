@@ -8,15 +8,15 @@ const search = require('yt-search');
 
 const client = new Discord.Client();
 
-var queue = new Map();
-var serverSetting = new Map();
+var queue = new Map();              // 음악 큐
+var serverStatus = new Map();       // 서버 설정
 
 var defaultprefix = config.prefix;
-var voiceRoomName = 'None';
+var voiceRoomName = 'None';   // 삭제
 var activity = '명령어 안정화 중 🖤 ||  ' + defaultprefix + '도움';
-var userInputId = ' ';
-var userInput;
-var playState = false;
+var userInputId = ' ';     // 입력 사용자 아이지 저장
+var userInput;            // 사용자 입력 저장
+var admin = config.admin;   // 관리자 아이디
 
 client.on('ready', () => {
   console.log(client.user.tag + ' 봇 실행');
@@ -29,13 +29,11 @@ client.on('ready', () => {
 
 client.on('message', message => {
   if(message.channel.type == 'dm') return;
-  if (serverSetting.get(message.guild.id) == undefined && !(message.member.id == client.user.id)) {
-    if (setServerSetting(message) == '생성 완료') {
-      message.channel.send('⚠️ 서버에 지정된 설정이 없어요! 기본 설정을 불러왔어요');
-    } else {
+  if (serverStatus.get(message.guild.id) == undefined && !(message.member.id == client.user.id)) {
+    if (!(setServerSetting(message) == '생성 완료')) {
       message.channel.send('❌ 서버에 지정된 설정이 없어요! 기본 설정을 불러오지 못했어요!');
+      return;
     }
-    return;
   }
 
   if(message.content == '삐이이') {
@@ -46,14 +44,14 @@ client.on('message', message => {
     return;
   }
 
-  var prefix = serverSetting.get(message.guild.id).prefix;
+  var prefix = serverStatus.get(message.guild.id).prefix;     // 서버 개별 설정 불러오기
 
 
   if(!message.content.startsWith(prefix)) return;
  
 
 
-  const serverQueue = queue.get(message.guild.id);
+  const serverQueue = queue.get(message.guild.id);      // 서버 개별 큐 불러오기, 함수 인자로 넘겨줌
 
   if (message.content.startsWith(prefix + '노래')) {
     if (message.content.substring(4, message.content.length) == '') return message.reply('사용법 : `' + prefix + '노래 제목`');
@@ -69,8 +67,8 @@ client.on('message', message => {
     songlist(message, serverQueue);
     return;
   } else if (message.content.startsWith(prefix + '반복') || message.content.startsWith(prefix + 'loop')) {
-    serverSetting.get(message.guild.id).musicLoop = !serverSetting.get(message.guild.id).musicLoop;
-    if (serverSetting.get(message.guild.id).musicLoop) {
+    serverStatus.get(message.guild.id).musicLoop = !serverStatus.get(message.guild.id).musicLoop;
+    if (serverStatus.get(message.guild.id).musicLoop) {
       message.reply('🔁 노래 반복을 켰어요');
     } else {
       message.reply('🔁 노래 반복을 껐어요');
@@ -107,7 +105,7 @@ client.on('message', message => {
 
 
   if(message.content.startsWith(prefix + '도움')) {
-    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 이에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기` `큐` `취소`\n\n**유틸**\n`핑` `상태` `도움` `접두어 변경` \n\n\n\n**도움**\n`알파카맨`';
+    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기` `큐` `취소`\n\n**유틸**\n`핑` `상태` `도움`\n\n\n\n**도움**\n`알파카맨`';
     message.channel.send(helpMsg);
     return;
   }
@@ -122,8 +120,8 @@ client.on('message', message => {
        return;
      }
      console.log(message.content.substring(8, message.content.length).length);
-     serverSetting.get(message.guild.id).prefix = message.content.substring(8, message.content.length);
-     message.reply('서버의 접두어가 ' + prefix + ' 에서 ' + serverSetting.get(message.guild.id).prefix + ' 로 변경되었어요');
+     serverStatus.get(message.guild.id).prefix = message.content.substring(8, message.content.length);
+     message.reply('서버의 접두어가 ' + prefix + ' 에서 ' + serverStatus.get(message.guild.id).prefix + ' 로 변경되었어요');
     return;
   }
 
@@ -135,14 +133,18 @@ client.on('message', message => {
   }
 
   if (message.content.startsWith(prefix + '테스트')) {
-    console.log(serverSetting.get(message.guild.id));
-    if (!serverSetting.devMode) {
+    if (!serverStatus.devMode && !(message.member.id == admin)) {
       message.reply('죄송해요 이 명령어는 개발때만 사용할수 있어요');
       return;
     }
-    console.log('test : ' + queue.get(message.guild.id).playingSong);
-    queue.get(message.guild.id).playingSong = queue.get(message.guild.id).playingSong + 1;
-    console.log('test after : ' + queue.get(message.guild.id).playingSong);
+    serverQueue.playingSong = serverQueue.playingSong + 1;
+    console.log(queue.get(message.guild.id).playingSong);
+    return;
+  }
+
+  if (message.content.startsWith(prefix + '설정')) {
+    var setting = serverStatus.get(message.guild.id);
+    message.channel.send(message.guild.name + ' 서버의 설정이에요```접두어 : ' + setting.prefix + '\n개발 모드 : ' + setting.devMode + '```');
     return;
   }
 
@@ -306,7 +308,7 @@ async function execute(message, serverQueue) {
 function skip(message, serverQueue) {
 	if (!message.member.voiceChannel) return message.channel.send('⚠️노래를 스킵하려면 음성 채널에 있어야 해요');
   if (!serverQueue) return message.channel.send('⚠️스킵할 노래가 없어요');
-  if (serverSetting.get(message.guild.id).musicLoop)
+  if (serverStatus.get(message.guild.id).musicLoop)
     serverQueue.songs.shift();
 	serverQueue.connection.dispatcher.end();
   message.channel.send('⏩노래를 스킵했어요');
@@ -314,7 +316,11 @@ function skip(message, serverQueue) {
 
 function stop(message, serverQueue) {
   if (!message.member.voiceChannel) return message.channel.send('⚠️노래를 멈추려면 음성 채널에 있어야 해요');
-  if (!playState) return message.channel.send('⚠️노래 재생중이 아니에요');
+  if (!serverQueue.playing) return message.channel.send('⚠️노래 재생중이 아니에요');
+  if (serverQueue.connection.dispatcher == null) {
+    console.log(serverQueue);
+    return message.reply('❌ 오류가 발생했어요');
+  }
 	serverQueue.songs = [];
   serverQueue.connection.dispatcher.end();
   message.channel.send('⏹노래 재생을 끝냈어요');
@@ -322,9 +328,12 @@ function stop(message, serverQueue) {
 
 function songlist(message, serverQueue) {
   if (!serverQueue) return message.channel.send('⚠️큐가 비었어요');
-  var list = serverQueue.songs[0].title;
-  var list = '🔁 큐 전체를 반복해요';
-  if (serverSetting.get(message.guild.id).musicLoop)
+  var list;
+  if (serverStatus.get(message.guild.id).musicLoop)
+    list = '🔁 큐 전체를 반복해요';
+  else if (!serverStatus.get(message.guild.id).musicLoop)
+    list = '▶️ 큐 전체를 재생해요';
+  if (serverStatus.get(message.guild.id).musicLoop)
     list = list + '';
   for(var i = 0; i < serverQueue.songs.length; i++)
     list = list +  '\n`<' + serverQueue.songs[i].author + '> - ' + serverQueue.songs[i].title + ' (' + serverQueue.songs[i].duration + ')' + '`';
@@ -334,44 +343,44 @@ function songlist(message, serverQueue) {
 
 
 function play(guild, song, message) {
-  const serverQueue = queue.get(guild.id);
+  var serverQueue = queue.get(guild.id);
   
 
 	if (!song) {
 		serverQueue.voiceChannel.leave();
     queue.delete(guild.id);
-    playState = false;
+    serverQueue.playing = false;
     return;
   }
-  console.log('playing : ' + queue.get(guild.id).playingSong);
+  console.log('재생 중인 번호 : ' + queue.get(guild.id).playingSong);
 
 
   const dispatcher = serverQueue.connection.playStream(ytdl(song.url));
   var loop = '';
-  if (serverSetting.get(message.guild.id).musicLoop)
+  if (serverStatus.get(message.guild.id).musicLoop)
     loop = '🔁';
   message.channel.send(loop + '▶️`' + song.title + '`' + ' 을(를) 재생해요 🎵');
-  //console.log(serverQueue.songs);
-  playState = true;
+  serverQueue.playing = true;
 
 	dispatcher.on('end', () => {
     console.log('Music ended!');
     message.channel.send('⏹노래가 끝났어요');
-    if (!serverSetting.get(message.guild.id).musicLoop)
-      serverQueue.songs.shift();
-    playState = false;
+    serverQueue.playing = false;
     
     var nextNum = 0;
-    if (serverSetting.get(message.guild.id).musicLoop) {
-      queue.get(guild.id).playingSong.set(queue.get(guild.id).playingSong + 1);
-      nextNum = queue.get(guild.id).playingSong;
-      if (serverQueue.songs[nextNum]) {
-        queue.get(guild.id).playingSong.set(0);
+    if (serverStatus.get(message.guild.id).musicLoop && serverQueue) {    // 루프가 켜진지 확인, 서버 큐 확인
+      serverQueue.playingSong++; 
+      nextNum = serverQueue.playingSong;
+      if (serverQueue.songs[nextNum] == null) {   // 다음곡이 존재하는지 체크
+        serverQueue.playingSong = 0;
+        nextNum = serverQueue.playingSong;
       }
-      console.log('nextNum : ' + nextNum);
-      console.log(serverQueue.songs[nextNum]);
-    }
-  
+      console.log('다음 재생 번호 : ' + nextNum);
+
+    } else if (!serverStatus.get(message.guild.id).musicLoop)  // 루프가 꺼져있을 때
+      serverQueue.songs.shift();
+
+
 		play(guild, serverQueue.songs[nextNum], message);
 	});
 	dispatcher.on('error', error => {
@@ -413,7 +422,7 @@ function setServerSetting(message) {
     devMode: true,
   };
 
-  serverSetting.set(message.guild.id, defaultSetting);
+  serverStatus.set(message.guild.id, defaultSetting);
   return '생성 완료';
 }
 
