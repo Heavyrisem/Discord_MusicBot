@@ -17,6 +17,7 @@ var activity = '명령어 beta 🖤 ||  ' + defaultprefix + '도움';
 var userInputId = ' ';
 var userInput;
 var playState = false;
+var admin = config.admin;
 
 client.on('ready', () => {
   console.log(client.user.tag + ' 봇 실행');
@@ -34,8 +35,8 @@ client.on('message', message => {
       message.channel.send('⚠️ 서버에 지정된 설정이 없어요! 기본 설정을 불러왔어요');
     } else {
       message.channel.send('❌ 서버에 지정된 설정이 없어요! 기본 설정을 불러오지 못했어요!');
+      return;
     }
-    return;
   }
 
   if(message.content == '삐이이') {
@@ -107,7 +108,7 @@ client.on('message', message => {
 
 
   if(message.content.startsWith(prefix + '도움')) {
-    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 이에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기` `큐` `취소`\n\n**유틸**\n`핑` `상태` `도움`\n\n\n\n**도움**\n`알파카맨`';
+    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기` `큐` `취소`\n\n**유틸**\n`핑` `상태` `도움`\n\n\n\n**도움**\n`알파카맨`';
     message.channel.send(helpMsg);
     return;
   }
@@ -135,15 +136,19 @@ client.on('message', message => {
   }
 
   if (message.content.startsWith(prefix + '테스트')) {
-    console.log(serverSetting.get(message.guild.id));
-    if (!serverSetting.devMode) {
+    if (!serverSetting.devMode && !(message.member.id == admin)) {
       message.reply('죄송해요 이 명령어는 개발때만 사용할수 있어요');
       return;
     }
-    console.log('test : ' + queue.get(message.guild.id).playingSong);
-    queue.get(message.guild.id).playingSong = queue.get(message.guild.id).playingSong + 1;
-    console.log('test after : ' + queue.get(message.guild.id).playingSong);
+    console.log(serverSetting.get(message.guild.id));
+    message.reply(JSON.stringify(serverSetting.get(message.guild.id)));
     return;
+  }
+
+  if (message.content.startsWith(prefix + '설정')) {
+    var setting = serverSetting.get(message.guild.id);
+    message.channel.send(message.guild.name + ' 서버의 설정이에요\n 접두어 : ' + setting.prefix + '\n ' )
+
   }
 
 
