@@ -137,8 +137,7 @@ client.on('message', message => {
       message.reply('죄송해요 이 명령어는 개발때만 사용할수 있어요');
       return;
     }
-    serverQueue.playingSong = serverQueue.playingSong + 1;
-    console.log(queue.get(message.guild.id).playingSong);
+    console.log(client.voiceConnections);
     return;
   }
 
@@ -170,6 +169,17 @@ client.on('message', message => {
     return;
   }
 });
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -308,8 +318,10 @@ async function execute(message, serverQueue) {
 function skip(message, serverQueue) {
 	if (!message.member.voiceChannel) return message.channel.send('⚠️노래를 스킵하려면 음성 채널에 있어야 해요');
   if (!serverQueue) return message.channel.send('⚠️스킵할 노래가 없어요');
-  if (serverStatus.get(message.guild.id).musicLoop)
+  if (serverStatus.get(message.guild.id).musicLoop) {
     serverQueue.songs.shift();
+    serverQueue.playingSong--;
+  }
 	serverQueue.connection.dispatcher.end();
   message.channel.send('⏩노래를 스킵했어요');
 }
