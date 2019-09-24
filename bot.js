@@ -12,9 +12,8 @@ var queue = new Map();              // 음악 큐
 var serverStatus = new Map();       // 서버 설정
 
 var defaultprefix = config.prefix;
-var voiceRoomName = 'None';   // 삭제
 var activity = '명령어 안정화 중 🖤 ||  ' + defaultprefix + '도움';
-var userInputId = ' ';     // 입력 사용자 아이지 저장
+var userInputId = ' ';     // 입력 사용자 아이디 저장
 var userInput;            // 사용자 입력 저장
 var admin = config.admin;   // 관리자 아이디
 
@@ -149,7 +148,7 @@ client.on('message', message => {
 
 
   if(message.content.startsWith(prefix + '상태') || message.content.startsWith(prefix + 'status')) {
-    message.reply('🏳️‍🌈' +  client.user.username + '은 지금 `' + voiceRoomName + '` 에 연결되어 있고 핑 : `'+ client.ping + 'ms`, `' + activity + '` 플레이 중 입니다.');
+    message.reply('🏳️‍🌈' +  client.user.username + '은 지금 핑 : `'+ client.ping + 'ms`, `' + activity + '` 플레이 중 입니다.');
     return;
   }
 
@@ -291,8 +290,9 @@ async function execute(message, serverQueue) {
 			connection: null,
 			songs: [],
 			volume: 1,
-      playing: true,
+      playing: false,
       playingSong: 0,
+      exitTimer: null,
 		};
 
 		queue.set(message.guild.id, queueContruct);
@@ -359,7 +359,11 @@ function play(guild, song, message) {
   
 
 	if (!song) {
-		serverQueue.voiceChannel.leave();
+    //serverQueue.voiceChannel.leave();
+    serverQueue.exitTimer = setTimeout(function() {
+      message.channel.send('⬅️ 아무런 활동이 없어 방을 나갔어요');
+      serverQueue.voiceChannel.leave();
+    }, 50000);
     queue.delete(guild.id);
     serverQueue.playing = false;
     return;
