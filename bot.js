@@ -88,14 +88,15 @@ client.on('message', message => {
 
   if(message.content.startsWith(prefix + 'join') || message.content.startsWith(prefix + '참가')) {
     if(message.member.voiceChannel) { // 이미 참가했는지 확인
-     //roomName = message.member.voiceChannel;
-     message.channel.send('➡️ `' + message.member.voiceChannel.name + '` 에 연결해요');
-     message.member.voiceChannel.join();
-       return;
-   } else {  // 사용자 없음
-     message.reply('⚠️ 어디에 들어가야 할지 모르겠어요');
-     return;
-   }
+      //roomName = message.member.voiceChannel;
+      message.channel.send('➡️ `' + message.member.voiceChannel.name + '` 에 연결해요');
+      message.member.voiceChannel.join();
+      clearTimeout(serverQueue.exitTimer);
+      return;
+    } else {  // 사용자 없음
+      message.reply('⚠️ 어디에 들어가야 할지 모르겠어요');
+      return;
+    }
  }
 
 
@@ -370,7 +371,7 @@ function play(guild, song, message) {
   }
   console.log('재생 중인 번호 : ' + queue.get(guild.id).playingSong);
 
-
+  clearTimeout(serverQueue.exitTimer);
   const dispatcher = serverQueue.connection.playStream(ytdl(song.url));
   var loop = '';
   if (serverStatus.get(message.guild.id).musicLoop)
