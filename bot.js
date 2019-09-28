@@ -43,7 +43,8 @@ client.on('message', message => {
     return;
   }
 
-  var prefix = serverStatus.get(message.guild.id).prefix;     // 서버 개별 설정 불러오기
+  const botStatus = serverStatus.get(message.guild.id);
+  var prefix = botStatus.prefix;     // 서버 개별 설정 불러오기
 
 
   if(!message.content.startsWith(prefix)) return;
@@ -54,7 +55,7 @@ client.on('message', message => {
 
   if (message.content.startsWith(prefix + '노래')) {
     if (message.content.substring(4, message.content.length) == '') return message.reply('사용법 : `' + prefix + '노래 제목`');
-    execute(message, serverQueue);
+    execute(message, serverQueue, botStatus);
     return;
   } else if (message.content.startsWith(prefix + 'skip') || message.content.startsWith(prefix + '스킵')) {
     skip(message, serverQueue);
@@ -66,8 +67,8 @@ client.on('message', message => {
     songlist(message, serverQueue);
     return;
   } else if (message.content.startsWith(prefix + '반복') || message.content.startsWith(prefix + 'loop')) {
-    serverStatus.get(message.guild.id).musicLoop = !serverStatus.get(message.guild.id).musicLoop;
-    if (serverStatus.get(message.guild.id).musicLoop) {
+    botStatus.musicLoop = !botStatus.musicLoop;
+    if (botStatus.musicLoop) {
       message.reply('🔁 노래 반복을 켰어요');
     } else {
       message.reply('🔁 노래 반복을 껐어요');
@@ -75,11 +76,11 @@ client.on('message', message => {
     return;
   }
 
-  if((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가')) && message.member.voiceChannel) {
-    message.member.voiceChannel.leave();
+  if((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가')) && botStatus.voiceChannel) {
+    botStatus.voiceChannel.leave();
     message.channel.send('⬅️ 방에서 나갔어요');
-    voiceRoom = ''; //나갈때 방 정보 초기화
-    client.user.setActivity(activity);
+    botStatus.voiceChannel = null;
+    clearTimeout(botStatus.exitTimer);
     return;
   } else if ((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가'))){
     message.reply('❌ 들어가 있는 방이 없어요');
@@ -88,10 +89,12 @@ client.on('message', message => {
 
   if(message.content.startsWith(prefix + 'join') || message.content.startsWith(prefix + '참가')) {
     if(message.member.voiceChannel) { // 이미 참가했는지 확인
-      //roomName = message.member.voiceChannel;
       message.channel.send('➡️ `' + message.member.voiceChannel.name + '` 에 연결해요');
+      botStatus.voiceChannel = message.member.voiceChannel;
       message.member.voiceChannel.join();
-      //clearTimeout(serverQueue.exitTimer);
+
+      setexitTimer(message, botStatus);
+
       return;
     } else {  // 사용자 없음
       message.reply('⚠️ 어디에 들어가야 할지 모르겠어요');
@@ -355,23 +358,20 @@ function songlist(message, serverQueue) {
 
 
 
-function play(guild, song, message) {
+function play(guild, song, message, botStatus) {
   var serverQueue = queue.get(guild.id);
   
 
 	if (!song) {
-    serverQueue.voiceChannel.leave();
-    /*serverQueue.exitTimer = setTimeout(function() {
-      message.channel.send('⬅️ 아무런 활동이 없어 방을 나갔어요');
-      serverQueue.voiceChannel.leave();
-    }, 50000);*/
+    //serverQueue.voiceChannel.leave();
+    setexitTimer(message, botStatus);
     queue.delete(guild.id);
     serverQueue.playing = false;
     return;
   }
   console.log('재생 중인 번호 : ' + queue.get(guild.id).playingSong);
 
-  clearTimeout(serverQueue.exitTimer);
+  clearTimeout(botStatus.exitTimer);
   const dispatcher = serverQueue.connection.playStream(ytdl(song.url));
   var loop = '';
   if (serverStatus.get(message.guild.id).musicLoop)
@@ -385,7 +385,7 @@ function play(guild, song, message) {
     serverQueue.playing = false;
     
     var nextNum = 0;
-    if (serverStatus.get(message.guild.id).musicLoop && serverQueue) {    // 루프가 켜진지 확인, 서버 큐 확인
+    if (botStatus.musicLoop && serverQueue) {    // 루프가 켜진지 확인, 서버 큐 확인
       serverQueue.playingSong++; 
       nextNum = serverQueue.playingSong;
       if (serverQueue.songs[nextNum] == null) {   // 다음곡이 존재하는지 체크
@@ -394,7 +394,7 @@ function play(guild, song, message) {
       }
       console.log('다음 재생 번호 : ' + nextNum);
 
-    } else if (!serverStatus.get(message.guild.id).musicLoop)  // 루프가 꺼져있을 때
+    } else if (!botStatus.musicLoop)  // 루프가 꺼져있을 때
       serverQueue.songs.shift();
 
 
@@ -432,10 +432,20 @@ function getTimestamp(second) {
   return timestamp;
 }
 
+function setexitTimer(message, botStatus) {
+  clearTimeout(botStatus.exitTimer);
+  botStatus.exitTimer = setTimeout(function() {
+    message.channel.send('⬅️ 아무런 활동이 없어 방을 나갔어요');
+    botStatus.voiceChannel.leave();
+  }, 5000);
+}
+
 function setServerSetting(message) {
   const defaultSetting = {
     prefix: '!',
     musicLoop: false,
+    voiceChannel: null,
+    exitTimer: null,
     devMode: true,
   };
 
