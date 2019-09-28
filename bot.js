@@ -91,7 +91,7 @@ client.on('message', message => {
       //roomName = message.member.voiceChannel;
       message.channel.send('➡️ `' + message.member.voiceChannel.name + '` 에 연결해요');
       message.member.voiceChannel.join();
-      clearTimeout(serverQueue.exitTimer);
+      //clearTimeout(serverQueue.exitTimer);
       return;
     } else {  // 사용자 없음
       message.reply('⚠️ 어디에 들어가야 할지 모르겠어요');
@@ -360,11 +360,11 @@ function play(guild, song, message) {
   
 
 	if (!song) {
-    //serverQueue.voiceChannel.leave();
-    serverQueue.exitTimer = setTimeout(function() {
+    serverQueue.voiceChannel.leave();
+    /*serverQueue.exitTimer = setTimeout(function() {
       message.channel.send('⬅️ 아무런 활동이 없어 방을 나갔어요');
       serverQueue.voiceChannel.leave();
-    }, 50000);
+    }, 50000);*/
     queue.delete(guild.id);
     serverQueue.playing = false;
     return;
