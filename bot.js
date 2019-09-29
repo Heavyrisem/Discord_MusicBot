@@ -55,7 +55,7 @@ client.on('message', message => {
 
   if (message.content.startsWith(prefix + '노래')) {
     if (message.content.substring(4, message.content.length) == '') return message.reply('사용법 : `' + prefix + '노래 제목`');
-    execute(message, serverQueue, botStatus);
+    execute(message, botStatus);
     return;
   } else if (message.content.startsWith(prefix + 'skip') || message.content.startsWith(prefix + '스킵')) {
     skip(message, serverQueue);
@@ -140,7 +140,10 @@ client.on('message', message => {
       message.reply('죄송해요 이 명령어는 개발때만 사용할수 있어요');
       return;
     }
-    console.log(client.voiceConnections);
+    const test1 = { second: "test1.second"};
+    const test2 = { first: test1};
+
+    console.log(test1.second);
     return;
   }
 
@@ -187,77 +190,17 @@ client.on('message', message => {
 
 
 
+
+
+
+
+
+
 // 노래 함수 시작
 
-function getVideoId(search_name, message) {
-  var musicID;
-  return new Promise (function(resolve, reject) { search(search_name, function (err, r) {
-
-    if (search_name.startsWith('https://www.youtube.com') || search_name.startsWith('http://www.youtube.com')) {
-      musicID = search_name.substring(32, search_name.length);
-      console.log('URL 감지됨 : ' + musicID);
-      resolve(musicID);
-      return;
-    }
-    const videos = r.videos;
-    const list = new Array();
-    var tmp = 0;
-    var chooselist = '';
-
-    for (var i = 0; i < 5; i++) {
-      if (videos[i].seconds == 0) {
-        tmp++;
-        list[i] = videos[i + tmp];
-        console.log('광고를 건너뛰었어요');
-      } else {
-        list[i] = videos[i + tmp];
-      }
-    }
-    console.log('----------');
-    for (var i = 0; i < 5; i++) {
-      chooselist = chooselist + (i + 1) + ': ' + list[i].title + ' <' + list[i].duration.timestamp + '>' + '\n';
-    }
-    chooselist = chooselist + '취소 : 선택을 하지않고 종료해요\n';
-    message.reply('\n`' + chooselist + '`');
-    console.log(chooselist);
-
-
-    userInput = '';
-    userInputId = '';
-    var interval = setInterval(function() {
-      if (!isNaN(userInput) && message.member.id == userInputId) {
-        if (userInput == 0) {
-          clearInterval(interval);
-          clearTimeout(timeout);
-          resolve('취소됨');
-          return;
-        }
-        message.reply('✅ `' + userInput + '` 번이 선택되었어요');
-        userInput--;
-        clearInterval(interval);
-        clearTimeout(timeout);
-        musicID = list[userInput].videoId;
-        userInput = '';
-        userInputId = '';
-        resolve(musicID);
-      }
-    }, 500);
-
-    var timeout = setTimeout(function() {
-      clearTimeout(interval);
-      console.log('시간 만료');
-      message.reply('🛑 노래는 8초 안에 선택해야 해요 `!번호` 로 선택할수 있어요');
-    }, 8500);
-
-
-  })});
-}
-
-
-
-
-async function execute(message, serverQueue) {
+async function execute(message, botStatus) {
   //const args = message.content.split(' ');
+  const serverQueue = botStatus.serverQueue;
 
   const voiceChannel = message.member.voiceChannel;
 	if (!voiceChannel) return message.channel.send('❌ 먼저 음성 채널에 들어가 주세요');
@@ -299,7 +242,9 @@ async function execute(message, serverQueue) {
       exitTimer: null,
 		};
 
-		queue.set(message.guild.id, queueContruct);
+    //queue.set(message.guild.id, queueContruct);
+    serverQueue = queueContruct;
+    
 
 		queueContruct.songs.push(song);
 
@@ -408,6 +353,75 @@ function play(guild, song, message, botStatus) {
 
 
 
+function getVideoId(search_name, message) {
+  var musicID;
+  return new Promise (function(resolve, reject) { search(search_name, function (err, r) {
+
+    if (search_name.startsWith('https://www.youtube.com') || search_name.startsWith('http://www.youtube.com')) {
+      musicID = search_name.substring(32, search_name.length);
+      console.log('URL 감지됨 : ' + musicID);
+      resolve(musicID);
+      return;
+    }
+    const videos = r.videos;
+    const list = new Array();
+    var tmp = 0;
+    var chooselist = '';
+
+    for (var i = 0; i < 5; i++) {
+      if (videos[i].seconds == 0) {
+        tmp++;
+        list[i] = videos[i + tmp];
+        console.log('광고를 건너뛰었어요');
+      } else {
+        list[i] = videos[i + tmp];
+      }
+    }
+    console.log('----------');
+    for (var i = 0; i < 5; i++) {
+      chooselist = chooselist + (i + 1) + ': ' + list[i].title + ' <' + list[i].duration.timestamp + '>' + '\n';
+    }
+    chooselist = chooselist + '취소 : 선택을 하지않고 종료해요\n';
+    message.reply('\n`' + chooselist + '`');
+    console.log(chooselist);
+
+
+    userInput = '';
+    userInputId = '';
+    var interval = setInterval(function() {
+      if (!isNaN(userInput) && message.member.id == userInputId) {
+        if (userInput == 0) {
+          clearInterval(interval);
+          clearTimeout(timeout);
+          resolve('취소됨');
+          return;
+        }
+        message.reply('✅ `' + userInput + '` 번이 선택되었어요');
+        userInput--;
+        clearInterval(interval);
+        clearTimeout(timeout);
+        musicID = list[userInput].videoId;
+        userInput = '';
+        userInputId = '';
+        resolve(musicID);
+      }
+    }, 500);
+
+    var timeout = setTimeout(function() {
+      clearTimeout(interval);
+      console.log('시간 만료');
+      message.reply('🛑 노래는 8초 안에 선택해야 해요 `!번호` 로 선택할수 있어요');
+    }, 8500);
+
+
+  })});
+}
+
+
+
+
+
+
 function getTimestamp(second) {
   var sec = second;
   var min;
@@ -445,6 +459,7 @@ function setServerSetting(message) {
     prefix: '!',
     musicLoop: false,
     voiceChannel: null,
+    serverQueue: null,
     exitTimer: null,
     devMode: true,
   };
