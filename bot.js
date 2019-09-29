@@ -55,7 +55,7 @@ client.on('message', message => {
 
   if (message.content.startsWith(prefix + '노래')) {
     if (message.content.substring(4, message.content.length) == '') return message.reply('사용법 : `' + prefix + '노래 제목`');
-    execute(message, serverQueue, botStatus);
+    execute(message, serverQueue);
     return;
   } else if (message.content.startsWith(prefix + 'skip') || message.content.startsWith(prefix + '스킵')) {
     skip(message, serverQueue);
@@ -357,22 +357,21 @@ function songlist(message, serverQueue) {
 }
 
 
-
-function play(guild, song, message, botStatus) {
+function play(guild, song, message) {
   var serverQueue = queue.get(guild.id);
   
 
 	if (!song) {
     //serverQueue.voiceChannel.leave();
-    setexitTimer(message, botStatus);
+    //setexitTimer(message, botStatus);
     queue.delete(guild.id);
     serverQueue.playing = false;
     return;
   }
   console.log('재생 중인 번호 : ' + queue.get(guild.id).playingSong);
 
-  if (botStatus.exitTimer);
-    clearTimeout(botStatus.exitTimer);
+  //if (botStatus);
+    //clearTimeout(botStatus.exitTimer);
   const dispatcher = serverQueue.connection.playStream(ytdl(song.url));
   var loop = '';
   if (serverStatus.get(message.guild.id).musicLoop)
