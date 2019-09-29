@@ -92,7 +92,7 @@ client.on('message', message => {
       message.channel.send('➡️ `' + message.member.voiceChannel.name + '` 에 연결해요');
       botStatus.voiceChannel = message.member.voiceChannel;
       message.member.voiceChannel.join();
-
+      clearTimeout(botStatus.exitTimer);
       setexitTimer(message, botStatus);
 
       return;
@@ -108,7 +108,7 @@ client.on('message', message => {
 
 
   if(message.content.startsWith(prefix + '도움')) {
-    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기` `큐` `취소`\n\n**유틸**\n`핑` `상태` `도움` `설정` `접두어 변경`\n\n\n\n**도움**\n`알파카맨`\n\n더 자세한 정보는 https://discordbot-web.herokuapp.com/ 에서 확인할수 있어요';
+    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기` `큐` `취소`\n\n**유틸**\n`핑` `상태` `도움` `설정` `접두어 변경`\n\n\n\n**도움**\n`알파카맨`\n\n더 자세한 정보는 https://discordbot-web.herokuapp.com/ 또는 https://discord-web-clone.herokuapp.com/ 에서 확인할수 있어요';
     message.channel.send(helpMsg);
     return;
   }
@@ -200,7 +200,7 @@ client.on('message', message => {
 
 async function execute(message, botStatus) {
   //const args = message.content.split(' ');
-  const serverQueue = botStatus.serverQueue;
+  var serverQueue = botStatus.serverQueue;
 
   const voiceChannel = message.member.voiceChannel;
 	if (!voiceChannel) return message.channel.send('❌ 먼저 음성 채널에 들어가 주세요');
@@ -243,7 +243,7 @@ async function execute(message, botStatus) {
 		};
 
     //queue.set(message.guild.id, queueContruct);
-    serverQueue = queueContruct;
+    botStatus.serverQueue = queueContruct;
     
 
 		queueContruct.songs.push(song);
@@ -251,14 +251,14 @@ async function execute(message, botStatus) {
 		try {
 			var connection = await voiceChannel.join();
 			queueContruct.connection = connection;
-			play(message.guild, queueContruct.songs[0], message);
+			play(message.guild, queueContruct.songs[0], message, botStatus);
 		} catch (err) {
 			console.log(err);
 			queue.delete(message.guild.id);
 			return message.channel.send(err);
 		}
 	} else {
-    serverQueue.songs.push(song);
+    botStatus.serverQueue.songs.push(song);
 		return message.channel.send('✅`' + song.title + '`' + ' 을(를) 재생목록에 추가했어요 🎵');
 	}
 
@@ -304,51 +304,52 @@ function songlist(message, serverQueue) {
 
 
 function play(guild, song, message, botStatus) {
-  var serverQueue = queue.get(guild.id);
+  // serverQueue = botStatus.serverQueue;
   
 
 	if (!song) {
     //serverQueue.voiceChannel.leave();
     setexitTimer(message, botStatus);
     queue.delete(guild.id);
-    serverQueue.playing = false;
+    botStatus.serverQueue.playing = false;
     return;
   }
-  console.log('재생 중인 번호 : ' + queue.get(guild.id).playingSong);
+  console.log('재생 중인 번호 : ' + botStatus.serverQueue.playingSong);
+  console.log(botStatus.serverQueue);
 
   clearTimeout(botStatus.exitTimer);
-  const dispatcher = serverQueue.connection.playStream(ytdl(song.url));
+  const dispatcher = botStatus.serverQueue.connection.playStream(ytdl(song.url));
   var loop = '';
   if (serverStatus.get(message.guild.id).musicLoop)
     loop = '🔁';
   message.channel.send(loop + '▶️`' + song.title + '`' + ' 을(를) 재생해요 🎵');
-  serverQueue.playing = true;
+  botStatus.serverQueue.playing = true;
 
 	dispatcher.on('end', () => {
     console.log('Music ended!');
     message.channel.send('⏹노래가 끝났어요');
-    serverQueue.playing = false;
+    botStatus.serverQueue.playing = false;
     
     var nextNum = 0;
-    if (botStatus.musicLoop && serverQueue) {    // 루프가 켜진지 확인, 서버 큐 확인
-      serverQueue.playingSong++; 
-      nextNum = serverQueue.playingSong;
-      if (serverQueue.songs[nextNum] == null) {   // 다음곡이 존재하는지 체크
-        serverQueue.playingSong = 0;
-        nextNum = serverQueue.playingSong;
+    if (botStatus.musicLoop && botStatus.serverQueue) {    // 루프가 켜진지 확인, 서버 큐 확인
+      botStatus.serverQueue.playingSong++; 
+      nextNum = botStatus.serverQueue.playingSong;
+      if (botStatus.serverQueue.songs[nextNum] == null) {   // 다음곡이 존재하는지 체크
+        botStatus.serverQueue.playingSong = 0;
+        nextNum = botStatus.serverQueue.playingSong;
       }
       console.log('다음 재생 번호 : ' + nextNum);
 
     } else if (!botStatus.musicLoop)  // 루프가 꺼져있을 때
-      serverQueue.songs.shift();
+      botStatus.serverQueue.songs.shift();
 
 
-		play(guild, serverQueue.songs[nextNum], message);
+		play(guild, botStatus.serverQueue.songs[nextNum], message, botStatus);
 	});
 	dispatcher.on('error', error => {
 		console.error(error);
   });
-	dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
+	dispatcher.setVolumeLogarithmic(botStatus.serverQueue.volume / 5);
 }
 
 
