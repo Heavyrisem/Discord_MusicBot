@@ -371,7 +371,7 @@ function play(guild, song, message, botStatus) {
   }
   console.log('재생 중인 번호 : ' + queue.get(guild.id).playingSong);
 
-  if (boutStatus.exitTimer);
+  if (botStatus.exitTimer);
     clearTimeout(botStatus.exitTimer);
   const dispatcher = serverQueue.connection.playStream(ytdl(song.url));
   var loop = '';
