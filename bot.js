@@ -50,21 +50,18 @@ client.on('message', message => {
   if(!message.content.startsWith(prefix)) return;
  
 
-
-  const serverQueue = queue.get(message.guild.id);      // 서버 개별 큐 불러오기, 함수 인자로 넘겨줌
-
   if (message.content.startsWith(prefix + '노래')) {
     if (message.content.substring(4, message.content.length) == '') return message.reply('사용법 : `' + prefix + '노래 제목`');
-    execute(message, serverQueue);
+    execute(message, botStatus);
     return;
   } else if (message.content.startsWith(prefix + 'skip') || message.content.startsWith(prefix + '스킵')) {
-    skip(message, serverQueue);
+    skip(message, botStatus);
     return;
   } else if (message.content.startsWith(prefix + 'stop') || message.content.startsWith(prefix + '정지') || message.content.startsWith(prefix + '큐 비우기')) {
-    stop(message, serverQueue);
+    stop(message, botStatus);
     return;
   } else if (message.content.startsWith(prefix + '큐 목록') || message.content.startsWith(prefix + '큐목록') || message.content.startsWith(prefix + '큐')) {
-    songlist(message, serverQueue);
+    songlist(message, botStatus);
     return;
   } else if (message.content.startsWith(prefix + '반복') || message.content.startsWith(prefix + 'loop')) {
     botStatus.musicLoop = !botStatus.musicLoop;
@@ -92,7 +89,7 @@ client.on('message', message => {
       message.channel.send('➡️ `' + message.member.voiceChannel.name + '` 에 연결해요');
       botStatus.voiceChannel = message.member.voiceChannel;
       message.member.voiceChannel.join();
-
+      clearTimeout(botStatus.exitTimer);
       setexitTimer(message, botStatus);
 
       return;
@@ -108,7 +105,7 @@ client.on('message', message => {
 
 
   if(message.content.startsWith(prefix + '도움')) {
-    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기` `큐` `취소`\n\n**유틸**\n`핑` `상태` `도움` `설정` `접두어 변경`\n\n\n\n**도움**\n`알파카맨`\n\n더 자세한 정보는 https://discordbot-web.herokuapp.com/ 에서 확인할수 있어요';
+    var helpMsg = '>>> 안녕하세요 **' + client.user.username + '** 에요\n명령어 사용방법은 다음과 같아요\n명령어는 `' + prefix + '명령어` 로 쓸수 있어요\n\n\n\n**노래**\n`노래` `참가` `나가` `스킵` `정지` `큐 비우기` `큐` `취소`\n\n**유틸**\n`핑` `상태` `도움` `설정` `접두어 변경`\n\n\n\n**도움**\n`알파카맨`\n\n더 자세한 정보는 https://discordbot-web.herokuapp.com/ 또는 https://discord-web-clone.herokuapp.com/ 에서 확인할수 있어요';
     message.channel.send(helpMsg);
     return;
   }
@@ -140,7 +137,6 @@ client.on('message', message => {
       message.reply('죄송해요 이 명령어는 개발때만 사용할수 있어요');
       return;
     }
-    console.log(client.voiceConnections);
     return;
   }
 
@@ -187,7 +183,166 @@ client.on('message', message => {
 
 
 
+
+
+
+
+
+
 // 노래 함수 시작
+
+async function execute(message, botStatus) {
+
+  const voiceChannel = message.member.voiceChannel;
+	if (!voiceChannel) return message.channel.send('❌ 먼저 음성 채널에 들어가 주세요');
+	const permissions = voiceChannel.permissionsFor(message.client.user);
+	if (!permissions.has('CONNECT') || !permissions.has('SPEAK')) {
+		return message.channel.send('🆘 참여하고 말할수 있는 권한이 없어요');
+  }
+  
+  const videoInfo = await getVideoId(message.content.substring(4, message.content.length), message);
+
+
+  console.log('videoId : ' + videoInfo);
+
+  if (videoInfo == '취소됨') {
+    message.reply('선택을 취소했어요');
+    return;
+  }
+
+  const songInfo = await ytdl.getInfo(videoInfo);
+  var timestamp = getTimestamp(songInfo.player_response.videoDetails.lengthSeconds);
+	const song = {
+		title: songInfo.title,
+    url: songInfo.video_url,
+    author: message.member.nickname,
+    duration: timestamp,
+  };
+
+
+
+	if (!botStatus.serverQueue) {
+		const queueContruct = {
+			textChannel: message.channel,
+			connection: null,
+			songs: [],
+			volume: 1,
+      playing: false,
+      playingSong: 0,
+      exitTimer: null,
+		};
+
+    
+    botStatus.voiceChannel = voiceChannel;
+    botStatus.serverQueue = queueContruct;
+    
+
+		queueContruct.songs.push(song);
+
+		try {
+      var connection = await voiceChannel.join();
+			queueContruct.connection = connection;
+			play(message.guild, queueContruct.songs[0], message, botStatus);
+		} catch (err) {
+			console.log(err);
+			queue.delete(message.guild.id);
+			return message.channel.send(err);
+		}
+	} else {
+    botStatus.serverQueue.songs.push(song);
+		return message.channel.send('✅`' + song.title + '`' + ' 을(를) 재생목록에 추가했어요 🎵');
+	}
+
+}
+
+function skip(message, botStatus) {
+	if (!message.member.voiceChannel) return message.channel.send('⚠️노래를 스킵하려면 음성 채널에 있어야 해요');
+  if (!botStatus.serverQueue) return message.channel.send('⚠️스킵할 노래가 없어요');
+  if (botStatus.musicLoop) {
+    botStatus.serverQueue.songs.shift();
+    botStatus.serverQueue.playingSong--;
+  }
+	botStatus.serverQueue.connection.dispatcher.end();
+  message.channel.send('⏩노래를 스킵했어요');
+}
+
+function stop(message, botStatus) {
+  if (!message.member.voiceChannel) return message.channel.send('⚠️노래를 멈추려면 음성 채널에 있어야 해요');
+  if (!botStatus.serverQueue.playing) return message.channel.send('⚠️노래 재생중이 아니에요');
+  if (botStatus.serverQueue.connection.dispatcher == null) {
+    console.log(botStatus.serverQueue);
+    return message.reply('❌ 오류가 발생했어요');
+  }
+	botStatus.serverQueue.songs = [];
+  botStatus.serverQueue.connection.dispatcher.end();
+  message.channel.send('⏹노래 재생을 끝냈어요');
+}
+
+function songlist(message, botStatus) {
+  if (!botStatus.serverQueue) return message.channel.send('⚠️큐가 비었어요');
+  var list;
+  if (botStatus.musicLoop)
+    list = '🔁 큐 전체를 반복해요';
+  else if (!botStatus.musicLoop)
+    list = '▶️ 큐 전체를 재생해요';
+  if (botStatus.musicLoop)
+    list = list + '';
+  for(var i = 0; i < botStatus.serverQueue.songs.length; i++)
+    list = list +  '\n`<' + botStatus.serverQueue.songs[i].author + '> - ' + botStatus.serverQueue.songs[i].title + ' (' + botStatus.serverQueue.songs[i].duration + ')' + '`';
+  return message.reply(list);
+}
+
+
+
+function play(guild, song, message, botStatus) {
+  
+
+	if (!song) {
+    setexitTimer(message, botStatus);
+    botStatus.serverQueue.playing = false;
+    return;
+  }
+  console.log('재생 중인 번호 : ' + botStatus.serverQueue.playingSong);
+
+  clearTimeout(botStatus.exitTimer);
+  const dispatcher = botStatus.serverQueue.connection.playStream(ytdl(song.url));
+  var loop = '';
+  if (serverStatus.get(message.guild.id).musicLoop)
+    loop = '🔁';
+  message.channel.send(loop + '▶️`' + song.title + '`' + ' 을(를) 재생해요 🎵');
+  botStatus.serverQueue.playing = true;
+
+
+
+	dispatcher.on('end', () => {
+    console.log('Music ended!');
+    message.channel.send('⏹노래가 끝났어요');
+    botStatus.serverQueue.playing = false;
+    
+    var nextNum = 0;
+    if (botStatus.musicLoop && botStatus.serverQueue) {    // 루프가 켜진지 확인, 서버 큐 확인
+      botStatus.serverQueue.playingSong++; 
+      nextNum = botStatus.serverQueue.playingSong;
+
+      if (botStatus.serverQueue.songs[nextNum] == null) {   // 다음곡이 존재하는지 체크
+        botStatus.serverQueue.playingSong = 0;
+        nextNum = botStatus.serverQueue.playingSong;
+      }
+      console.log('다음 재생 번호 : ' + nextNum);
+
+    } else if (!botStatus.musicLoop)  // 루프가 꺼져있을 때
+      botStatus.serverQueue.songs.shift();
+
+
+		play(guild, botStatus.serverQueue.songs[nextNum], message, botStatus);
+	});
+	dispatcher.on('error', error => {
+		console.error(error);
+  });
+	dispatcher.setVolumeLogarithmic(botStatus.serverQueue.volume / 5);
+}
+
+
 
 function getVideoId(search_name, message) {
   var musicID;
@@ -256,156 +411,6 @@ function getVideoId(search_name, message) {
 
 
 
-async function execute(message, serverQueue) {
-  //const args = message.content.split(' ');
-
-  const voiceChannel = message.member.voiceChannel;
-	if (!voiceChannel) return message.channel.send('❌ 먼저 음성 채널에 들어가 주세요');
-	const permissions = voiceChannel.permissionsFor(message.client.user);
-	if (!permissions.has('CONNECT') || !permissions.has('SPEAK')) {
-		return message.channel.send('🆘 참여하고 말할수 있는 권한이 없어요');
-  }
-  
-  const videoInfo = await getVideoId(message.content.substring(4, message.content.length), message);
-
-
-  console.log('videoId : ' + videoInfo);
-
-  if (videoInfo == '취소됨') {
-    message.reply('선택을 취소했어요');
-    return;
-  }
-
-  const songInfo = await ytdl.getInfo(videoInfo);
-  var timestamp = getTimestamp(songInfo.player_response.videoDetails.lengthSeconds);
-	const song = {
-		title: songInfo.title,
-    url: songInfo.video_url,
-    author: message.member.nickname,
-    duration: timestamp,
-  };
-
-
-
-	if (!serverQueue) {
-		const queueContruct = {
-			textChannel: message.channel,
-			voiceChannel: voiceChannel,
-			connection: null,
-			songs: [],
-			volume: 1,
-      playing: false,
-      playingSong: 0,
-      exitTimer: null,
-		};
-
-		queue.set(message.guild.id, queueContruct);
-
-		queueContruct.songs.push(song);
-
-		try {
-			var connection = await voiceChannel.join();
-			queueContruct.connection = connection;
-			play(message.guild, queueContruct.songs[0], message);
-		} catch (err) {
-			console.log(err);
-			queue.delete(message.guild.id);
-			return message.channel.send(err);
-		}
-	} else {
-    serverQueue.songs.push(song);
-		return message.channel.send('✅`' + song.title + '`' + ' 을(를) 재생목록에 추가했어요 🎵');
-	}
-
-}
-
-function skip(message, serverQueue) {
-	if (!message.member.voiceChannel) return message.channel.send('⚠️노래를 스킵하려면 음성 채널에 있어야 해요');
-  if (!serverQueue) return message.channel.send('⚠️스킵할 노래가 없어요');
-  if (serverStatus.get(message.guild.id).musicLoop) {
-    serverQueue.songs.shift();
-    serverQueue.playingSong--;
-  }
-	serverQueue.connection.dispatcher.end();
-  message.channel.send('⏩노래를 스킵했어요');
-}
-
-function stop(message, serverQueue) {
-  if (!message.member.voiceChannel) return message.channel.send('⚠️노래를 멈추려면 음성 채널에 있어야 해요');
-  if (!serverQueue.playing) return message.channel.send('⚠️노래 재생중이 아니에요');
-  if (serverQueue.connection.dispatcher == null) {
-    console.log(serverQueue);
-    return message.reply('❌ 오류가 발생했어요');
-  }
-	serverQueue.songs = [];
-  serverQueue.connection.dispatcher.end();
-  message.channel.send('⏹노래 재생을 끝냈어요');
-}
-
-function songlist(message, serverQueue) {
-  if (!serverQueue) return message.channel.send('⚠️큐가 비었어요');
-  var list;
-  if (serverStatus.get(message.guild.id).musicLoop)
-    list = '🔁 큐 전체를 반복해요';
-  else if (!serverStatus.get(message.guild.id).musicLoop)
-    list = '▶️ 큐 전체를 재생해요';
-  if (serverStatus.get(message.guild.id).musicLoop)
-    list = list + '';
-  for(var i = 0; i < serverQueue.songs.length; i++)
-    list = list +  '\n`<' + serverQueue.songs[i].author + '> - ' + serverQueue.songs[i].title + ' (' + serverQueue.songs[i].duration + ')' + '`';
-  return message.reply(list);
-}
-
-
-function play(guild, song, message) {
-  var serverQueue = queue.get(guild.id);
-  
-
-	if (!song) {
-    //serverQueue.voiceChannel.leave();
-    //setexitTimer(message, botStatus);
-    queue.delete(guild.id);
-    serverQueue.playing = false;
-    return;
-  }
-  console.log('재생 중인 번호 : ' + queue.get(guild.id).playingSong);
-
-  //if (botStatus);
-    //clearTimeout(botStatus.exitTimer);
-  const dispatcher = serverQueue.connection.playStream(ytdl(song.url));
-  var loop = '';
-  if (serverStatus.get(message.guild.id).musicLoop)
-    loop = '🔁';
-  message.channel.send(loop + '▶️`' + song.title + '`' + ' 을(를) 재생해요 🎵');
-  serverQueue.playing = true;
-
-	dispatcher.on('end', () => {
-    console.log('Music ended!');
-    message.channel.send('⏹노래가 끝났어요');
-    serverQueue.playing = false;
-    
-    var nextNum = 0;
-    if (botStatus.musicLoop && serverQueue) {    // 루프가 켜진지 확인, 서버 큐 확인
-      serverQueue.playingSong++; 
-      nextNum = serverQueue.playingSong;
-      if (serverQueue.songs[nextNum] == null) {   // 다음곡이 존재하는지 체크
-        serverQueue.playingSong = 0;
-        nextNum = serverQueue.playingSong;
-      }
-      console.log('다음 재생 번호 : ' + nextNum);
-
-    } else if (!botStatus.musicLoop)  // 루프가 꺼져있을 때
-      serverQueue.songs.shift();
-
-
-		play(guild, serverQueue.songs[nextNum], message);
-	});
-	dispatcher.on('error', error => {
-		console.error(error);
-  });
-	dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
-}
-
 
 
 function getTimestamp(second) {
@@ -436,8 +441,9 @@ function setexitTimer(message, botStatus) {
   clearTimeout(botStatus.exitTimer);
   botStatus.exitTimer = setTimeout(function() {
     message.channel.send('⬅️ 아무런 활동이 없어 방을 나갔어요');
+    botStatus.voicechannel
     botStatus.voiceChannel.leave();
-  }, 50000);
+  }, 5000);
 }
 
 function setServerSetting(message) {
@@ -445,8 +451,9 @@ function setServerSetting(message) {
     prefix: '!',
     musicLoop: false,
     voiceChannel: null,
+    serverQueue: null,
     exitTimer: null,
-    devMode: true,
+    devMode: false,
   };
 
   serverStatus.set(message.guild.id, defaultSetting);
