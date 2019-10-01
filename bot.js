@@ -443,7 +443,7 @@ function setexitTimer(message, botStatus) {
     message.channel.send('⬅️ 아무런 활동이 없어 방을 나갔어요');
     botStatus.voicechannel
     botStatus.voiceChannel.leave();
-  }, 5000);
+  }, 50000);
 }
 
 function setServerSetting(message) {
