@@ -250,7 +250,8 @@ async function execute(message, botStatus) {
 
 		try {
       var connection = await voiceChannel.join();
-			queueContruct.connection = connection;
+      queueContruct.connection = connection;
+
 			play(message.guild, queueContruct.songs[0], message, botStatus);
 		} catch (err) {
 			console.log(err);
@@ -309,6 +310,7 @@ function play(guild, song, message, botStatus) {
 	if (!song) {
     setexitTimer(message, botStatus);
     botStatus.serverQueue.playing = false;
+    botStatus.serverQueue = null;
     return;
   }
   console.log('재생 중인 번호 : ' + botStatus.serverQueue.playingSong);
