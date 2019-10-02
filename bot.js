@@ -146,6 +146,7 @@ client.on('message', message => {
       message.reply('죄송해요 이 명령어는 개발때만 사용할수 있어요');
       return;
     }
+    console.log(botStatus.serverQueue);
     return;
   }
 
@@ -462,7 +463,7 @@ function setServerSetting(message) {
     voiceChannel: null,
     serverQueue: null,
     exitTimer: null,
-    devMode: false,
+    devMode: true,
   };
 
   serverStatus.set(message.guild.id, defaultSetting);
