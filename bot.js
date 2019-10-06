@@ -117,6 +117,7 @@ client.on('message', message => {
   const helpEmbed = new Discord.RichEmbed()
   .setColor('#ff148e')
   .setTitle('지봇령')
+  .setURL('http://discordbot-ghost.forharu.com/')
   .setAuthor('도움말', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
   .setDescription('유튜브에 있는 음악들을 재생해주는 봇이에요.')
   .setThumbnail('http://discordbot-ghost.forharu.com/bot.png')
