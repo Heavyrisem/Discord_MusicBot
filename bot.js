@@ -114,6 +114,7 @@ client.on('message', message => {
 
 
   if(message.content.startsWith(prefix + '도움')) {
+    
     const helpEmbed = new Discord.RichEmbed()
     .setColor('#ff148e')
     .setTitle('지봇령')
