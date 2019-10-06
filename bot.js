@@ -117,6 +117,7 @@ client.on('message', message => {
     const helpEmbed = new Discord.RichEmbed()
     .setColor('#ff148e')
     .setTitle('지봇령')
+    .setURL('http://discordbot-ghost.forharu.com/')
     .setAuthor('도움말', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
     .setDescription('유튜브에 있는 음악들을 재생해주는 봇이에요.')
     .setThumbnail('http://discordbot-ghost.forharu.com/bot.png')
@@ -160,22 +161,6 @@ client.on('message', message => {
       message.reply('죄송해요 이 명령어는 개발때만 사용할수 있어요');
       return;
     }
-    const exampleEmbed = new Discord.RichEmbed()
-    .setColor('#ff148e')
-    .setTitle('지봇령')
-    .setAuthor('도움말', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
-    .setDescription('유튜브에 있는 음악들을 재생해주는 봇이에요.')
-    .setThumbnail('http://discordbot-ghost.forharu.com/bot.png')
-    .addField("사용법", "`" + prefix + "명령어` 로 사용할수 있어요.")
-    .addBlankField()
-    .addField(`노래`, "`노래` `참가` `나가` `스킵` `정지` `큐` `큐 비우기` `취소`")
-    .addField(`유틸`, "`핑` `상태` `도움` `설정` `접두어 변경`")
-    .addBlankField()
-    .addField("주의!", "아직 개발 중이여서 불안정한 부분이 있어요. \n업데이트가 되면 웹 페이지에서 확인할수 있어요.",)
-    .addBlankField()
-    .setFooter('맨 위의 봇 이름을 클릭하면 웹 페이지로 이동해요. (개발 - 지박령, 도움 - 알파카맨)', 'https://i.imgur.com/wSTFkRM.png');
-
-    message.channel.send(exampleEmbed);
     return;
   }
 
