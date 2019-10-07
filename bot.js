@@ -4,6 +4,7 @@ const Discord = require('discord.js');
 const config = require('./config.js');
 const ytdl = require('ytdl-core');
 const search = require('yt-search');
+const DB = require('./DB.js');
 
 
 const client = new Discord.Client();
@@ -162,6 +163,7 @@ client.on('message', message => {
       message.reply('죄송해요 이 명령어는 개발때만 사용할수 있어요');
       return;
     }
+    test(message);
     return;
   }
 
@@ -474,17 +476,24 @@ function setexitTimer(message, botStatus) {
 }
 
 function setServerSetting(message) {
+
   const defaultSetting = {
-    prefix: '!',
+    prefix: '!',            // DB 저장
     musicLoop: false,
     voiceChannel: null,
     serverQueue: null,
     exitTimer: null,
-    devMode: true,
+    devMode: true,          // DB 저장
   };
 
   serverStatus.set(message.guild.id, defaultSetting);
   return '생성 완료';
+}
+
+
+async function test(message) {
+  var test = await DB.DB_update(message);
+  console.log(test);
 }
 
 client.login(config.token);
