@@ -27,7 +27,16 @@ client.on('ready', () => {
 
 
 client.on('message', message => {
-  if(message.channel.type == 'dm') return;
+  if(message.channel.type == 'dm') {
+    if (message.author.id == client.user.id)
+      return;
+    const refuse = new Discord.RichEmbed()
+    .setColor('#ff148e')
+    .addField('❌거부됨', '개인 메세지는 지원되지 않아요')
+
+    message.channel.send(refuse);
+    return;
+  }
   if (serverStatus.get(message.guild.id) == undefined && !(message.member.id == client.user.id)) {
     if (!(setServerSetting(message) == '생성 완료')) {
       message.channel.send('❌ 서버에 지정된 설정이 없어요! 기본 설정을 불러오지 못했어요!');
