@@ -1,5 +1,5 @@
-exports.DB_update = function(message) {
-    return new Promise (function(resolve, reject) {
+exports.DB_update = async function(message) {
+    return new Promise (async function(resolve, reject) {
         var mysql = require('mysql');
         const config = require('./config.js');
         var conn = mysql.createConnection({
@@ -12,20 +12,20 @@ exports.DB_update = function(message) {
 
         conn.connect();
 
-        conn.query('SELECT prefix, devMode FROM serverConfig WHERE serverID="'+message.guild.id+'";', function(err, rows, fields) {
+        conn.query('SELECT * FROM serverConfig WHERE serverID="'+message.guild.id+'";', async function(err, rows, fields) {
             if (!err) {
                 console.log('결과: ', rows);
-                resolve(rows);
                 if (rows == '') {
-                    const defaultSetting = loadDefaultSettings();
-                    resolve(defaultSetting);
-                    return;
+                    const defaultSetting = await loadDefaultSettings(conn, message);
+                    await resolve(defaultSetting);
+                } else {
+                    await resolve(rows);
                 }
             } else {
                 console.log('쿼리 실행중 오류.', err);
-                return;
             }
         });
+        conn.end();
     });
 }
 
@@ -33,18 +33,18 @@ exports.DB_update = function(message) {
 
 
 
-function loadDefaultSettings() {
-    console.log('test');
-    conn.query('SELECT prefix, devMode FROM serverConfig WHERE serverID="Default"', function(err, rows, fields) {
-        if (!err) {
-            var sql = "INSERT INTO serverConfig(serverID, prefix, devMode, serverName) VALUES('" + message.guild.id + "', '" + rows[0].prefix + "' ,'" + rows[0].devMode + "' ,'" + message.guild.name+ "');";
-            //conn.query(sql);
-            console.log(sql);
-            conn.end();
-            return rows;
-        } else {
-            console.log('쿼리 실행중 오류.', err);
-        }
-
+async function loadDefaultSettings(conn, message) {
+    return new Promise(async function(resolve, reject) {
+        conn.query('SELECT prefix, devMode FROM serverConfig WHERE serverID="Default"', async function(err, rows, fields) {
+            if (!err) {
+                var sql = "INSERT INTO serverConfig(serverID, prefix, devMode, serverName) VALUES('" + message.guild.id + "', '" + rows[0].prefix + "' ,'" + rows[0].devMode + "' ,'" + message.guild.name+ "');";
+                //conn.query(sql);
+                console.log(rows);
+                await resolve(rows);
+            } else {
+                console.log('2 실행중 오류.', err);
+            }
+        });
+        conn.end();
     });
 }

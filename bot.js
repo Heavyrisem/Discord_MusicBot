@@ -401,9 +401,10 @@ function getVideoId(search_name, message) {
     for (var i = 0; i < 5; i++) {
       chooselist = chooselist + (i + 1) + ': ' + list[i].title + ' <' + list[i].duration.timestamp + '>' + '\n';
     }
-    chooselist = chooselist + '취소 : 선택을 하지않고 종료해요\n';
-    message.reply('\n`' + chooselist + '`');
-    console.log(chooselist);
+    chooselist = chooselist + '\n취소 : 선택을 하지않고 종료해요\n';
+    
+    message.reply('```cs\n' + chooselist + '```');
+    console.log('```cs\n' + chooselist + '```');
 
 
     userInput = '';
@@ -476,14 +477,16 @@ function setexitTimer(message, botStatus) {
 }
 
 function setServerSetting(message) {
-
+  //const serverSetting = await get_DB(message);
+  //console.log(serverSetting);
+  //return 'err';
   const defaultSetting = {
     prefix: '!',            // DB 저장
     musicLoop: false,
     voiceChannel: null,
     serverQueue: null,
     exitTimer: null,
-    devMode: true,          // DB 저장
+    devMode: false,          // DB 저장
   };
 
   serverStatus.set(message.guild.id, defaultSetting);
@@ -491,9 +494,10 @@ function setServerSetting(message) {
 }
 
 
-async function test(message) {
+async function get_DB(message) {
   var test = await DB.DB_update(message);
   console.log(test);
+  return test;
 }
 
 client.login(config.token);
