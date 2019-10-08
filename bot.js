@@ -5,6 +5,7 @@ const config = require('./config.js');
 const ytdl = require('ytdl-core');
 const search = require('yt-search');
 const DB = require('./DB.js');
+const startup = require('./startup.js');
 
 
 const client = new Discord.Client();
@@ -18,8 +19,12 @@ var userInputId = ' ';     // 입력 사용자 아이디 저장
 var userInput;            // 사용자 입력 저장
 var admin = config.admin;   // 관리자 아이디
 
-client.on('ready', () => {
+var firstDB;
+
+client.on('ready', async function() {
   console.log(client.user.tag + ' 봇 실행');
+  firstDB = await startup.getDB_all();
+  console.log('DB', firstDB);
   client.user.setActivity(activity);
 });
  
@@ -27,34 +32,28 @@ client.on('ready', () => {
 
 
 
-client.on('message', message => {
-  if(message.channel.type == 'dm') return;
-  if (serverStatus.get(message.guild.id) == undefined && !(message.member.id == client.user.id)) {
-    if (!(setServerSetting(message) == '생성 완료')) {
-      message.channel.send('❌ 서버에 지정된 설정이 없어요! 기본 설정을 불러오지 못했어요!');
+client.on('message', function(message) {
+  if (message.content == '테스트') {
+    console.log('-------');
+    console.log(firstDB);
+  }
+  if(message.channel.type == 'dm') {
+    if (message.author.id == client.user.id)
       return;
-    }
-  }
+    const refuse = new Discord.RichEmbed()
+    .setColor('#ff148e')
+    .addField('❌거부됨', '개인 메세지는 지원되지 않아요')
 
-  if(message.content == '삐이이') {
-    message.channel.send('요오오오오오오오오오오오오오옹');
-    return;
-  } else if(message.content == '오리') {
-    message.channel.send('꽤애액🦆🦆🦆🦆🦆🦆');
-    return;
-  } else if (message.content.startsWith('이이')) {
-    message.channel.send('음식이 장난이야?');
-    message.channel.send({
-      files: [{
-        attachment: 'EE.jpg',
-        name: 'EE.jpg'
-      }]
-    });
+    message.channel.send(refuse);
     return;
   }
+  if (serverStatus.get(message.guild.id) == undefined && !(message.member.id == client.user.id)) {
+    //loaddefaultsetting(message);
+  }
+  startup.fun(message);
 
-  const botStatus = serverStatus.get(message.guild.id);
-  var prefix = botStatus.prefix;     // 서버 개별 설정 불러오기
+  //const botStatus = serverStatus.get(message.guild.id);
+  var prefix = '!'; //botStatus.prefix;     // 서버 개별 설정 불러오기
 
 
   if(!message.content.startsWith(prefix)) return;
@@ -163,7 +162,7 @@ client.on('message', message => {
       message.reply('죄송해요 이 명령어는 개발때만 사용할수 있어요');
       return;
     }
-    test(message);
+    DB.DB_update(message);
     return;
   }
 
@@ -438,8 +437,21 @@ function getVideoId(search_name, message) {
   })});
 }
 
+function loaddefaultsetting(message) {
+  const defaultSetting = {
+    prefix: firstDB[0].prefix,            // DB 저장
+    musicLoop: false,
+    voiceChannel: null,
+    serverQueue: null,
+    exitTimer: null,
+    devMode: firstDB[0].devMode,          // DB 저장
+  };
+  console.log(defaultSetting);
 
-
+  serverStatus.set(message.guild.id, defaultSetting);
+  
+  return '생성 완료';
+}
 
 
 
@@ -476,28 +488,7 @@ function setexitTimer(message, botStatus) {
   }, 5000);
 }
 
-function setServerSetting(message) {
-  //const serverSetting = await get_DB(message);
-  //console.log(serverSetting);
-  //return 'err';
-  const defaultSetting = {
-    prefix: '!',            // DB 저장
-    musicLoop: false,
-    voiceChannel: null,
-    serverQueue: null,
-    exitTimer: null,
-    devMode: false,          // DB 저장
-  };
-
-  serverStatus.set(message.guild.id, defaultSetting);
-  return '생성 완료';
-}
 
 
-async function get_DB(message) {
-  var test = await DB.DB_update(message);
-  console.log(test);
-  return test;
-}
 
 client.login(config.token);
