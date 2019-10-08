@@ -408,8 +408,8 @@ function getVideoId(search_name, message) {
       chooselist = chooselist + (i + 1) + ': ' + list[i].title + ' <' + list[i].duration.timestamp + '>' + '\n';
     }
     chooselist = chooselist + '취소 : 선택을 하지않고 종료해요\n';
-    message.reply('\n`' + chooselist + '`');
-    console.log(chooselist);
+    message.reply('```cs\n' + chooselist + '```');
+    console.log('```cs\n' + chooselist + '```');
 
 
     userInput = '';
