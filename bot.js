@@ -91,6 +91,11 @@ client.on('message', message => {
     return;
   }
 
+  if(message.content.startsWith(prefix + '강제 정지')) {
+    botStatus.serverQueue.songs = [];
+    return;
+  }
+
   if((message.content.startsWith(prefix + 'leave') || message.content.startsWith(prefix + '나가')) && botStatus.voiceChannel) {
     botStatus.voiceChannel.leave();
     message.channel.send('⬅️ 방에서 나갔어요');
