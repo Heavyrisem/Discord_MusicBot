@@ -93,6 +93,7 @@ client.on('message', message => {
 
   if(message.content.startsWith(prefix + '강제 정지')) {
     botStatus.serverQueue.songs = [];
+    botStatus.serverQueue.playing = false;
     return;
   }
 
