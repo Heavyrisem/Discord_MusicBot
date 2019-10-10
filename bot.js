@@ -35,7 +35,7 @@ client.on('ready', async function() {
 client.on('message', function(message) {
   if (message.content == '테스트') {
     console.log('-------');
-    console.log(firstDB);
+    for (var i = 0; i < )
   }
   if(message.channel.type == 'dm') {
     if (message.author.id == client.user.id)

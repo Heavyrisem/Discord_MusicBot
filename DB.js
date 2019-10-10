@@ -33,6 +33,21 @@ exports.DB_update = function(message) {
     });
 }
 
+exports.getallDB = function(message) {
+    return new Promise (function(resolve, reject) {
+        const conn = connectDB();
+        conn.query('SELECT * FROM serverConfig;', function(err, rows, fields) {
+            if (!err) {
+                if (rows == '')
+                    console.log('데이터베이스가 비었습니다.');
+                resolve (rows);
+            } else {
+                console.log('초기 데이터베이스 가져오는 중 오류.', err);
+            }
+        });
+    });
+}
+
 exports.inputNewServer = async function(message) {
     const conn = connectDB();
     console.log(await loadDefaultSettings(conn, message));
