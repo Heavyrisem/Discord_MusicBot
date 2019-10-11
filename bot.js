@@ -508,7 +508,7 @@ function setexitTimer(message, botStatus) {
     message.channel.send('⬅️ 아무런 활동이 없어 방을 나갔어요');
     botStatus.voicechannel
     botStatus.voiceChannel.leave();
-  }, 300000));
+  }, 300000);
 }
 
  async function checkServerSetting(message) {
