@@ -19,7 +19,7 @@ exports.fun = function(message) {
 }
 
 exports.getDB_all = async function() {
-    return await DB.DB_update('all');
+    return await DB.getallDB();
 }
 
 

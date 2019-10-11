@@ -35,7 +35,6 @@ client.on('ready', async function() {
 client.on('message', function(message) {
   if (message.content == '테스트') {
     console.log('-------');
-    for (var i = 0; i < )
   }
   if(message.channel.type == 'dm') {
     if (message.author.id == client.user.id)
@@ -48,12 +47,14 @@ client.on('message', function(message) {
     return;
   }
   if (serverStatus.get(message.guild.id) == undefined && !(message.member.id == client.user.id)) {
-    //loaddefaultsetting(message);
+    console.log('ttests');
+    loaddefaultsetting(message);
+    checkServerSetting(message);
   }
   startup.fun(message);
 
-  //const botStatus = serverStatus.get(message.guild.id);
-  var prefix = '!'; //botStatus.prefix;     // 서버 개별 설정 불러오기
+  const botStatus = serverStatus.get(message.guild.id);
+  var prefix = botStatus.prefix;     // 서버 개별 설정 불러오기
 
 
   if(!message.content.startsWith(prefix)) return;
@@ -162,7 +163,6 @@ client.on('message', function(message) {
       message.reply('죄송해요 이 명령어는 개발때만 사용할수 있어요');
       return;
     }
-    DB.DB_update(message);
     return;
   }
 
@@ -488,7 +488,16 @@ function setexitTimer(message, botStatus) {
   }, 5000);
 }
 
-
-
+ async function checkServerSetting(message, botStatus) {
+  var result = await DB.searchServerID(message);
+  if (result == '' || result == undefined) {
+    message.channel.send('⚠️ ' + message.guild.name + ' 에 저장된 설정이 없습니다. 새로 생성합니다.');
+    DB.createNewSetting(message, firstDB[0]);
+  } else {
+    message.channel.send('✅ `' + result.serverName + '` 의 설정이 발견되었어요. 설정을 불러와요');
+    botStatus = result;
+    console.log('botstatus',botStatus);
+  }
+ }
 
 client.login(config.token);
