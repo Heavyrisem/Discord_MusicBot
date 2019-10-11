@@ -126,7 +126,7 @@ client.on('message', function(message) {
     .setThumbnail('http://discordbot-ghost.forharu.com/bot.png')
     .addField("사용법", "`" + prefix + "명령어` 로 사용할수 있어요.")
     .addBlankField()
-    .addField(`노래`, "`노래` `참가` `나가` `스킵` `정지` `큐` `큐 비우기` `취소`")
+    .addField(`노래`, "`노래` `참가` `나가` `스킵` `정지` `큐` `취소` `큐 삭제`")
     .addField(`유틸`, "`핑` `상태` `도움` `설정` `접두어 변경`")
     .addBlankField()
     .addField("주의!", "아직 개발 중이여서 불안정한 부분이 있어요. \n업데이트가 되면 웹 페이지에서 확인할수 있어요.",)
