@@ -490,9 +490,7 @@ function setexitTimer(message, botStatus) {
     DB.createNewSetting(message, firstDB[0]);
   } else {
     message.channel.send('✅ `' + result.serverName + '` 의 설정이 발견되었어요. 설정을 불러와요');
-    console.log('botstatus1', serverStatus.get(message.guild.id));
     loaddefaultsetting(message, result);
-    console.log('botstatus2', serverStatus.get(message.guild.id));
   }
  }
 
