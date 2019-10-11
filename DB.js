@@ -40,6 +40,17 @@ exports.createNewSetting = function(message, defaultsetting) {
     return;
 }
 
+exports.DB_prefix = function(message, prefix) {
+    return new Promise(function(resolve, reject){
+        var conn = connectDB();
+        var sql = "UPDATE `serverConfig` SET `prefix`='" + prefix + "' WHERE serverID='" + message.guild.id + "';";
+        console.log(sql);
+        conn.query(sql);
+        conn.end();
+        resolve(prefix);
+    });
+}
+
 function connectDB() {
     var mysql = require('mysql');
     const config = require('./config.js');

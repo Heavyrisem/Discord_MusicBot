@@ -23,7 +23,7 @@ var firstDB;
 
 client.on('ready', async function() {
   console.log(client.user.tag + ' 봇 실행');
-  firstDB = await startup.getDB_all();
+  firstDB = await DB.getallDB();
   console.log('DB', firstDB);
   client.user.setActivity(activity);
 });
@@ -33,9 +33,6 @@ client.on('ready', async function() {
 
 
 client.on('message', function(message) {
-  if (message.content == '테스트') {
-    console.log('-------');
-  }
   if(message.channel.type == 'dm') {
     if (message.author.id == client.user.id)
       return;
@@ -47,8 +44,8 @@ client.on('message', function(message) {
     return;
   }
   if (serverStatus.get(message.guild.id) == undefined && !(message.member.id == client.user.id)) {
-    console.log('ttests');
-    loaddefaultsetting(message);
+    console.log('load Setting');
+    loaddefaultsetting(message, firstDB[0]);
     checkServerSetting(message);
   }
   startup.fun(message);
@@ -145,9 +142,8 @@ client.on('message', function(message) {
        message.reply('접두어는 한글자만 가능해요');
        return;
      }
-     console.log(message.content.substring(8, message.content.length).length);
-     serverStatus.get(message.guild.id).prefix = message.content.substring(8, message.content.length);
-     message.reply('서버의 접두어가 ' + prefix + ' 에서 ' + serverStatus.get(message.guild.id).prefix + ' 로 변경되었어요');
+     Updateprefix(message, message.content.substring(8, message.content.length), botStatus);
+     //serverStatus.get(message.guild.id).prefix = 
     return;
   }
 
@@ -437,16 +433,15 @@ function getVideoId(search_name, message) {
   })});
 }
 
-function loaddefaultsetting(message) {
+function loaddefaultsetting(message, setting) {
   const defaultSetting = {
-    prefix: firstDB[0].prefix,            // DB 저장
+    prefix: setting.prefix,            // DB 저장
     musicLoop: false,
     voiceChannel: null,
     serverQueue: null,
     exitTimer: null,
-    devMode: firstDB[0].devMode,          // DB 저장
+    devMode: setting.devMode,          // DB 저장
   };
-  console.log(defaultSetting);
 
   serverStatus.set(message.guild.id, defaultSetting);
   
@@ -488,16 +483,27 @@ function setexitTimer(message, botStatus) {
   }, 5000);
 }
 
- async function checkServerSetting(message, botStatus) {
+ async function checkServerSetting(message) {
   var result = await DB.searchServerID(message);
   if (result == '' || result == undefined) {
     message.channel.send('⚠️ ' + message.guild.name + ' 에 저장된 설정이 없습니다. 새로 생성합니다.');
     DB.createNewSetting(message, firstDB[0]);
   } else {
     message.channel.send('✅ `' + result.serverName + '` 의 설정이 발견되었어요. 설정을 불러와요');
-    botStatus = result;
-    console.log('botstatus',botStatus);
+    console.log('botstatus1', serverStatus.get(message.guild.id));
+    loaddefaultsetting(message, result);
+    console.log('botstatus2', serverStatus.get(message.guild.id));
   }
+ }
+
+ async function Updateprefix(message, prefix, botStatus) {
+   var updated_prefix = await DB.DB_prefix(message, prefix);
+   botStatus.prefix = updated_prefix;
+   if (botStatus.prefix == undefined || botStatus.prefix == '') {
+     message.channel.send('접두어 변경중에 오류가 발생했어요. 기본 설정을 불러옵니다.');
+     loaddefaultsetting(message, firstDB[0]);
+   }
+   message.reply('서버의 접두어가 ' + serverStatus.get(message.guild.id).prefix + ' 로 변경되었어요');
  }
 
 client.login(config.token);
