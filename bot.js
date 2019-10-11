@@ -4,6 +4,8 @@ const Discord = require('discord.js');
 const config = require('./config.js');
 const ytdl = require('ytdl-core');
 const search = require('yt-search');
+const DB = require('./DB.js');
+const startup = require('./startup.js');
 
 
 const client = new Discord.Client();
@@ -17,8 +19,12 @@ var userInputId = ' ';     // 입력 사용자 아이디 저장
 var userInput;            // 사용자 입력 저장
 var admin = config.admin;   // 관리자 아이디
 
-client.on('ready', () => {
+var firstDB;
+
+client.on('ready', async function() {
   console.log(client.user.tag + ' 봇 실행');
+  firstDB = await DB.getallDB();
+  console.log('DB', firstDB);
   client.user.setActivity(activity);
 });
  
@@ -26,7 +32,7 @@ client.on('ready', () => {
 
 
 
-client.on('message', message => {
+client.on('message', function(message) {
   if(message.channel.type == 'dm') {
     if (message.author.id == client.user.id)
       return;
@@ -38,28 +44,11 @@ client.on('message', message => {
     return;
   }
   if (serverStatus.get(message.guild.id) == undefined && !(message.member.id == client.user.id)) {
-    if (!(setServerSetting(message) == '생성 완료')) {
-      message.channel.send('❌ 서버에 지정된 설정이 없어요! 기본 설정을 불러오지 못했어요!');
-      return;
-    }
+    console.log('load Setting');
+    loaddefaultsetting(message, firstDB[0]);
+    checkServerSetting(message);
   }
-
-  if(message.content == '삐이이') {
-    message.channel.send('요오오오오오오오오오오오오오옹');
-    return;
-  } else if(message.content == '오리') {
-    message.channel.send('꽤애액🦆🦆🦆🦆🦆🦆');
-    return;
-  } else if (message.content.startsWith('이이')) {
-    message.channel.send('음식이 장난이야?');
-    message.channel.send({
-      files: [{
-        attachment: 'EE.jpg',
-        name: 'EE.jpg'
-      }]
-    });
-    return;
-  }
+  startup.fun(message);
 
   const botStatus = serverStatus.get(message.guild.id);
   var prefix = botStatus.prefix;     // 서버 개별 설정 불러오기
@@ -88,12 +77,6 @@ client.on('message', message => {
     } else {
       message.reply('🔁 노래 반복을 껐어요');
     }
-    return;
-  }
-
-  if(message.content.startsWith(prefix + '강제 정지')) {
-    botStatus.serverQueue.songs = [];
-    botStatus.serverQueue.playing = false;
     return;
   }
 
@@ -128,26 +111,27 @@ client.on('message', message => {
  
 
 
- if(message.content.startsWith(prefix + '도움')) {
-  const helpEmbed = new Discord.RichEmbed()
-  .setColor('#ff148e')
-  .setTitle('지봇령')
-  .setURL('http://discordbot-ghost.forharu.com/')
-  .setAuthor('도움말', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
-  .setDescription('유튜브에 있는 음악들을 재생해주는 봇이에요.')
-  .setThumbnail('http://discordbot-ghost.forharu.com/bot.png')
-  .addField("사용법", "`" + prefix + "명령어` 로 사용할수 있어요.")
-  .addBlankField()
-  .addField(`노래`, "`노래` `참가` `나가` `스킵` `정지` `큐` `큐 비우기` `취소`")
-  .addField(`유틸`, "`핑` `상태` `도움` `설정` `접두어 변경`")
-  .addBlankField()
-  .addField("주의!", "아직 개발 중이여서 불안정한 부분이 있어요. \n업데이트가 되면 웹 페이지에서 확인할수 있어요.",)
-  .addBlankField()
-  .setFooter('맨 위의 봇 이름을 클릭하면 웹 페이지로 이동해요. (개발 - 지박령, 도움 - 알파카맨)', 'https://i.imgur.com/wSTFkRM.png');
+  if(message.content.startsWith(prefix + '도움')) {
+    
+    const helpEmbed = new Discord.RichEmbed()
+    .setColor('#ff148e')
+    .setTitle('지봇령')
+    .setURL('http://discordbot-ghost.forharu.com/')
+    .setAuthor('도움말', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
+    .setDescription('유튜브에 있는 음악들을 재생해주는 봇이에요.')
+    .setThumbnail('http://discordbot-ghost.forharu.com/bot.png')
+    .addField("사용법", "`" + prefix + "명령어` 로 사용할수 있어요.")
+    .addBlankField()
+    .addField(`노래`, "`노래` `참가` `나가` `스킵` `정지` `큐` `큐 비우기` `취소`")
+    .addField(`유틸`, "`핑` `상태` `도움` `설정` `접두어 변경`")
+    .addBlankField()
+    .addField("주의!", "아직 개발 중이여서 불안정한 부분이 있어요. \n업데이트가 되면 웹 페이지에서 확인할수 있어요.",)
+    .addBlankField()
+    .setFooter('맨 위의 봇 이름을 클릭하면 웹 페이지로 이동해요. (개발 - 지박령, 도움 - 알파카맨)', 'https://i.imgur.com/wSTFkRM.png');
 
-  message.channel.send(helpEmbed);
-  return;
-}
+    message.channel.send(helpEmbed);
+    return;
+  }
   
   if (message.content.startsWith(prefix + '접두어 변경')) {
     if (message.content.substring(8, message.content.length) == '' || (message.content.substring(8, message.content.length) == ' ')) {
@@ -158,9 +142,8 @@ client.on('message', message => {
        message.reply('접두어는 한글자만 가능해요');
        return;
      }
-     console.log(message.content.substring(8, message.content.length).length);
-     serverStatus.get(message.guild.id).prefix = message.content.substring(8, message.content.length);
-     message.reply('서버의 접두어가 ' + prefix + ' 에서 ' + serverStatus.get(message.guild.id).prefix + ' 로 변경되었어요');
+     Updateprefix(message, message.content.substring(8, message.content.length), botStatus);
+     //serverStatus.get(message.guild.id).prefix = 
     return;
   }
 
@@ -413,7 +396,8 @@ function getVideoId(search_name, message) {
     for (var i = 0; i < 5; i++) {
       chooselist = chooselist + (i + 1) + ': ' + list[i].title + ' <' + list[i].duration.timestamp + '>' + '\n';
     }
-    chooselist = chooselist + '취소 : 선택을 하지않고 종료해요\n';
+    chooselist = chooselist + '\n취소 : 선택을 하지않고 종료해요\n';
+    
     message.reply('```cs\n' + chooselist + '```');
     console.log('```cs\n' + chooselist + '```');
 
@@ -449,8 +433,20 @@ function getVideoId(search_name, message) {
   })});
 }
 
+function loaddefaultsetting(message, setting) {
+  const defaultSetting = {
+    prefix: setting.prefix,            // DB 저장
+    musicLoop: false,
+    voiceChannel: null,
+    serverQueue: null,
+    exitTimer: null,
+    devMode: setting.devMode,          // DB 저장
+  };
 
-
+  serverStatus.set(message.guild.id, defaultSetting);
+  
+  return '생성 완료';
+}
 
 
 
@@ -484,21 +480,30 @@ function setexitTimer(message, botStatus) {
     message.channel.send('⬅️ 아무런 활동이 없어 방을 나갔어요');
     botStatus.voicechannel
     botStatus.voiceChannel.leave();
-  }, 300000);
+  }, 5000);
 }
 
-function setServerSetting(message) {
-  const defaultSetting = {
-    prefix: '!',
-    musicLoop: false,
-    voiceChannel: null,
-    serverQueue: null,
-    exitTimer: null,
-    devMode: true,
-  };
+ async function checkServerSetting(message) {
+  var result = await DB.searchServerID(message);
+  if (result == '' || result == undefined) {
+    message.channel.send('⚠️ ' + message.guild.name + ' 에 저장된 설정이 없습니다. 새로 생성합니다.');
+    DB.createNewSetting(message, firstDB[0]);
+  } else {
+    message.channel.send('✅ `' + result.serverName + '` 의 설정이 발견되었어요. 설정을 불러와요');
+    console.log('botstatus1', serverStatus.get(message.guild.id));
+    loaddefaultsetting(message, result);
+    console.log('botstatus2', serverStatus.get(message.guild.id));
+  }
+ }
 
-  serverStatus.set(message.guild.id, defaultSetting);
-  return '생성 완료';
-}
+ async function Updateprefix(message, prefix, botStatus) {
+   var updated_prefix = await DB.DB_prefix(message, prefix);
+   botStatus.prefix = updated_prefix;
+   if (botStatus.prefix == undefined || botStatus.prefix == '') {
+     message.channel.send('접두어 변경중에 오류가 발생했어요. 기본 설정을 불러옵니다.');
+     loaddefaultsetting(message, firstDB[0]);
+   }
+   message.reply('서버의 접두어가 ' + serverStatus.get(message.guild.id).prefix + ' 로 변경되었어요');
+ }
 
 client.login(config.token);
