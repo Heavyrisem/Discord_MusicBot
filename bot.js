@@ -67,7 +67,7 @@ client.on('message', function(message) {
   } else if (message.content.startsWith(prefix + 'stop') || message.content.startsWith(prefix + '정지') || message.content.startsWith(prefix + '큐 비우기')) {
     stop(message, botStatus);
     return;
-  } else if (message.content.startsWith(prefix + '큐 목록') || message.content.startsWith(prefix + '큐목록') || message.content.startsWith(prefix + '큐')) {
+  } else if (message.content.startsWith(prefix + '큐 목록') || message.content.startsWith(prefix + '큐목록') || message.content == prefix + '큐') {
     songlist(message, botStatus);
     return;
   } else if (message.content.startsWith(prefix + '반복') || message.content.startsWith(prefix + 'loop')) {
@@ -77,6 +77,10 @@ client.on('message', function(message) {
     } else {
       message.reply('🔁 노래 반복을 껐어요');
     }
+    return;
+  } else if (message.content.startsWith(prefix + '큐 삭제')) {
+    if (message.content.substring(6, message.content.length) == '') return message.reply('사용법 : `' + prefix + '큐 삭제 <삭제할 노래 번호>`');
+    songDel(message, botStatus, message.content.substring(6, message.content.length));
     return;
   }
 
@@ -310,9 +314,33 @@ function songlist(message, botStatus) {
     list = '▶️ 큐 전체를 재생해요';
   if (botStatus.musicLoop)
     list = list + '';
+  console.log('queue', botStatus.serverQueue.songs);
   for(var i = 0; i < botStatus.serverQueue.songs.length; i++)
     list = list +  '\n`<' + botStatus.serverQueue.songs[i].author + '> - ' + botStatus.serverQueue.songs[i].title + ' (' + botStatus.serverQueue.songs[i].duration + ')' + '`';
   return message.reply(list);
+}
+
+
+function songDel(message, botStatus, songNum) {
+  if (!isNaN(songNum)) {
+    songNum--;
+    if (songNum < 0) 
+      skip(message, botStatus);
+
+    if (botStatus.serverQueue) {
+      if (!(botStatus.serverQueue.songs[songNum] == null)) {
+        console.log(botStatus.serverQueue.songs[songNum]);
+        botStatus.serverQueue.songs.splice(songNum, 1);
+      } else {
+        message.reply('선택한 번호의 곡이 없어요.');
+      }
+    } else {
+      message.reply('큐가 없어요');
+    }
+  } else {
+    message.reply('사용법 : `' + botStatus.prefix + '큐 삭제 <삭제할 노래 번호>`');
+    console.log('숫자가 아닙니다.');
+  }
 }
 
 
@@ -490,9 +518,7 @@ function setexitTimer(message, botStatus) {
     DB.createNewSetting(message, firstDB[0]);
   } else {
     message.channel.send('✅ `' + result.serverName + '` 의 설정이 발견되었어요. 설정을 불러와요');
-    console.log('botstatus1', serverStatus.get(message.guild.id));
     loaddefaultsetting(message, result);
-    console.log('botstatus2', serverStatus.get(message.guild.id));
   }
  }
 
