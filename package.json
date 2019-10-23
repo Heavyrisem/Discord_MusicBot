@@ -11,8 +11,12 @@
     "discord-yt-player": "^1.1.1",
     "discord.js": "^11.5.1",
     "ffmpeg": "0.0.4",
+    "node-gyp": "^5.0.3",
+    "node-opus": "^0.3.2",
+    "rebuild": "^0.1.2",
     "request": "^2.81.0",
     "yt-search": "^0.4.1",
-    "ytdl-core": "^0.29.5"
+    "ytdl-core": "^0.29.5",
+    "ytdl-core-discord": "^1.0.3"
   }
 }
