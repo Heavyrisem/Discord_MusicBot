@@ -116,7 +116,7 @@ client.on('message', message => {
  if(message.content.startsWith(prefix + '도움')) {
   const helpEmbed = new Discord.RichEmbed()
   .setColor('#ff148e')
-  .setTitle('지봇령')
+  .setTitle(client.user.username)
   .setURL('http://discordbot-ghost.forharu.com/')
   .setAuthor('도움말', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
   .setDescription('유튜브에 있는 음악들을 재생해주는 봇이에요.')
