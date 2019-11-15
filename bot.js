@@ -331,7 +331,7 @@ function play(guild, song, message, botStatus) {
   console.log('재생 중인 번호 : ' + botStatus.serverQueue.playingSong);
 
   clearTimeout(botStatus.exitTimer);
-  const dispatcher = botStatus.serverQueue.connection.playStream(ytdl(song.url));
+  const dispatcher = botStatus.serverQueue.connection.playStream(ytdl(song.url), {bitrate: 192000});
   var loop = '';
   if (serverStatus.get(message.guild.id).musicLoop)
     loop = '🔁';
@@ -365,7 +365,8 @@ function play(guild, song, message, botStatus) {
 	dispatcher.on('error', error => {
 		console.error(error);
   });
-	dispatcher.setVolumeLogarithmic(botStatus.serverQueue.volume / 5);
+  dispatcher.setVolumeLogarithmic(botStatus.serverQueue.volume / 5);
+  dispatcher.
 }
 
 
