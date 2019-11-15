@@ -366,7 +366,6 @@ function play(guild, song, message, botStatus) {
 		console.error(error);
   });
   dispatcher.setVolumeLogarithmic(botStatus.serverQueue.volume / 5);
-  dispatcher.
 }
 
 
