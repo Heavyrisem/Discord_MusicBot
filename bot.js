@@ -6,6 +6,9 @@ const ytdl = require('ytdl-core');
 const search = require('yt-search');
 
 
+const fs = require('fs');
+
+
 const client = new Discord.Client();
 
 var queue = new Map();              // 음악 큐
@@ -42,6 +45,12 @@ client.on('message', message => {
     message.channel.send('꽤애액🦆🦆🦆🦆🦆🦆');
     return;
   } else if (message.content.startsWith('이이')) {
+    message.member.voiceChannel.join().then(connection => {
+      connection.playStream(fs.createReadStream('EE.mp3'));
+      setTimeout(function() {
+        connection.disconnect();
+      }, 5000);
+    })
     message.channel.send('음식이 장난이야?');
     message.channel.send({
       files: [{
@@ -331,6 +340,7 @@ function play(guild, song, message, botStatus) {
   console.log('재생 중인 번호 : ' + botStatus.serverQueue.playingSong);
 
   clearTimeout(botStatus.exitTimer);
+
   const dispatcher = botStatus.serverQueue.connection.playStream(ytdl(song.url), {bitrate: 192000});
   var loop = '';
   if (serverStatus.get(message.guild.id).musicLoop)
