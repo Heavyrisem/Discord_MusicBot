@@ -54,7 +54,7 @@ client.on('message', message => {
         name: 'EE.jpg'
       }]
     });
-    if (audioEsteregg && message.member.voiceChannel)
+    if (audioEsteregg || (message.member.voiceChannel == undefined))
       return;
     message.member.voiceChannel.join().then(connection => {
       connection.playStream(fs.createReadStream('EE.mp3'));
