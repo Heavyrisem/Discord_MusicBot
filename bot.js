@@ -47,6 +47,13 @@ client.on('message', message => {
     message.channel.send('꽤애액🦆🦆🦆🦆🦆🦆');
     return;
   } else if (message.content.startsWith('이이')) {
+    message.channel.send('음식이 장난이야?');
+    message.channel.send({
+      files: [{
+        attachment: 'EE.jpg',
+        name: 'EE.jpg'
+      }]
+    });
     if (audioEsteregg && message.member.voiceChannel)
       return;
     message.member.voiceChannel.join().then(connection => {
@@ -57,13 +64,6 @@ client.on('message', message => {
         audioEsteregg = false;
       }, 5000);
     })
-    message.channel.send('음식이 장난이야?');
-    message.channel.send({
-      files: [{
-        attachment: 'EE.jpg',
-        name: 'EE.jpg'
-      }]
-    });
     return;
   } else if (message.content == '업보') {
     if (audioEsteregg && message.member.voiceChannel)
