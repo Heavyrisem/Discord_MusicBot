@@ -20,6 +20,8 @@ var userInputId = ' ';     // 입력 사용자 아이디 저장
 var userInput;            // 사용자 입력 저장
 var admin = config.admin;   // 관리자 아이디
 
+var audioEsteregg = false;
+
 client.on('ready', () => {
   console.log(client.user.tag + ' 봇 실행');
   client.user.setActivity(activity);
@@ -45,10 +47,14 @@ client.on('message', message => {
     message.channel.send('꽤애액🦆🦆🦆🦆🦆🦆');
     return;
   } else if (message.content.startsWith('이이')) {
+    if (audioEsteregg)
+      return;
     message.member.voiceChannel.join().then(connection => {
       connection.playStream(fs.createReadStream('EE.mp3'));
+      audioEsteregg = true;
       setTimeout(function() {
         connection.disconnect();
+        audioEsteregg = false;
       }, 5000);
     })
     message.channel.send('음식이 장난이야?');
@@ -58,6 +64,18 @@ client.on('message', message => {
         name: 'EE.jpg'
       }]
     });
+    return;
+  } else if (message.content == '업보') {
+    if (audioEsteregg)
+      return;
+    message.member.voiceChannel.join().then(connection => {
+      connection.playStream(fs.createReadStream('eoajfl.mp3'));
+      audioEsteregg = true;
+      setTimeout(function() {
+        connection.disconnect();
+        audioEsteregg = false;
+      }, 6000);
+    })
     return;
   }
 
