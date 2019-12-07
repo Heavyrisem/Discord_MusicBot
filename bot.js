@@ -47,7 +47,7 @@ client.on('message', message => {
     message.channel.send('꽤애액🦆🦆🦆🦆🦆🦆');
     return;
   } else if (message.content.startsWith('이이')) {
-    if (audioEsteregg)
+    if (audioEsteregg && message.member.voiceChannel)
       return;
     message.member.voiceChannel.join().then(connection => {
       connection.playStream(fs.createReadStream('EE.mp3'));
@@ -66,7 +66,7 @@ client.on('message', message => {
     });
     return;
   } else if (message.content == '업보') {
-    if (audioEsteregg)
+    if (audioEsteregg && message.member.voiceChannel)
       return;
     message.member.voiceChannel.join().then(connection => {
       connection.playStream(fs.createReadStream('eoajfl.mp3'));
