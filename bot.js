@@ -46,7 +46,13 @@ client.on('message', message => {
   } else if(message.content == '오리') {
     message.channel.send('꽤애액🦆🦆🦆🦆🦆🦆');
     return;
-  } else if (message.content.startsWith('이이')) {
+  }
+
+  
+  const botStatus = serverStatus.get(message.guild.id);
+  var prefix = botStatus.prefix;     // 서버 개별 설정 불러오기
+
+  if (message.content.startsWith('이이')) {
     message.channel.send('음식이 장난이야?');
     message.channel.send({
       files: [{
@@ -54,7 +60,7 @@ client.on('message', message => {
         name: 'EE.jpg'
       }]
     });
-    if (audioEsteregg || (message.member.voiceChannel == undefined))
+    if (audioEsteregg || (message.member.voiceChannel == undefined) || botStatus.serverQueue.playing)
       return;
     message.member.voiceChannel.join().then(connection => {
       connection.playStream(fs.createReadStream('EE.mp3'));
@@ -65,8 +71,8 @@ client.on('message', message => {
       }, 5000);
     })
     return;
-  } else if (message.content == '업보') {
-    if (audioEsteregg && message.member.voiceChannel)
+  } else if (message.content == '업보킹') {
+    if (audioEsteregg && message.member.voiceChannel || botStatus.serverQueue.playing)
       return;
     message.member.voiceChannel.join().then(connection => {
       connection.playStream(fs.createReadStream('eoajfl.mp3'));
@@ -78,9 +84,6 @@ client.on('message', message => {
     })
     return;
   }
-
-  const botStatus = serverStatus.get(message.guild.id);
-  var prefix = botStatus.prefix;     // 서버 개별 설정 불러오기
 
 
   if(!message.content.startsWith(prefix)) return;
