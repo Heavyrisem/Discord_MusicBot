@@ -60,10 +60,13 @@ client.on('message', message => {
         name: 'EE.jpg'
       }]
     });
-    if (audioEsteregg || message.member.voiceChannel || botStatus.serverQueue.playing == null)
+    if (audioEsteregg || message.member.voiceChannel == undefined) {
       return;
-    if (botStatus.serverQueue.playing)
-      return;
+    }
+    if (botStatus.serverQueue) {
+      if (botStatus.serverQueue.playing)
+        return;
+    }
     message.member.voiceChannel.join().then(connection => {
       connection.playStream(fs.createReadStream('EE.mp3'));
       audioEsteregg = true;
@@ -74,9 +77,10 @@ client.on('message', message => {
     })
     return;
   } else if (message.content == '업보킹') {
-    if (audioEsteregg || message.member.voiceChannel)
+    if (audioEsteregg || message.member.voiceChannel == undefined) {
       return;
-    if (botStatus.serverQueue.playing != null) {
+    }
+    if (botStatus.serverQueue) {
       if (botStatus.serverQueue.playing)
         return;
     }
