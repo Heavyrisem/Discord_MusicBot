@@ -74,10 +74,12 @@ client.on('message', message => {
     })
     return;
   } else if (message.content == '업보킹') {
-    if (audioEsteregg || message.member.voiceChannel || botStatus.serverQueue.playing == null)
+    if (audioEsteregg || message.member.voiceChannel)
       return;
-    if (botStatus.serverQueue.playing)
-      return;
+    if (botStatus.serverQueue.playing != null) {
+      if (botStatus.serverQueue.playing)
+        return;
+    }
     message.member.voiceChannel.join().then(connection => {
       connection.playStream(fs.createReadStream('eoajfl.mp3'));
       audioEsteregg = true;
