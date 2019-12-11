@@ -292,7 +292,7 @@ async function execute(message, botStatus) {
 
   var songInfo;
   try {
-    await ytdl.getInfo(videoInfo);
+    songInfo = await ytdl.getInfo(videoInfo);
   } catch (error) {
     const errormsg = new Discord.RichEmbed()
     .setColor('#ff148e')
