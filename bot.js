@@ -20,11 +20,16 @@ var userInputId = ' ';     // 입력 사용자 아이디 저장
 var userInput;            // 사용자 입력 저장
 var admin = config.admin;   // 관리자 아이디
 
+var joy = 0;
+
 var audioEsteregg = false;
 
 client.on('ready', () => {
   console.log(client.user.tag + ' 봇 실행');
   client.user.setActivity(activity);
+});
+client.on('error', (err) => {
+  console.log('error : ', err);
 });
  
 
@@ -97,6 +102,17 @@ client.on('message', message => {
 
 
   if(!message.content.startsWith(prefix)) return;
+
+  if (message.content.startsWith(prefix + 'X') || message.content.startsWith(prefix + 'x')) {
+    joy++;
+    const prayJoy = new Discord.RichEmbed()
+    .setColor('#ff148e')
+    .setDescription('**' + message.author.username + ' 님이 조의를 표했습니다.**')
+    .addField('오늘 ' + joy + ' 명이 조의를 표했습니다.', '** **', true);
+
+    message.channel.send(prayJoy);
+    return;
+  }
  
 
   if (message.content.startsWith(prefix + '노래')) {
@@ -274,7 +290,19 @@ async function execute(message, botStatus) {
     return;
   }
 
-  const songInfo = await ytdl.getInfo(videoInfo);
+  var songInfo;
+  try {
+    await ytdl.getInfo(videoInfo);
+  } catch (error) {
+    const errormsg = new Discord.RichEmbed()
+    .setColor('#ff148e')
+    .setTitle('⚠️ 오류가 발생했어요.')
+    .setDescription(error)
+    .setTimestamp()
+    
+    message.channel.send(errormsg);
+    return 1;
+  }
   var timestamp = getTimestamp(songInfo.player_response.videoDetails.lengthSeconds);
 	const song = {
 		title: songInfo.title,
