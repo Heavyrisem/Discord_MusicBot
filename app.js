@@ -5,8 +5,11 @@
 // Import the discord.js module
 const Discord = require('discord.js');
 
+const server = require('./server/server');
 // Create an instance of a Discord client
 const client = new Discord.Client();
+
+var serverMap = new Map();
 
 /**
  * The ready event is vital, it means that only _after_ this will your bot start reacting to information
@@ -16,14 +19,24 @@ client.on('ready', () => {
   console.log('I am ready!');
 });
 
+
 // Create an event listener for messages
 client.on('message', message => {
   // If the message is "ping"
-  if (message.content === '아령하세요') {
-    // Send "pong" to the same channel
-    message.channel.send('허잇');
+  if (message.content === '테스트') {
+    if (!serverMap.has(message.guild.id)) {
+      try {
+        serverMap.set(message.guild.id, new server(client, message));
+      } catch(error) {
+        errorhandler(error, message)
+      }
+    }
+    var d = serverMap.get(message.guild.id);
+    d.join(message);
+    d.holdPing();
   }
+  return;
 });
 
 // Log our bot in using the token from https://discordapp.com/developers/applications/me
-client.login('NjE3MzEwMzY1OTE4ODIyNDIx.XWpYLw.6E27npAYasMqfR0qXy-I1UAiHAg');
+client.login('NjE5NTI3MzY0MDkwNjU4ODE3.XXJh-A.uGTknJRXOKBxjzYB7jaQk_UfLUw'); 

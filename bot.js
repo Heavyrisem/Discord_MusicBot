@@ -195,6 +195,9 @@ client.on('message', message => {
       message.reply('죄송해요 이 명령어는 개발때만 사용할수 있어요');
       return;
     }
+    setInterval(function() {
+      console.log('joy : ' + Utility.joy);
+    }, 1000);
     return;
   }
 

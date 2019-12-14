@@ -44,3 +44,5 @@ function Help(client, message, prefix) {
 module.exports.Help = Help;
 module.exports.GetClientPing = GetClientPing;
 module.exports.Pray = Pray;
+
+module.exports.joy = joy;
