@@ -2,9 +2,9 @@
   "name": "discord-bot",
   "description": "Discord Bot",
   "version": "1.0.0",
-  "main": "bot.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node bot.js"
+    "start": "node app.js"
   },
   "dependencies": {
     "discord-youtube-api": "^0.1.0",
