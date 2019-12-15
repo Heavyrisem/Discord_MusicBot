@@ -47,7 +47,7 @@ class server extends voicechannel {
         var e = this;
         setInterval(function() {
             e.client.user.setActivity('ping ' + e.client.ping);
-        }, 1000);
+        }, 60000);
     }
 
     errorhandler(msg) {
