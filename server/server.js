@@ -22,6 +22,7 @@ class server extends voicechannel {
                 join() {e.Join()},
                 now() {e.Now()},
                 leave() {e.Leave()},
+                play_url(target) {e.playmusic_url(target)},
                 autoleave: undefined,
                 playSong: {
                     connection: undefined,
