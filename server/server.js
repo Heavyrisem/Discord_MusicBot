@@ -14,7 +14,6 @@ class server extends voicechannel {
 
             this.serversetting = {
                 'prefix': '!',
-                'volume': 50,
                 'autoleave': 3000,
             }
 
@@ -22,21 +21,17 @@ class server extends voicechannel {
                 join() {e.Join()},
                 now() {e.Now()},
                 leave() {e.Leave()},
-                play_url(target) {e.playmusic_url(target)},
+                addmusic_url(target) {e.addmusic(target)},
                 autoleave: undefined,
                 playSong: {
+                    playing: false,
+                    streamOption: {
+                        seek: 0,
+                        volume: 50
+                    },
                     connection: undefined,
                     dispatcher: undefined,
-                    queue: [{
-                        title: '브베예투',
-                        time: '3:25',
-                        author: 'ㄱㅇㅋㄱㅇㅋ'
-                    },
-                    {
-                        title: '바베예투',
-                        time: '3:25',
-                        author: 'ㄱㅇㅋ'
-                    }],
+                    queue: [],
                 },
                 show_queue() {e.queue_show()}
             };
@@ -48,7 +43,7 @@ class server extends voicechannel {
     holdPing() {
         var e = this;
         setInterval(function() {
-            e.client.user.setActivity('ping : ' + e.client.ping);
+            e.client.user.setActivity('ping ' + e.client.ping);
         }, 1000);
     }
 

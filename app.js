@@ -68,7 +68,7 @@ client.on('message', message => {
     var keyword = message.content.substring(4, message.content.length);
     if (keyword.startsWith('https://www.youtube.com') || keyword.startsWith('http://www.youtube.com')) {
       try {
-        server.voiceChannel.play_url(keyword);
+        server.voiceChannel.addmusic_url(keyword);
       } catch(error) {
         const errormsg = new Discord.RichEmbed()
         .setColor('#ff148e')
