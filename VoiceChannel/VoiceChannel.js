@@ -12,6 +12,7 @@ class voicechannel extends getyoutube {
         console.log(message.content);
         try {
             if (message.member.voiceChannel != undefined) {
+                this.autoleave_clear();
                 message.member.voiceChannel.join();
                 message.channel.send('``➡️ ' + message.member.voiceChannel.name + ' 에 연결해요``');
                 this.autoleave();
@@ -26,6 +27,7 @@ class voicechannel extends getyoutube {
     Leave() {
         var message = this.message;
         try {
+            this.autoleave_clear();
             if (message.guild.me.voiceChannel == undefined) {
                 message.channel.send('``아무 채널에도 연결되어 있지 않아요.``');
             } else {
@@ -50,15 +52,8 @@ class voicechannel extends getyoutube {
 
     autoleave() {
         var e = this;
-        if (this.voiceChannel.autoleave != undefined) {
-            try {
-                clearInterval(this.voiceChannel.autoleave)
-            } catch(error) {
-                this.voiceerrorhandler(error);
-            }
-
-        }
-        this.voiceChannel.autoleave = setInterval(function() {
+        
+        this.voiceChannel.autoleave = setTimeout(function() {
             var message = e.message;
             try {
                 if (message.guild.me.voiceChannel) {
@@ -73,7 +68,7 @@ class voicechannel extends getyoutube {
 
     autoleave_clear() {
         if (this.voiceChannel.autoleave) 
-            clearInterval(this.voiceChannel.autoleave);
+            clearTimeout(this.voiceChannel.autoleave);
     }
 
     voiceerrorhandler(msg) {

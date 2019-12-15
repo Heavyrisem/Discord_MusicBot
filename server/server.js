@@ -22,8 +22,22 @@ class server extends voicechannel {
                 join() {e.Join()},
                 now() {e.Now()},
                 leave() {e.Leave()},
-                'autoleave': undefined,
-                test() {e.getvideo(e.message);}
+                autoleave: undefined,
+                playSong: {
+                    connection: undefined,
+                    dispatcher: undefined,
+                    queue: [{
+                        title: '브베예투',
+                        time: '3:25',
+                        author: 'ㄱㅇㅋㄱㅇㅋ'
+                    },
+                    {
+                        title: '바베예투',
+                        time: '3:25',
+                        author: 'ㄱㅇㅋ'
+                    }],
+                },
+                show_queue() {e.queue_show()}
             };
         } catch(error) {
             this.errorhandler(error);

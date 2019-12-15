@@ -65,13 +65,26 @@ client.on('message', message => {
   }
 
   if (message.content.startsWith(prefix + '노래')) {
-    if (message.content.substring(4, message.content.length) == '') {
-      message.channel.send('``사용법 : [' + prefix + '노래 URL]');
+    var keyword = message.content.substring(4, message.content.length);
+    if (keyword.startsWith('https://www.youtube.com') || keyword.startsWith('http://www.youtube.com')) {
+      try {
+        server.voiceChannel.play_url(keyword);
+      } catch(error) {
+        const errormsg = new Discord.RichEmbed()
+        .setColor('#ff148e')
+        .setTitle('⚠️ [URL 재생] 에서 오류가 발생했어요.')
+        .setDescription(error)
+        .setTimestamp();
+    
+        message.channel.send(errormsg);
+      }
+    } else {
+      message.channel.send('``사용법 : [' + prefix + '노래 URL]``');
     }
   }
   
   if (message.content.startsWith(prefix + '테스트')) {
-    server.voiceChannel.test();
+    server.voiceChannel.show_queue();
   }
 });
 

@@ -261,7 +261,7 @@ async function execute(message, botStatus) {
 		return message.channel.send('🆘 참여하고 말할수 있는 권한이 없어요');
   }
   
-  const videoInfo = await getVideoId(message.content.substring(4, message.content.length), message);
+  const videoInfo = await !(message.content.substring(4, message.content.length), message);
 
 
   console.log('videoId : ' + videoInfo);
