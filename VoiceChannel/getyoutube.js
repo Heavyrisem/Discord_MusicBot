@@ -8,6 +8,22 @@ class getyoutube {
     constructor() {
     }
 
+    Skip() {
+        if (this.voiceChannel.playSong.queue == '') 
+            this.message.channel.send('``큐가 이미 비어있습니다.``');
+        else if (this.message.member.voiceChannel == null || this.message.member.voiceChannel.id != this.message.guild.me.voiceChannel.id) 
+            this.message.channel.send('``먼저 음성 채팅방에 입장해 주세요.``');
+        else {
+            try {
+                this.voiceChannel.playSong.queue.shift();
+                this.voiceChannel.playSong.dispatcher.end();
+                this.message.channel.send('``음악을 스킵했어요.``');
+            } catch(error) {
+                this.playerrorhandling('Skip', error);
+            }
+        }
+    }
+
     queue_show() {
         var e = this;
         if (e.voiceChannel.playSong.queue == '') {
@@ -47,13 +63,14 @@ class getyoutube {
             else   
                 e.message.channel.send('``' + video_info.title + ' 을(를) 재생목록에 추가했어요.``');
         })
-        .catch(function (error) {e.playerrorhandling(error)});
+        .catch(function (error) {e.playerrorhandling('ytdl.getInfo', error)});
     }
 
     playmusic_url() {
         var e = this;
 
-        this.message.member.voiceChannel.join().then(connection => {
+        this.voiceChannel.join().then(connection => {
+            this.voiceChannel.autoleave_clear();
             var video_info = e.voiceChannel.playSong.queue[0];
             console.log(video_info.id);
             const streamOption = {
@@ -69,20 +86,20 @@ class getyoutube {
 
                 e.message.channel.send('``' + video_info.title + ' 을(를) 재생해요 🎵``');
             } catch(error) {
-                e.playerrorhandling(error);
+                e.playerrorhandling('playStream' ,error);
             }
 
             e.voiceChannel.playSong.dispatcher.on('end', () => {
                 e.voiceChannel.playSong.playing = false;
-                e.message.channel.send('``음악이 끝났어요.``');
                 
                 e.voiceChannel.playSong.queue.shift();
+                e.voiceChannel.autoleave_active();
                 if (e.voiceChannel.playSong.queue[0] != undefined)
                     e.playmusic_url();
             })
 
             e.voiceChannel.playSong.dispatcher.on('error', () => {
-                e.playerrorhandling(error);
+                e.playerrorhandling('dispatcher' ,error);
             });
         });
 
@@ -112,11 +129,11 @@ class getyoutube {
         return timestamp;
       }
 
-      playerrorhandling(msg) {
+      playerrorhandling(msg, err) {
         const errormsg = new Discord.RichEmbed()            
         .setColor('#ff148e')
-        .setTitle('⚠️ [playStream] 에서 오류가 발생했어요.')
-        .setDescription(msg)
+        .setTitle('⚠️ [' + msg + '] 에서 오류가 발생했어요.')
+        .setDescription(err)
         .setTimestamp();
     
         this.message.channel.send(errormsg);

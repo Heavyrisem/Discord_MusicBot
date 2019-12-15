@@ -1,5 +1,4 @@
 const voicechannel = require('../VoiceChannel/VoiceChannel');
-const getyoutube = require('../VoiceChannel/getyoutube');
 
 
 class server extends voicechannel {
@@ -14,14 +13,17 @@ class server extends voicechannel {
 
             this.serversetting = {
                 'prefix': '!',
-                'autoleave': 3000,
+                'autoleave': 8000,
             }
 
             this.voiceChannel = {
-                join() {e.Join()},
+                join() {return e.Join()},
                 now() {e.Now()},
                 leave() {e.Leave()},
                 addmusic_url(target) {e.addmusic(target)},
+                skip() {e.Skip()},
+                autoleave_active() {e.Autoleave()},
+                autoleave_clear() {e.Autoleave_clear()},
                 autoleave: undefined,
                 playSong: {
                     playing: false,

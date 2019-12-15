@@ -11,10 +11,10 @@ class voicechannel extends getyoutube {
         var message = this.message;
         try {
             if (message.member.voiceChannel != undefined) {
-                this.autoleave_clear();
-                message.member.voiceChannel.join();
+                this.Autoleave_clear();
                 message.channel.send('``➡️ ' + message.member.voiceChannel.name + ' 에 연결해요``');
-                this.autoleave();
+                this.Autoleave();
+                return message.member.voiceChannel.join();
             } else {
                 message.channel.send('``먼저 음성 채널에 접속해 주세요.``');
             }
@@ -26,12 +26,12 @@ class voicechannel extends getyoutube {
     Leave() {
         var message = this.message;
         try {
-            this.autoleave_clear();
             if (message.guild.me.voiceChannel == undefined) {
                 message.channel.send('``아무 채널에도 연결되어 있지 않아요.``');
             } else {
                 message.guild.me.voiceChannel.leave();
                 message.channel.send('``' + message.guild.me.voiceChannel.name + ' 음성 채널을 떠났어요.``');
+                this.Autoleave_clear();
             }
         } catch(error) {
             this.voiceerrorhandler(error);
@@ -50,9 +50,13 @@ class voicechannel extends getyoutube {
         }
     }
 
-    autoleave() {
+    Autoleave() {
         var e = this;
-        
+        if (this.voiceChannel.playSong.playing) {
+            console.log('오류, Autoleave() 가 재생중에 실행됨');
+            return;
+        }
+        console.log('active');
         this.voiceChannel.autoleave = setTimeout(function() {
             var message = e.message;
             try {
@@ -66,9 +70,9 @@ class voicechannel extends getyoutube {
         }, e.serversetting.autoleave)
     }
 
-    autoleave_clear() {
-        if (this.voiceChannel.autoleave) 
-            clearTimeout(this.voiceChannel.autoleave);
+    Autoleave_clear() {
+        console.log('clear');
+        clearTimeout(this.voiceChannel.autoleave);
     }
 
     voiceerrorhandler(msg) {

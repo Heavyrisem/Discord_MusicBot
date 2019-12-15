@@ -84,10 +84,10 @@ client.on('message', message => {
   }
 
   if (message.content.startsWith(prefix + '스킵')) {
-    server.voiceChannel.skip_song();
+    server.voiceChannel.skip();
   }
   
-  if (message.content.startsWith(prefix + '테스트')) {
+  if (message.content.startsWith(prefix + '큐')) {
     server.voiceChannel.show_queue();
   }
 });
