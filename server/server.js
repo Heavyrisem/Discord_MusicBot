@@ -29,7 +29,8 @@ class server extends voicechannel {
                     playing: false,
                     streamOption: {
                         seek: 0,
-                        volume: 50
+                        volume: 50,
+                        bitrate: 192000
                     },
                     connection: undefined,
                     dispatcher: undefined,
