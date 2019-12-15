@@ -44,6 +44,8 @@ class getyoutube {
             e.voiceChannel.playSong.queue.push(video_info);
             if (e.voiceChannel.playSong.playing == false)
                 this.playmusic_url();
+            else   
+                e.message.channel.send('``' + video_info.title + ' 을(를) 재생목록에 추가했어요.``');
         })
         .catch(function (error) {e.playerrorhandling(error)});
     }
@@ -59,7 +61,7 @@ class getyoutube {
                 seek: 0
             };
             
-        
+        //https://www.youtube.com/watch?v=_1scmwn_1VI
             try {
                 e.voiceChannel.playSong.connection = connection;
                 e.voiceChannel.playSong.dispatcher = connection.playStream(ytdl(video_info.id, {filter: 'audioonly'}), streamOption);
@@ -76,11 +78,11 @@ class getyoutube {
                 
                 e.voiceChannel.playSong.queue.shift();
                 if (e.voiceChannel.playSong.queue[0] != undefined)
-                    this.playmusic_url();
+                    e.playmusic_url();
             })
 
             e.voiceChannel.playSong.dispatcher.on('error', () => {
-                
+                e.playerrorhandling(error);
             });
         });
 

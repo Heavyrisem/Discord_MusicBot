@@ -82,6 +82,10 @@ client.on('message', message => {
       message.channel.send('``사용법 : [' + prefix + '노래 URL]``');
     }
   }
+
+  if (message.content.startsWith(prefix + '스킵')) {
+    server.voiceChannel.skip_song();
+  }
   
   if (message.content.startsWith(prefix + '테스트')) {
     server.voiceChannel.show_queue();

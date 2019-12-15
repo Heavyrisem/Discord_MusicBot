@@ -9,7 +9,6 @@ class voicechannel extends getyoutube {
 
     Join() {
         var message = this.message;
-        console.log(message.content);
         try {
             if (message.member.voiceChannel != undefined) {
                 this.autoleave_clear();
@@ -32,6 +31,7 @@ class voicechannel extends getyoutube {
                 message.channel.send('``아무 채널에도 연결되어 있지 않아요.``');
             } else {
                 message.guild.me.voiceChannel.leave();
+                message.channel.send('``' + message.guild.me.voiceChannel.name + ' 음성 채널을 떠났어요.``');
             }
         } catch(error) {
             this.voiceerrorhandler(error);
