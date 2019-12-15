@@ -10,6 +10,7 @@ class server extends voicechannel {
             this.client = client;
             this.servername = message.guild.name;
             this.message = message;
+            this.ping = undefined;
 
             this.serversetting = {
                 'prefix': '!',
@@ -45,7 +46,10 @@ class server extends voicechannel {
 
     holdPing() {
         var e = this;
-        setInterval(function() {
+        if (e.ping != undefined) return;
+        
+        e.client.user.setActivity('ping ' + e.client.ping);
+        e.ping = setInterval(function() {
             e.client.user.setActivity('ping ' + e.client.ping);
         }, 60000);
     }
