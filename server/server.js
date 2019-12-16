@@ -21,6 +21,7 @@ class server extends voicechannel {
                 join() {return e.Join()},
                 now() {e.Now()},
                 leave() {e.Leave()},
+                addmusic(keyword) {e.search_music(keyword)},
                 addmusic_url(target) {e.addmusic(target)},
                 skip() {e.Skip()},
                 autoleave_active() {e.Autoleave()},
@@ -47,7 +48,7 @@ class server extends voicechannel {
     holdPing() {
         var e = this;
         if (e.ping != undefined) return;
-        
+
         e.client.user.setActivity('ping ' + e.client.ping);
         e.ping = setInterval(function() {
             e.client.user.setActivity('ping ' + e.client.ping);

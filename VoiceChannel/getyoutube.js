@@ -105,6 +105,39 @@ class getyoutube {
 
     }
 
+    search_music(keyword) {
+        var e = this;
+        var music_list = [];
+        var music_selection = '```cs';
+            yt_search(keyword, function(err, r) {
+                try {
+                    for (var i = 0; i < 5; i++) {
+                        if (r.videos[i] == undefined) break;
+                        if (r.videos[i].seconds == 0) {
+                            console.log('광고를 건너뜁니다.');
+                            r.videos.splice(i, 1);
+                            i--;
+                            continue;
+                        } else {
+                            music_list[i] = r.videos[i];
+                        }
+                    }
+
+                    for (var i = 0; i < 5; i++) {
+                        if (music_list[i] == undefined) break;
+                        music_selection = music_selection + '\n' + parseInt(i+1) + ': ' + music_list[i].title + ' (' + music_list[i].timestamp + ')'
+                    }
+
+                    music_selection = music_selection + '```';
+
+                    e.message.channel.send(music_selection);
+                    e.addmusic(music_list[0].videoId);
+                } catch(error) {
+                    e.playerrorhandling('yt_search', error);
+                }
+            });
+    }
+
     scTomin(second) {
         var sec = second;
         var min;
