@@ -18,7 +18,6 @@ class server extends voicechannel {
             }
 
             this.voiceChannel = {
-                test(a) {e.test(a)},
                 join() {return e.Join()},
                 now() {e.Now()},
                 leave() {e.Leave()},
@@ -54,19 +53,13 @@ class server extends voicechannel {
         e.client.user.setActivity('ping ' + e.client.ping);
         e.ping = setInterval(function() {
             e.client.user.setActivity('ping ' + e.client.ping);
-        }, 1000);
+        }, 10000);
     }
 
     updateMsg(message) {
         this.message = message;
     }
 
-    test(message) {
-        var e = this;
-        setInterval(function() {
-            console.log('interval ', e.message.content);
-        },500);
-    }
 
     errorhandler(msg) {
         const errormsg = new Discord.RichEmbed()
