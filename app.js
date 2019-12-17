@@ -21,8 +21,13 @@ client.on('message', message => {
     if (servert.getmessage) {
       servert.updateMsg(message);
     }
-      
   }
+
+  if (message.content == '오리') {
+    message.channel.send('꽤애액🦆🦆🦆🦆🦆🦆');
+  }
+
+
   if (!message.content.startsWith('!')) return;
   if (!serverMap.has(message.guild.id)) {
     try {
@@ -93,6 +98,10 @@ client.on('message', message => {
     server.voiceChannel.skip();
   }
   
+  if (message.content.startsWith(prefix + '정지')) {
+    server.voiceChannel.stop();
+  }
+
   if (message.content.startsWith(prefix + '큐')) {
     server.voiceChannel.show_queue();
   }

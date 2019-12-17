@@ -23,6 +23,22 @@ class getyoutube {
         }
     }
 
+    Stop() {
+        try {
+            if (this.voiceChannel.playSong.playing == false) 
+                this.message.channel.send('``재생 중이 아닙니다.``');
+            else if (this.message.member.voiceChannel == null || this.message.member.voiceChannel.id != this.message.guild.me.voiceChannel.id) 
+                this.message.channel.send('``먼저 음성 채팅방에 입장해 주세요.``');
+            else {
+                this.voiceChannel.playSong.queue = '';
+                this.voiceChannel.playSong.dispatcher.end();
+                this.message.channel.send('``음악 재생을 정지했어요.``');
+            }
+        } catch(error) {
+            this.playerrorhandling('Stop', error);
+        }
+    }
+
     queue_show() {
         var e = this;
         if (e.voiceChannel.playSong.queue == '') {
