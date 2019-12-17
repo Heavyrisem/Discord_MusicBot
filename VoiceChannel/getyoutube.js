@@ -80,6 +80,7 @@ class getyoutube {
             //https://www.youtube.com/watch?v=_1scmwn_1VI
             try {
                 e.voiceChannel.playSong.connection = connection;
+                var url = "https://www.youtube.com/watch?v=" + video_info.id + "?hl=kr";
                 e.voiceChannel.playSong.dispatcher = connection.playStream(ytdl(video_info.id, {filter: 'audioonly', quality: 'lowestaudio'}), streamOption);
                 e.voiceChannel.playSong.playing = true;
 
