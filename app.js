@@ -106,11 +106,16 @@ client.on('message', message => {
     server.voiceChannel.show_queue();
   }
 
+  if (message.content.startsWith(prefix + '업타임')) {
+    message.channel.send('``' + client.uptime/60/10 + '``');
+  }
+  
   if (message.content.startsWith(prefix + '테스트')) {
-    
-    server.voiceChannel.test(message);
   }
 });
 
 
 client.login('NjE3MzEwMzY1OTE4ODIyNDIx.XWuI4w.MSdZ8LorBxaKMAIzYA-68L1WCto'); 
+
+  //main NjE3MzEwMzY1OTE4ODIyNDIx.XWuI4w.MSdZ8LorBxaKMAIzYA-68L1WCto
+  //beta NjE5NTI3MzY0MDkwNjU4ODE3.XXJh-A.uGTknJRXOKBxjzYB7jaQk_UfLUw
