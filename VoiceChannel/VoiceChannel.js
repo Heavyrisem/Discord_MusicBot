@@ -56,7 +56,7 @@ class voicechannel extends getyoutube {
             console.log('오류, Autoleave() 가 재생중에 실행됨');
             return;
         }
-        console.log('active');
+        
         this.voiceChannel.autoleave = setTimeout(function() {
             var message = e.message;
             try {
@@ -71,7 +71,6 @@ class voicechannel extends getyoutube {
     }
 
     Autoleave_clear() {
-        console.log('clear');
         clearTimeout(this.voiceChannel.autoleave);
     }
 

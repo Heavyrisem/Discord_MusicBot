@@ -19,6 +19,14 @@ client.on('ready', () => {
 
 
 client.on('message', message => {
+  if (message.member.id == client.user.id) return;
+  if (serverMap.has(message.guild.id)) {
+    var servert = serverMap.get(message.guild.id);
+    if (servert.getmessage) {
+      servert.updateMsg(message);
+    }
+      
+  }
   if (!message.content.startsWith('!')) return;
   if (!serverMap.has(message.guild.id)) {
     try {
@@ -91,6 +99,11 @@ client.on('message', message => {
   
   if (message.content.startsWith(prefix + '큐')) {
     server.voiceChannel.show_queue();
+  }
+
+  if (message.content.startsWith(prefix + '테스트')) {
+    
+    server.voiceChannel.test(message);
   }
 });
 

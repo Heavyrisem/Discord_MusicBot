@@ -1,6 +1,5 @@
 const voicechannel = require('../VoiceChannel/VoiceChannel');
 
-
 class server extends voicechannel {
     constructor(client, message) {
         try {
@@ -10,6 +9,7 @@ class server extends voicechannel {
             this.client = client;
             this.servername = message.guild.name;
             this.message = message;
+            this.getmessage = true;
             this.ping = undefined;
 
             this.serversetting = {
@@ -18,6 +18,7 @@ class server extends voicechannel {
             }
 
             this.voiceChannel = {
+                test(a) {e.test(a)},
                 join() {return e.Join()},
                 now() {e.Now()},
                 leave() {e.Leave()},
@@ -52,7 +53,18 @@ class server extends voicechannel {
         e.client.user.setActivity('ping ' + e.client.ping);
         e.ping = setInterval(function() {
             e.client.user.setActivity('ping ' + e.client.ping);
-        }, 60000);
+        }, 1000);
+    }
+
+    updateMsg(message) {
+        this.message = message;
+    }
+
+    test(message) {
+        var e = this;
+        setInterval(function() {
+            console.log('interval ', e.message.content);
+        },500);
     }
 
     errorhandler(msg) {

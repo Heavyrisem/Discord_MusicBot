@@ -2,7 +2,6 @@ const Discord = require('discord.js');
 const ytdl = require('ytdl-core');
 const yt_search = require('yt-search');
 
-const fs = require('fs');
 
 class getyoutube {
     constructor() {
@@ -78,7 +77,7 @@ class getyoutube {
                 seek: 0
             };
             
-        //https://www.youtube.com/watch?v=_1scmwn_1VI
+            //https://www.youtube.com/watch?v=_1scmwn_1VI
             try {
                 e.voiceChannel.playSong.connection = connection;
                 e.voiceChannel.playSong.dispatcher = connection.playStream(ytdl(video_info.id, {filter: 'audioonly'}), streamOption);
@@ -96,7 +95,7 @@ class getyoutube {
                 e.voiceChannel.autoleave_active();
                 if (e.voiceChannel.playSong.queue[0] != undefined)
                     e.playmusic_url();
-            })
+            });
 
             e.voiceChannel.playSong.dispatcher.on('error', () => {
                 e.playerrorhandling('dispatcher' ,error);
@@ -109,6 +108,7 @@ class getyoutube {
         var e = this;
         var music_list = [];
         var music_selection = '```cs';
+        const request_author = e.message.member.id;
             yt_search(keyword, function(err, r) {
                 try {
                     for (var i = 0; i < 5; i++) {
@@ -131,11 +131,49 @@ class getyoutube {
                     music_selection = music_selection + '```';
 
                     e.message.channel.send(music_selection);
-                    e.addmusic(music_list[0].videoId);
+
+                    e.select_music(music_list.length, request_author).then(a => {
+                        if (a == undefined) throw new Error('선택값을 찾지 못했습니다.');
+                        
+                        e.addmusic(music_list[a-1].videoId);
+                    });
                 } catch(error) {
                     e.playerrorhandling('yt_search', error);
                 }
             });
+    }
+
+    select_music(range_max, request_author) {
+        var e = this;
+        return new Promise(function(resolve, reject) {
+
+            var select_timeout = setTimeout(function() {
+                e.message.channel.send('``선택 시간이 초과되었어요.``');
+                clearInterval(getmessage);
+            }, 10000);
+
+            var getmessage = setInterval(function() {
+                try {
+                    var num = e.message.content.substring(1, e.message.content.length);
+                    if (isNaN(num)) return;
+                    if (request_author != e.message.member.id) return;
+
+                    console.log('log : ', num);
+
+                    if (num <= 0 || num > range_max) {
+                        e.message.channel('``범위 내에서 선택해 주세요.``');
+                        return;
+                    }
+                    
+                    clearTimeout(select_timeout);
+                    clearInterval(getmessage);
+                    resolve(num);
+                } catch(error) {
+                    reject();
+                    e.playerrorhandling('getmessage', error);
+                }
+            }, 500);
+        });
     }
 
     scTomin(second) {
