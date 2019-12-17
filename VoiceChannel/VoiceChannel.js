@@ -82,6 +82,7 @@ class voicechannel extends getyoutube {
         .setTimestamp();
 
         this.message.channel.send(errormsg);
+        this.voiceChannel.leave();
     }
 }
 

@@ -29,7 +29,7 @@ class getyoutube {
             e.message.channel.send('``큐가 비어있습니다.``');
         } else {
             var queue = e.voiceChannel.playSong.queue;
-            var queuelist = '```cs\n';
+            var queuelist = '```Swift\n';
 
             for (var i = 0; i < queue.length; i++) {
                 if (i == 0) queuelist = queuelist + parseInt(1+i) + ': ' + queue[i].title + '(' + queue[i].time + ') - <' + queue[i].author + '>';
@@ -107,7 +107,7 @@ class getyoutube {
     search_music(keyword) {
         var e = this;
         var music_list = [];
-        var music_selection = '```cs';
+        var music_selection = '```Swift';
         const request_author = e.message.member.id;
             yt_search(keyword, function(err, r) {
                 try {
@@ -208,6 +208,7 @@ class getyoutube {
         .setTimestamp();
     
         this.message.channel.send(errormsg);
+        this.voiceChannel.leave();
       }
 }
 
