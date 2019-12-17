@@ -81,7 +81,7 @@ class getyoutube {
             try {
                 e.voiceChannel.playSong.connection = connection;
                 var url = "https://www.youtube.com/watch?v=" + video_info.id + "?hl=kr";
-                e.voiceChannel.playSong.dispatcher = connection.playStream(ytdl(video_info.id, {filter: 'audioonly', quality: 'lowestaudio'}), streamOption);
+                e.voiceChannel.playSong.dispatcher = connection.playStream(ytdl(url, {filter: 'audioonly', quality: 'lowestaudio'}), streamOption);
                 e.voiceChannel.playSong.playing = true;
 
                 e.message.channel.send('``' + video_info.title + ' 을(를) 재생해요 🎵``');
