@@ -208,7 +208,6 @@ class getyoutube {
         .setTimestamp();
     
         this.message.channel.send(errormsg);
-        this.voiceChannel.leave();
       }
 }
 
