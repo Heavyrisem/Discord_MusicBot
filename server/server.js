@@ -33,7 +33,7 @@ class server extends voicechannel {
                     streamOption: {
                         seek: 0,
                         volume: 50,
-                        bitrate: 192000
+                        bitrate: 19200
                     },
                     connection: undefined,
                     dispatcher: undefined,
