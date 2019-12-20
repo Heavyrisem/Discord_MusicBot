@@ -95,7 +95,10 @@ client.on('message', message => {
   }
 
   if (message.content.startsWith(prefix + '스킵')) {
-    server.voiceChannel.skip();
+    if (!isNaN(message.content.substring(4, message.content.length))) 
+      server.voiceChannel.skip(message.content.substring(4, message.content.length));
+    else
+      server.voiceChannel.skip();
   }
   
   if (message.content.startsWith(prefix + '정지')) {

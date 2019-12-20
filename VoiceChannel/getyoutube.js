@@ -8,19 +8,23 @@ class getyoutube {
     constructor() {
     }
 
-    Skip() {
-        if (this.voiceChannel.playSong.queue == '') 
-            this.message.channel.send('``큐가 이미 비어있습니다.``');
-        else if (this.message.member.voiceChannel == null || this.message.member.voiceChannel.id != this.message.guild.me.voiceChannel.id) 
-            this.message.channel.send('``먼저 음성 채팅방에 입장해 주세요.``');
-        else {
-            try {
-                this.voiceChannel.playSong.queue.shift();
-                this.voiceChannel.playSong.dispatcher.end();
-                this.message.channel.send('``음악을 스킵했어요.``');
-            } catch(error) {
-                this.playerrorhandling('Skip', error);
+    Skip(n) {
+        try {
+            if (this.voiceChannel.playSong.queue == '') 
+                this.message.channel.send('``큐가 이미 비어있습니다.``');
+            else if (this.message.member.voiceChannel == null || this.message.member.voiceChannel.id != this.message.guild.me.voiceChannel.id) 
+                this.message.channel.send('``먼저 음성 채팅방에 입장해 주세요.``');
+            else if (n == undefined || n <= 1) {
+                    this.voiceChannel.playSong.queue.shift();
+                    this.voiceChannel.playSong.dispatcher.end();
+                    this.message.channel.send('``음악을 스킵했어요.``');
+            } else {
+                if (this.voiceChannel.playSong.queue[n-1] == undefined) return this.message.channel.send('``큐의 ' + n + ' 번째는 비어 있어요.``');
+                var deletedsong = this.voiceChannel.playSong.queue.splice(n-1, 1);
+                this.message.channel.send('``' + deletedsong[0].title + ' 를 큐에서 제거했어요.``');
             }
+        } catch(error) {
+            this.playerrorhandling('Skip', error);
         }
     }
 
@@ -59,8 +63,10 @@ class getyoutube {
         
     }
 
-    addmusic(target) {
+    Addmusic(target) {
         if (target == '') return this.message.channel.send('``링크가 비었습니다.``');
+        if (target.startsWith('https://www.youtube.com') || target.startsWith('http://www.youtube.com'))
+            target = this.message.content.substring(36, this.message.content.length);
         var e = this;
         var video_info;
 
@@ -75,20 +81,19 @@ class getyoutube {
             
             e.voiceChannel.playSong.queue.push(video_info);
             if (e.voiceChannel.playSong.playing == false)
-                this.playmusic_url();
+                this.playmusic();
             else   
                 e.message.channel.send('``' + video_info.title + ' 을(를) 재생목록에 추가했어요.``');
         })
         .catch(function (error) {e.playerrorhandling('ytdl.getInfo', error)});
     }
 
-    playmusic_url() {
+    playmusic() {
         var e = this;
 
         this.voiceChannel.join().then(connection => {
             this.voiceChannel.autoleave_clear();
             var video_info = e.voiceChannel.playSong.queue[0];
-            console.log(video_info.id);
             const streamOption = {
                 volume: e.voiceChannel.playSong.streamOption.volume * 1 / 1000,
                 seek: 0
@@ -97,8 +102,8 @@ class getyoutube {
             //https://www.youtube.com/watch?v=_1scmwn_1VI
             try {
                 e.voiceChannel.playSong.connection = connection;
-                var url = "https://www.youtube.com/watch?v=" + video_info.id + "?hl=kr";
-                e.voiceChannel.playSong.dispatcher = connection.playStream(ytdl(url, {filter: 'audioonly', quality: 'lowestaudio'}), streamOption);
+                
+                e.voiceChannel.playSong.dispatcher = connection.playStream(ytdl(video_info.id, {filter: 'audioonly', quality: 'lowestaudio'}), streamOption);
                 e.voiceChannel.playSong.playing = true;
 
                 e.message.channel.send('``' + video_info.title + ' 을(를) 재생해요 🎵``');
@@ -113,7 +118,7 @@ class getyoutube {
                 e.voiceChannel.playSong.queue.shift();
                 e.voiceChannel.autoleave_active();
                 if (e.voiceChannel.playSong.queue[0] != undefined)
-                    e.playmusic_url();
+                    e.playmusic();
             });
 
             e.voiceChannel.playSong.dispatcher.on('error', error => {
@@ -154,7 +159,7 @@ class getyoutube {
                     e.select_music(music_list.length, request_author).then(a => {
                         if (a == undefined) throw new Error('선택값을 찾지 못했습니다.');
                         
-                        e.addmusic(music_list[a-1].videoId);
+                        e.Addmusic(music_list[a-1].videoId);
                     });
                 } catch(error) {
                     e.playerrorhandling('yt_search', error);
