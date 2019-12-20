@@ -55,6 +55,7 @@ class voicechannel extends getyoutube {
             if (v > 100 || v < 10) return this.message.channel.send('``볼륨은 10 ~ 100 사이에서 정해 주세요.``');
             
             this.voiceChannel.playSong.streamOption.volume = v;
+            this.voicechannel.playSong.dispatcher.setvolume(this.voicechannel.playSong.streamOption.volume * 1 / 1000);
             console.log(this.voiceChannel.playSong.streamOption.volume);
         } catch(error) {
             this.voiceerrorhandler(error);
