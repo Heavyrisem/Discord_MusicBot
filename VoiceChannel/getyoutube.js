@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const ytdl = require('ytdl-core');
+const youtubeinfo = require('youtube-info');
 const yt_search = require('yt-search');
 
 
@@ -63,12 +64,12 @@ class getyoutube {
         var e = this;
         var video_info;
 
-        ytdl.getInfo(target).then(info => {
+        youtubeinfo(target).then(info => {
             video_info = {
-                'title': info.player_response.videoDetails.title,
-                'time': e.scTomin(info.player_response.videoDetails.lengthSeconds),
+                'title': info.title,
+                'time': e.scTomin(info.duration),
                 'author': e.message.member.user.username,
-                'id': info.player_response.videoDetails.videoId
+                'id': info.videoId
             }
 
             
@@ -89,7 +90,7 @@ class getyoutube {
             var video_info = e.voiceChannel.playSong.queue[0];
             console.log(video_info.id);
             const streamOption = {
-                volume: e.voiceChannel.playSong.streamOption.volume * 1 / 2000,
+                volume: e.voiceChannel.playSong.streamOption.volume * 1 / 1000,
                 seek: 0
             };
             
@@ -105,8 +106,9 @@ class getyoutube {
                 e.playerrorhandling('playStream' ,error);
             }
 
-            e.voiceChannel.playSong.dispatcher.on('end', () => {
+            e.voiceChannel.playSong.dispatcher.on('end', reason => {
                 e.voiceChannel.playSong.playing = false;
+                console.log('reason : ', reason);
                 
                 e.voiceChannel.playSong.queue.shift();
                 e.voiceChannel.autoleave_active();
@@ -114,7 +116,7 @@ class getyoutube {
                     e.playmusic_url();
             });
 
-            e.voiceChannel.playSong.dispatcher.on('error', () => {
+            e.voiceChannel.playSong.dispatcher.on('error', error => {
                 e.playerrorhandling('dispatcher' ,error);
             });
         });

@@ -25,6 +25,7 @@ class server extends voicechannel {
                 addmusic_url(target) {e.addmusic(target)},
                 skip() {e.Skip()},
                 stop() {e.Stop()},
+                setvolume(v) {e.Volume(v)},
                 autoleave_active() {e.Autoleave()},
                 autoleave_clear() {e.Autoleave_clear()},
                 autoleave: undefined,

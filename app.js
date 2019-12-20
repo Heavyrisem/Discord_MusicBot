@@ -106,6 +106,12 @@ client.on('message', message => {
     server.voiceChannel.show_queue();
   }
 
+  if (message.content.startsWith(prefix + '볼륨')) {
+    console.log(message.content.substring(4, message.content.length));
+    if (isNaN(message.content.substring(4, message.content.length))) return message.channel.send('``사용법 : 볼륨 [숫자]``');
+    server.voiceChannel.setvolume(message.content.substring(4, message.content.length));
+  }
+
   if (message.content.startsWith(prefix + '업타임')) {
     message.channel.send('``' + client.uptime/60/10 + '``');
   }
@@ -115,7 +121,7 @@ client.on('message', message => {
 });
 
 
-client.login('NjE3MzEwMzY1OTE4ODIyNDIx.XWuI4w.MSdZ8LorBxaKMAIzYA-68L1WCto'); 
+client.login('NjE5NTI3MzY0MDkwNjU4ODE3.XXJh-A.uGTknJRXOKBxjzYB7jaQk_UfLUw'); 
 
   //main NjE3MzEwMzY1OTE4ODIyNDIx.XWuI4w.MSdZ8LorBxaKMAIzYA-68L1WCto
   //beta NjE5NTI3MzY0MDkwNjU4ODE3.XXJh-A.uGTknJRXOKBxjzYB7jaQk_UfLUw

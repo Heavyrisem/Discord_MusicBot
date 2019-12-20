@@ -50,6 +50,17 @@ class voicechannel extends getyoutube {
         }
     }
 
+    Volume(v) {
+        try {
+            if (v > 100 || v < 10) return this.message.channel.send('``볼륨은 10 ~ 100 사이에서 정해 주세요.``');
+            
+            this.voiceChannel.playSong.streamOption.volume = v;
+            console.log(this.voiceChannel.playSong.streamOption.volume);
+        } catch(error) {
+            this.voiceerrorhandler(error);
+        }
+    }
+
     Autoleave() {
         var e = this;
         if (this.voiceChannel.playSong.playing) {
