@@ -95,7 +95,7 @@ class getyoutube {
             this.voiceChannel.autoleave_clear();
             var video_info = e.voiceChannel.playSong.queue[0];
             const streamOption = {
-                volume: e.voiceChannel.playSong.streamOption.volume * 1 / 1000,
+                volume: e.voiceChannel.playSong.streamOption.volume * 1 / 100,
                 seek: 0
             };
             

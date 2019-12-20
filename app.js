@@ -110,7 +110,6 @@ client.on('message', message => {
   }
 
   if (message.content.startsWith(prefix + '볼륨')) {
-    console.log(message.content.substring(4, message.content.length));
     if (isNaN(message.content.substring(4, message.content.length))) return message.channel.send('``사용법 : 볼륨 [숫자]``');
     server.voiceChannel.setvolume(message.content.substring(4, message.content.length));
   }
