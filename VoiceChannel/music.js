@@ -3,8 +3,10 @@ const ytdl = require('ytdl-core');
 const youtubeinfo = require('youtube-info');
 const yt_search = require('yt-search');
 
+const fs = require('fs');
 
-class getyoutube {
+
+class music {
     constructor() {
     }
 
@@ -15,7 +17,6 @@ class getyoutube {
             else if (this.message.member.voiceChannel == null || this.message.member.voiceChannel.id != this.message.guild.me.voiceChannel.id) 
                 this.message.channel.send('``먼저 음성 채팅방에 입장해 주세요.``');
             else if (n == undefined || n <= 1) {
-                    this.voiceChannel.playSong.queue.shift();
                     this.voiceChannel.playSong.dispatcher.end();
                     this.message.channel.send('``음악을 스킵했어요.``');
             } else {
@@ -90,12 +91,14 @@ class getyoutube {
 
     playmusic() {
         var e = this;
+        var i = 0;
+        var l = 0;
 
         this.voiceChannel.join().then(connection => {
             this.voiceChannel.autoleave_clear();
             var video_info = e.voiceChannel.playSong.queue[0];
             const streamOption = {
-                volume: e.voiceChannel.playSong.streamOption.volume * 1 / 100,
+                volume: e.voiceChannel.playSong.streamOption.volume * 1 / 800,
                 seek: 0
             };
             
@@ -103,27 +106,53 @@ class getyoutube {
             try {
                 e.voiceChannel.playSong.connection = connection;
                 
-                e.voiceChannel.playSong.dispatcher = connection.playStream(ytdl(video_info.id, {filter: 'audioonly', quality: 'lowestaudio'}), streamOption);
-                e.voiceChannel.playSong.playing = true;
+                const test = ytdl(video_info.id, {filter: 'audioonly', quality: 'lowestaudio'});
+                test.pipe(fs.createWriteStream('VoiceChannel/temp/'+e.message.guild.id+'.mp3'));
+                
+                test.on('end', () => {
+                    i = 0;
+                    console.log('write end ', i);
+                });
 
-                e.message.channel.send('``' + video_info.title + ' 을(를) 재생해요 🎵``');
+                test.on('data', () => {
+                    i++;
+                    if (i != 1) return;
+                    var read = fs.createReadStream('VoiceChannel/temp/'+e.message.guild.id+'.mp3', { highWaterMark: 256 });
+                    
+
+                    e.voiceChannel.playSong.dispatcher = connection.playStream(read , streamOption);
+                    e.voiceChannel.playSong.playing = true;
+    
+                    e.message.channel.send('``' + video_info.title + ' 을(를) 재생해요 🎵``');
+
+                    e.voiceChannel.playSong.dispatcher.on('end', reason => {
+                        e.voiceChannel.playSong.playing = false;
+                        console.log('dispatcher end : ', reason);
+                        
+                        e.voiceChannel.playSong.queue.shift();
+                        e.voiceChannel.autoleave_active();
+                        if (e.voiceChannel.playSong.queue[0] != undefined)
+                            e.playmusic();
+                    });
+        
+                    e.voiceChannel.playSong.dispatcher.on('error', error => {
+                        e.playerrorhandling('dispatcher' ,error);
+                    });
+    
+                    read.on('data', () => {l++;});
+                    read.on('end', () => {console.log('read end ', l)});
+                });
+                
+
+
+
+                
+
             } catch(error) {
                 e.playerrorhandling('playStream' ,error);
             }
 
-            e.voiceChannel.playSong.dispatcher.on('end', reason => {
-                e.voiceChannel.playSong.playing = false;
-                console.log('reason : ', reason);
-                
-                e.voiceChannel.playSong.queue.shift();
-                e.voiceChannel.autoleave_active();
-                if (e.voiceChannel.playSong.queue[0] != undefined)
-                    e.playmusic();
-            });
 
-            e.voiceChannel.playSong.dispatcher.on('error', error => {
-                e.playerrorhandling('dispatcher' ,error);
-            });
         });
 
     }
@@ -235,4 +264,4 @@ class getyoutube {
       }
 }
 
-module.exports = getyoutube;
+module.exports = music;

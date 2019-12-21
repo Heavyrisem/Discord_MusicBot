@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
 
-const getyoutube = require('./getyoutube');
+const music = require('./music');
 
-class voicechannel extends getyoutube {
+class voicechannel extends music {
     constructor() {
         super();
     }
@@ -12,7 +12,8 @@ class voicechannel extends getyoutube {
         try {
             if (message.member.voiceChannel != undefined) {
                 this.Autoleave_clear();
-                message.channel.send('``➡️ ' + message.member.voiceChannel.name + ' 에 연결해요``');
+                if (message.guild.me.voiceChannel == undefined)
+                    message.channel.send('``➡️ ' + message.member.voiceChannel.name + ' 에 연결해요``');
                 this.Autoleave();
                 return message.member.voiceChannel.join();
             } else {
@@ -52,12 +53,12 @@ class voicechannel extends getyoutube {
 
     Volume(v) {
         try {
-            if (v > 100 || v < 10) return this.message.channel.send('``볼륨은 10 ~ 100 사이에서 정해 주세요.``');
+            if (v > 120 || v < 10) return this.message.channel.send('``볼륨은 10 ~ 120 사이에서 정해 주세요.``');
             
             this.voiceChannel.playSong.streamOption.volume = v;
             
             if (this.voiceChannel.playSong.playing)
-                this.voiceChannel.playSong.dispatcher.setVolume(this.voiceChannel.playSong.streamOption.volume * 1 / 100);
+                this.voiceChannel.playSong.dispatcher.setVolume(this.voiceChannel.playSong.streamOption.volume * 1 / 800);
 
             this.message.channel.send('``볼륨을 ' + this.voiceChannel.playSong.streamOption.volume + ' 으로 설정했어요.``');
         } catch(error) {

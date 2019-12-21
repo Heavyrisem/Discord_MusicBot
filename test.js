@@ -1,14 +1,9 @@
-const classtest = require('./class');
+const fs = require('fs');
 
-class test extends classtest {
-    constructor() {
-        super();
-    }
-    classname() {
-        console.log(this.num);
-    }
-}
+var file = fs.createReadStream('test.txt', 'UTF-8');
 
-const d = new test;
+var i =0;
 
-module.exports = test;
+var r = '';
+file.on('data', (c) => {console.log(++i); r = r + c;})
+file.on('end', () => {console.log (r)});
