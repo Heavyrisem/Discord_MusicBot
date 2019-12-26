@@ -47,14 +47,11 @@ class server extends voicechannel {
         }
     }
 
-    holdPing() {
+    Ping() {
         var e = this;
         if (e.ping != undefined) return;
 
-        e.client.user.setActivity('ping ' + e.client.ping);
-        e.ping = setInterval(function() {
-            e.client.user.setActivity('ping ' + e.client.ping);
-        }, 10000);
+        this.message.channel.send('``현재 핑은 ' + this.client.ping + 'ms 입니다.``');
     }
 
     updateMsg(message) {

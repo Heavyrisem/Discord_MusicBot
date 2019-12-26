@@ -58,7 +58,7 @@ client.on('message', message => {
   }
 
   if (message.content.startsWith(prefix + '핑')) {
-    server.holdPing();
+    server.Ping();
   }
 
   if (message.content.startsWith(prefix + '참가')) {
@@ -114,10 +114,15 @@ client.on('message', message => {
     server.voiceChannel.setvolume(message.content.substring(4, message.content.length));
   }
 
+  if (message.content.startsWith(prefix + '리셋')) {
+    server = '';
+  }
+
   if (message.content.startsWith(prefix + '업타임')) {
     message.channel.send('``' + client.uptime/60/10 + '``');
   }
   
+
   if (message.content.startsWith(prefix + '테스트')) {
   }
 });

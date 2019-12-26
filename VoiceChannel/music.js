@@ -106,30 +106,31 @@ class music {
             try {
                 e.voiceChannel.playSong.connection = connection;
                 
-                const test = ytdl(video_info.id, {filter: 'audioonly', quality: 'lowestaudio'});
-                test.pipe(fs.createWriteStream('VoiceChannel/temp/'+e.message.guild.id+'.mp3'));
+                const music_file = ytdl(video_info.id, {filter: 'audioonly', quality: 'lowestaudio'});
+                music_file.pipe(fs.createWriteStream('VoiceChannel/temp/'+e.message.guild.id+'.mp3')); // video download
                 
-                test.on('end', () => {
-                    i = 0;
+                music_file.on('end', () => {
                     console.log('write end ', i);
+                    i = 0;
                 });
 
-                test.on('data', () => {
+                music_file.on('data', () => {
                     i++;
                     if (i != 1) return;
-                    var read = fs.createReadStream('VoiceChannel/temp/'+e.message.guild.id+'.mp3', { highWaterMark: 256 });
+                    var read = fs.createReadStream('VoiceChannel/temp/'+e.message.guild.id+'.mp3', { highWaterMark: 256 }); // video load
                     
 
                     e.voiceChannel.playSong.dispatcher = connection.playStream(read , streamOption);
                     e.voiceChannel.playSong.playing = true;
-    
                     e.message.channel.send('``' + video_info.title + ' 을(를) 재생해요 🎵``');
 
                     e.voiceChannel.playSong.dispatcher.on('end', reason => {
                         e.voiceChannel.playSong.playing = false;
                         console.log('dispatcher end : ', reason);
                         
-                        e.voiceChannel.playSong.queue.shift();
+                        if (e.voiceChannel.playSong.queue != '')
+                            e.voiceChannel.playSong.queue.shift();
+
                         e.voiceChannel.autoleave_active();
                         if (e.voiceChannel.playSong.queue[0] != undefined)
                             e.playmusic();
@@ -210,8 +211,6 @@ class music {
                     var num = e.message.content.substring(1, e.message.content.length);
                     if (isNaN(num)) return;
                     if (request_author != e.message.member.id) return;
-
-                    console.log('log : ', num);
 
                     if (num <= 0 || num > range_max) {
                         e.message.channel('``범위 내에서 선택해 주세요.``');
