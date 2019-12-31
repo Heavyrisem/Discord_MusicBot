@@ -213,7 +213,7 @@ class music {
                     if (request_author != e.message.member.id) return;
 
                     if (num <= 0 || num > range_max) {
-                        e.message.channel('``범위 내에서 선택해 주세요.``');
+                        e.message.channel.send('``범위 내에서 선택해 주세요.``');
                         return;
                     }
                     
