@@ -123,8 +123,7 @@ class music {
 
                     e.voiceChannel.playSong.dispatcher = connection.playStream(read , streamOption);
                     e.voiceChannel.playSong.playing = true;
-                    console.log('``' + video_info.title + ' 을(를) 재생해요 🎵``');
-                    console.log(message.channel.name);
+                    console.log('``' + video_info.title + ' 을(를) 재생해요 🎵``', message.channel.name);
                     message.channel.send('``' + video_info.title + ' 을(를) 재생해요 🎵``');
 
                     e.voiceChannel.playSong.dispatcher.on('end', reason => {

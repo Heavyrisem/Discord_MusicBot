@@ -6,6 +6,10 @@ const serverClass = require('./server/server');
 // Create an instance of a Discord client
 const client = new Discord.Client();
 
+
+
+const fs = require('fs');
+
 var serverMap = new Map();
 
 
@@ -23,6 +27,7 @@ client.on('message', message => {
       servert.updateMsg(message);
     }
   }
+
 
   if (message.content == '오리') {
     message.channel.send('꽤애액🦆🦆🦆🦆🦆🦆');
@@ -44,7 +49,7 @@ client.on('message', message => {
     }
   }
 
-  const server = serverMap.get(message.guild.id);
+  var server = serverMap.get(message.guild.id);
 
   try {
     var prefix = server.serversetting.prefix;
@@ -56,6 +61,16 @@ client.on('message', message => {
     .setTimestamp();
 
     message.channel.send(errormsg);
+  }
+
+  if (message.content.startsWith(prefix + '틱')) {
+    server.voiceChannel.fun.tick();
+  }
+  if (message.content.startsWith(prefix + '이이')) {
+    server.voiceChannel.fun.ee();
+  }
+  if (message.content.startsWith(prefix + '업보킹')) {
+    server.voiceChannel.fun.eoajfl();
   }
 
   if (message.content.startsWith(prefix + '핑')) {
@@ -116,7 +131,6 @@ client.on('message', message => {
   }
 
   if (message.content.startsWith(prefix + '리셋')) {
-    return message.channel.send('``오류로 비활성화 되었어요.``');
     server = '';
   }
 
@@ -125,12 +139,13 @@ client.on('message', message => {
   }
   
 
-  if (message.content.startsWith(prefix + '테스트')) {
+  if (message.content.startsWith(prefix + '이이')) {
+    server.voiceChannel.fun.ee();
   }
 });
 
 
-client.login('NjE3MzEwMzY1OTE4ODIyNDIx.XWuI4w.MSdZ8LorBxaKMAIzYA-68L1WCto'); 
+client.login('NjE5NTI3MzY0MDkwNjU4ODE3.XXJh-A.uGTknJRXOKBxjzYB7jaQk_UfLUw'); 
 
   //main NjE3MzEwMzY1OTE4ODIyNDIx.XWuI4w.MSdZ8LorBxaKMAIzYA-68L1WCto
   //beta NjE5NTI3MzY0MDkwNjU4ODE3.XXJh-A.uGTknJRXOKBxjzYB7jaQk_UfLUw

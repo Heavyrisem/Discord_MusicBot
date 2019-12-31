@@ -40,6 +40,11 @@ class server extends voicechannel {
                     dispatcher: undefined,
                     queue: [],
                 },
+                fun : {
+                    tick() {e.Tick()},
+                    ee() {e.EE()},
+                    eoajfl() {e.Eoajfl()}
+                },
                 show_queue() {e.queue_show()}
             };
         } catch(error) {

@@ -1,10 +1,69 @@
 const Discord = require('discord.js');
+const fs = require('fs');
 
 const music = require('./music');
 
 class voicechannel extends music {
     constructor() {
         super();
+    }
+
+    Tick() {
+        if (this.voiceChannel.playSong.playing) return;
+        else if (this.message.member.voiceChannel == undefined) return;
+        else {
+            var e = this;
+            this.voiceChannel.join().then(connection => {
+                e.voiceChannel.playSong.connection = connection;
+                e.voiceChannel.playSong.dispatcher = connection.playStream(fs.createReadStream('./xlr.mp3'));
+                e.voiceChannel.playSong.playing = true;
+                console.log('xlr');
+
+                e.voiceChannel.playSong.dispatcher.on('end', () => {
+                    console.log('xlr end')
+                    e.voiceChannel.playSong.playing = false;
+                    e.voiceChannel.autoleave_active();
+                })
+            });
+        }
+    }
+
+    EE() {
+        if (this.voiceChannel.playSong.playing) return;
+        else if (this.message.member.voiceChannel == undefined) return;
+        else {
+            var e = this;
+            this.voiceChannel.join().then(connection => {
+                e.voiceChannel.playSong.connection = connection;
+                e.voiceChannel.playSong.dispatcher = connection.playStream(fs.createReadStream('./EE.mp3'));
+                e.voiceChannel.playSong.playing = true;
+                
+                e.voiceChannel.playSong.dispatcher.on('end', () => {
+                    e.voiceChannel.playSong.playing = false;
+                    e.voiceChannel.autoleave_active();
+                })
+            });
+        }
+    }
+
+    Eoajfl() {
+        if (this.voiceChannel.playSong.playing) return;
+        else if (this.message.member.voiceChannel == undefined) return;
+        else {
+            var e = this;
+            this.voiceChannel.join().then(connection => {
+                e.voiceChannel.playSong.connection = connection;
+                e.voiceChannel.playSong.dispatcher = connection.playStream(fs.createReadStream('./eoajfl.mp3'));
+                e.voiceChannel.playSong.playing = true;
+                console.log('xlr');
+
+                e.voiceChannel.playSong.dispatcher.on('end', () => {
+                    console.log('xlr end')
+                    e.voiceChannel.playSong.playing = false;
+                    e.voiceChannel.autoleave_active();
+                })
+            });
+        }
     }
 
     Join() {
