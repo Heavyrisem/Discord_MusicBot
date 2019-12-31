@@ -103,7 +103,6 @@ client.on('message', message => {
   }
   
   if (message.content.startsWith(prefix + '정지')) {
-    return message.channel.send('``오류로 비활성화 되었어요.``');
     server.voiceChannel.stop();
   }
 
