@@ -1,9 +1,17 @@
-const fs = require('fs');
+const Discord = require('discord.js');
 
-var file = fs.createReadStream('test.txt', 'UTF-8');
+var client = new Discord.Client();
 
-var i =0;
+client.on('ready', () => {
+  console.log(`Logged in as ${client.user.tag}!`);
+});
 
-var r = '';
-file.on('data', (c) => {console.log(++i); r = r + c;})
-file.on('end', () => {console.log (r)});
+client.on('message', msg => {
+    console.log(msg.content, !isNaN(msg.content), Number.isInteger(msg.content));
+});
+
+function test() {
+    client.removeAllListeners("message");
+}
+
+client.login('NjE5NTI3MzY0MDkwNjU4ODE3.XXJh-A.uGTknJRXOKBxjzYB7jaQk_UfLUw');

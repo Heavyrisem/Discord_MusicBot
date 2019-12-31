@@ -105,9 +105,10 @@ class music {
             //https://www.youtube.com/watch?v=_1scmwn_1VI
             try {
                 e.voiceChannel.playSong.connection = connection;
+                var message = e.message;
                 
                 const music_file = ytdl(video_info.id, {filter: 'audioonly', quality: 'lowestaudio'});
-                music_file.pipe(fs.createWriteStream('VoiceChannel/temp/'+e.message.guild.id+'.mp3')); // video download
+                music_file.pipe(fs.createWriteStream('VoiceChannel/temp/'+message.guild.id+'.mp3')); // video download
                 
                 music_file.on('end', () => {
                     console.log('write end ', i);
@@ -117,12 +118,14 @@ class music {
                 music_file.on('data', () => {
                     i++;
                     if (i != 1) return;
-                    var read = fs.createReadStream('VoiceChannel/temp/'+e.message.guild.id+'.mp3', { highWaterMark: 256 }); // video load
+                    var read = fs.createReadStream('VoiceChannel/temp/'+message.guild.id+'.mp3', { highWaterMark: 256 }); // video load
                     
 
                     e.voiceChannel.playSong.dispatcher = connection.playStream(read , streamOption);
                     e.voiceChannel.playSong.playing = true;
-                    e.message.channel.send('``' + video_info.title + ' 을(를) 재생해요 🎵``');
+                    console.log('``' + video_info.title + ' 을(를) 재생해요 🎵``');
+                    console.log(message.channel.name);
+                    message.channel.send('``' + video_info.title + ' 을(를) 재생해요 🎵``');
 
                     e.voiceChannel.playSong.dispatcher.on('end', reason => {
                         e.voiceChannel.playSong.playing = false;
@@ -200,31 +203,36 @@ class music {
     select_music(range_max, request_author) {
         var e = this;
         return new Promise(function(resolve, reject) {
+            var waiting_input = true;
 
             var select_timeout = setTimeout(function() {
                 e.message.channel.send('``선택 시간이 초과되었어요.``');
-                clearInterval(getmessage);
+                waiting_input = false;
             }, 10000);
 
-            var getmessage = setInterval(function() {
+            e.client.on('message', message => {
                 try {
-                    var num = e.message.content.substring(1, e.message.content.length);
+                    if (!waiting_input || message.member.id == e.client.user.id) return;
+
+                    var num;
+                    if (!isNaN(message.content)) num = message.content;
+                    else num = message.content.substring(1, message.content.length);
                     if (isNaN(num)) return;
-                    if (request_author != e.message.member.id) return;
+                    if (request_author != message.member.id) return;
 
                     if (num <= 0 || num > range_max) {
-                        e.message.channel.send('``범위 내에서 선택해 주세요.``');
+                        message.channel.send('``범위 내에서 선택해 주세요.``');
                         return;
                     }
                     
                     clearTimeout(select_timeout);
-                    clearInterval(getmessage);
+                    waiting_input = false;
                     resolve(num);
                 } catch(error) {
                     reject();
                     e.playerrorhandling('getmessage', error);
                 }
-            }, 500);
+            });
         });
     }
 

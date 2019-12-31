@@ -14,7 +14,7 @@ class server extends voicechannel {
 
             this.serversetting = {
                 'prefix': '!',
-                'autoleave': 8000,
+                'autoleave': 60000,
             }
 
             this.voiceChannel = {
