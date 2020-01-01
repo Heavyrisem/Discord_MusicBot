@@ -202,22 +202,24 @@ class music {
     select_music(range_max, request_author) {
         var e = this;
         return new Promise(function(resolve, reject) {
-            var waiting_input = true;
 
             var select_timeout = setTimeout(function() {
                 e.message.channel.send('``선택 시간이 초과되었어요.``');
-                waiting_input = false;
+                e.client.removeListener('message', e.client.listeners('message')[1]);
             }, 10000);
+            
 
             e.client.on('message', message => {
                 try {
-                    if (!waiting_input || message.member.id == e.client.user.id) return;
+                    if (message.member.id == e.client.user.id) return console.log('return');
+                    console.log(message.content);
 
                     var num;
+                    
                     if (!isNaN(message.content)) num = message.content;
                     else num = message.content.substring(1, message.content.length);
-                    if (isNaN(num)) return;
-                    if (request_author != message.member.id) return;
+                    if (isNaN(num)) return console.log('nan');
+                    if (request_author != message.member.id) return console.log('author diff');
 
                     if (num <= 0 || num > range_max) {
                         message.channel.send('``범위 내에서 선택해 주세요.``');
@@ -226,13 +228,13 @@ class music {
                     message.delete();
                     
                     clearTimeout(select_timeout);
-                    waiting_input = false;
+                    e.client.removeListener('message', e.client.listeners('message')[1]);
                     resolve(num);
                 } catch(error) {
                     reject();
                     e.playerrorhandling('getmessage', error);
                 }
-            });
+            }); 
         });
     }
 
