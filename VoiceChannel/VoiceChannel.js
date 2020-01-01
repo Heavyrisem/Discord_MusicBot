@@ -8,60 +8,57 @@ class voicechannel extends music {
         super();
     }
 
-    Tick() {
+    FunAction(input) {
         if (this.voiceChannel.playSong.playing) return;
         else if (this.message.member.voiceChannel == undefined) return;
         else {
             var e = this;
+            var mp3;
             this.voiceChannel.join().then(connection => {
                 e.voiceChannel.playSong.connection = connection;
-                e.voiceChannel.playSong.dispatcher = connection.playStream(fs.createReadStream('./xlr.mp3'));
-                e.voiceChannel.playSong.playing = true;
-                console.log('xlr');
 
-                e.voiceChannel.playSong.dispatcher.on('end', () => {
-                    console.log('xlr end')
-                    e.voiceChannel.playSong.playing = false;
-                    e.voiceChannel.autoleave_active();
-                })
-            });
-        }
-    }
-
-    EE() {
-        if (this.voiceChannel.playSong.playing) return;
-        else if (this.message.member.voiceChannel == undefined) return;
-        else {
-            var e = this;
-            this.voiceChannel.join().then(connection => {
-                e.voiceChannel.playSong.connection = connection;
-                e.voiceChannel.playSong.dispatcher = connection.playStream(fs.createReadStream('./EE.mp3'));
-                e.voiceChannel.playSong.playing = true;
+                if (input == 'Tick') {
+                    mp3 = fs.createReadStream('./VoiceChannel/fun/xlr.mp3');
+                    const errormsg = new Discord.RichEmbed()
+                    .setColor('#ff148e')
+                    .setTitle('⚠️ 틱장애 발생.')
+                    .setDescription('티기틱ㅌㄱ티기ㅣㅌ기ㅣ티긱')
+                    .setTimestamp();
                 
-                e.voiceChannel.playSong.dispatcher.on('end', () => {
-                    e.voiceChannel.playSong.playing = false;
-                    e.voiceChannel.autoleave_active();
-                })
-            });
-        }
-    }
+                    e.message.channel.send(errormsg);
+                }
+                else if (input == 'EE') {
+                    e.message.channel.send('음식이 장난이야?');
+                    e.message.channel.send({
+                      files: [{
+                        attachment: './VoiceChannel/fun/EE.jpg',
+                        name: 'EE.jpg'
+                      }]
+                    });
+                    mp3 = fs.createReadStream('./VoiceChannel/fun/EE.mp3');
+                } 
+                else if (input == 'eoajfl')
+                    mp3 = fs.createReadStream('./VoiceChannel/fun/eoajfl.mp3');
+                else throw new Error('틱틱틱틱틱틱틱');
 
-    Eoajfl() {
-        if (this.voiceChannel.playSong.playing) return;
-        else if (this.message.member.voiceChannel == undefined) return;
-        else {
-            var e = this;
-            this.voiceChannel.join().then(connection => {
-                e.voiceChannel.playSong.connection = connection;
-                e.voiceChannel.playSong.dispatcher = connection.playStream(fs.createReadStream('./eoajfl.mp3'));
+                e.voiceChannel.playSong.dispatcher = connection.playStream(mp3);
+
+
                 e.voiceChannel.playSong.playing = true;
-                console.log('xlr');
 
                 e.voiceChannel.playSong.dispatcher.on('end', () => {
-                    console.log('xlr end')
                     e.voiceChannel.playSong.playing = false;
                     e.voiceChannel.autoleave_active();
                 })
+            }).catch(error => {
+                const errormsg = new Discord.RichEmbed()
+                .setColor('#ff148e')
+                .setTitle('⚠️ 틱장애 발생.')
+                .setDescription(error)
+                .setTimestamp();
+            
+                this.message.channel.send(errormsg);
+                this.voiceChannel.leave();
             });
         }
     }

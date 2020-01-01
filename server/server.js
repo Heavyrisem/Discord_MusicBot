@@ -41,9 +41,7 @@ class server extends voicechannel {
                     queue: [],
                 },
                 fun : {
-                    tick() {e.Tick()},
-                    ee() {e.EE()},
-                    eoajfl() {e.Eoajfl()}
+                    funAction(input) {e.FunAction(input)},
                 },
                 show_queue() {e.queue_show()}
             };

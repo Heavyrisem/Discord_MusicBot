@@ -64,13 +64,16 @@ client.on('message', message => {
   }
 
   if (message.content.startsWith(prefix + '틱')) {
-    server.voiceChannel.fun.tick();
+    server.voiceChannel.fun.funAction('Tick');
   }
   if (message.content.startsWith(prefix + '이이')) {
-    server.voiceChannel.fun.ee();
+    server.voiceChannel.fun.funAction('EE');
   }
   if (message.content.startsWith(prefix + '업보킹')) {
-    server.voiceChannel.fun.eoajfl();
+    server.voiceChannel.fun.funAction('eoajfl');
+  }
+  if (message.content.startsWith(prefix + '테스트')) {
+    server.voiceChannel.fun.funAction('ㅁㄻㄻ');
   }
 
   if (message.content.startsWith(prefix + '핑')) {
@@ -139,9 +142,6 @@ client.on('message', message => {
   }
   
 
-  if (message.content.startsWith(prefix + '이이')) {
-    server.voiceChannel.fun.ee();
-  }
 });
 
 
