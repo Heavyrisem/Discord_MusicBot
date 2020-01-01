@@ -223,6 +223,7 @@ class music {
                         message.channel.send('``범위 내에서 선택해 주세요.``');
                         return;
                     }
+                    message.delete();
                     
                     clearTimeout(select_timeout);
                     waiting_input = false;

@@ -1,6 +1,10 @@
 // 35.190.232.202
 // Import the discord.js module
+
+//main NjE3MzEwMzY1OTE4ODIyNDIx.XWuI4w.MSdZ8LorBxaKMAIzYA-68L1WCto
+//beta NjE5NTI3MzY0MDkwNjU4ODE3.XXJh-A.uGTknJRXOKBxjzYB7jaQk_UfLUw
 const Discord = require('discord.js');
+const Token = 'NjE5NTI3MzY0MDkwNjU4ODE3.XXJh-A.uGTknJRXOKBxjzYB7jaQk_UfLUw';
 
 const serverClass = require('./server/server');
 // Create an instance of a Discord client
@@ -21,12 +25,12 @@ client.on('ready', () => {
 
 client.on('message', message => {
   if (message.member.id == client.user.id) return;
-  if (serverMap.has(message.guild.id)) {
+/*   if (serverMap.has(message.guild.id)) {
     var servert = serverMap.get(message.guild.id);
     if (servert.getmessage) {
       servert.updateMsg(message);
     }
-  }
+  } */
 
 
   if (message.content == '오리') {
@@ -141,11 +145,14 @@ client.on('message', message => {
     message.channel.send('``' + client.uptime/60/10 + '``');
   }
   
+  if (message.content === prefix + '재시작 DHQUDALS') {
+    message.delete();
+    console.log('강제 재시작 : ', message.member.user.username);
+    message.channel.send('``⚠️ 강제 재시작을 시작합니다. \n디스코드 봇의 기능이 모두 정지되고, 재시작까지 최대 30초가 소요됩니다.``');
+    client.destroy().then(client.login(Token))
+  }
 
 });
 
 
-client.login('NjE3MzEwMzY1OTE4ODIyNDIx.XWuI4w.MSdZ8LorBxaKMAIzYA-68L1WCto'); 
-
-  //main NjE3MzEwMzY1OTE4ODIyNDIx.XWuI4w.MSdZ8LorBxaKMAIzYA-68L1WCto
-  //beta NjE5NTI3MzY0MDkwNjU4ODE3.XXJh-A.uGTknJRXOKBxjzYB7jaQk_UfLUw
+client.login(Token); 
