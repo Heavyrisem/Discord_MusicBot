@@ -21,7 +21,7 @@ class server extends voicechannel {
                 join() {return e.Join()},
                 now() {e.Now()},
                 leave() {e.Leave()},
-                addmusic(keyword) {e.search_music(keyword)},
+                addmusic(message, keyword) {e.search_music(message, keyword)},
                 addmusic_url(target) {e.Addmusic(target)},
                 skip(n) {e.Skip(n)},
                 stop() {e.Stop()},

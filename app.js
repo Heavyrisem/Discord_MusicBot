@@ -109,7 +109,7 @@ client.on('message', message => {
         message.channel.send(errormsg);
       }
     } else if (keyword != '') {
-      server.voiceChannel.addmusic(keyword);
+      server.voiceChannel.addmusic(message, keyword);
     } else {
       message.channel.send('``사용법 : ' + prefix + '노래 [URL 이나 제목]``');
     }

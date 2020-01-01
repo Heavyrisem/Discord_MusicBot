@@ -160,11 +160,11 @@ class music {
 
     }
 
-    search_music(keyword) {
+    search_music(message, keyword) {
         var e = this;
         var music_list = [];
         var music_selection = '```Swift';
-        const request_author = e.message.member.id;
+        const request_author = message.member.id;
             yt_search(keyword, function(err, r) {
                 try {
                     for (var i = 0; i < 5; i++) {
@@ -219,7 +219,7 @@ class music {
                     if (!isNaN(message.content)) num = message.content;
                     else num = message.content.substring(1, message.content.length);
                     if (isNaN(num)) return console.log('nan');
-                    if (request_author != message.member.id) return console.log('author diff');
+                    if (request_author != message.member.id) return console.log('author diff', request_author);
 
                     if (num <= 0 || num > range_max) {
                         message.channel.send('``범위 내에서 선택해 주세요.``');
