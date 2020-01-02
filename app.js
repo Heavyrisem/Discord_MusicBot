@@ -23,12 +23,6 @@ client.on('ready', () => {
 
 client.on('message', message => {
   if (message.member.id == client.user.id) return;
-/*   if (serverMap.has(message.guild.id)) {
-    var servert = serverMap.get(message.guild.id);
-    if (servert.getmessage) {
-      servert.updateMsg(message);
-    }
-  } */
 
 
   if (message.content == '오리') {
@@ -50,6 +44,13 @@ client.on('message', message => {
       message.channel.send(errormsg);
     }
   }
+  
+  if (serverMap.has(message.guild.id)) {
+   var servert = serverMap.get(message.guild.id);
+   if (servert.getmessage) {
+     servert.updateMsg(message);
+   }
+ }
 
   var server = serverMap.get(message.guild.id);
 
