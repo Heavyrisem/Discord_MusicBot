@@ -117,7 +117,7 @@ class music {
 
                 music_file.on('data', () => {
                     i++;
-                    if (i != 1) return;
+                    if (i != 3) return;
                     var read = fs.createReadStream('VoiceChannel/temp/'+message.guild.id+'.mp3', { highWaterMark: 256 }); // video load
                     
 
