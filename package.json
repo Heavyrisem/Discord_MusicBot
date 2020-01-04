@@ -7,6 +7,8 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "axios": "^0.19.0",
+    "cheerio": "^1.0.0-rc.3",
     "discord-youtube-api": "^0.1.0",
     "discord-yt-player": "^1.1.1",
     "discord.js": "^11.5.1",
