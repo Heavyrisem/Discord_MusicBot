@@ -57,6 +57,11 @@ class server extends voicechannel {
         this.message.channel.send('``현재 핑은 ' + this.client.ping + 'ms 입니다.``');
     }
 
+    updateMsg(message) {
+        if (message == undefined) return;
+        this.message = message;
+    }
+
     errorhandler(msg) {
         const errormsg = new Discord.RichEmbed()
         .setColor('#ff148e')

@@ -44,15 +44,12 @@ client.on('message', message => {
       message.channel.send(errormsg);
     }
   }
-  
-  if (serverMap.has(message.guild.id)) {
-   var servert = serverMap.get(message.guild.id);
-   if (servert.getmessage) {
-     servert.updateMsg(message);
-   }
- }
 
   var server = serverMap.get(message.guild.id);
+
+  if (server.getmessage) {
+    server.updateMsg(message);
+  }
 
   try {
     var prefix = server.serversetting.prefix;
