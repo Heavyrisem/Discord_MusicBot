@@ -96,6 +96,7 @@ client.on('message', message => {
   }
 
   if (message.content.startsWith(prefix + '노래')) {
+    if (message.member.voiceChannel == undefined) return message.channel.send('``먼저 음성 채널에 접속해 주세요.``');
     var keyword = message.content.substring(4, message.content.length);
     if (keyword.startsWith('https://www.youtube.com') || keyword.startsWith('http://www.youtube.com')) {
       try {
