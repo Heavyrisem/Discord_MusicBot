@@ -134,6 +134,29 @@ client.on('message', message => {
     server.voiceChannel.setvolume(message.content.substring(4, message.content.length));
   }
 
+  if (message.content.startsWith(prefix + '스팀')) {
+    var search = message.content.substring(3, message.content.length);
+    if (search == undefined) return message.channel.send('``스팀 [검색어]``');
+    server.Utility.steamSearch(search).then(result => {
+      if (result == undefined) return message.channel.send('``검색 결과가 없습니다.``');
+      var price;
+      if (result.gameprice[0] == 0) price = '무료';
+      else if (result.gameprice[0] == undefined) price = '미정';
+      else price = result.gameprice[0] + '원';
+      
+
+      const steamgame = new Discord.RichEmbed()
+      .setColor('#ff148e')
+      .setTitle(result.gametitle[0])
+      .setThumbnail(result.gameimgURL[0])
+      .addField('출시일자', result.gamerelesed[0])
+      .addField('가격', price)
+      .setFooter('지원 os ,' + result.gameplatform[0]);
+
+      message.channel.send(steamgame);
+    });
+  }
+
   if (message.content.startsWith(prefix + '리셋')) {
     server = '';
   }

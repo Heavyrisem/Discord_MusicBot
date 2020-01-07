@@ -1,4 +1,5 @@
 const voicechannel = require('../VoiceChannel/VoiceChannel');
+const Utility = require('../utility/utility');
 
 class server extends voicechannel {
     constructor(client, message) {
@@ -45,6 +46,8 @@ class server extends voicechannel {
                 },
                 show_queue() {e.queue_show()}
             };
+
+            this.Utility = new Utility();
         } catch(error) {
             this.errorhandler(error);
         }
