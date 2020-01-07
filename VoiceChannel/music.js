@@ -108,7 +108,7 @@ class music {
                 var message = e.message;
                 
                 const music_file = ytdl(video_info.id, {filter: 'audioonly', quality: 'lowestaudio'});
-                music_file.pipe(fs.createWriteStream('VoiceChannel/temp/'+message.guild.id+'.mp3')); // video download
+                music_file.pipe(fs.createWriteStream('VoiceChannel/temp/'+message.guild.id+'.mp3', { highWaterMark: 128 })); // video download
                 
                 music_file.on('end', () => {
                     console.log('write end ', i);
