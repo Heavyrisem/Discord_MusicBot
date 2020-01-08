@@ -123,6 +123,7 @@ class voicechannel extends music {
     }
 
     Autoleave() {
+        console.log('Autoleave');
         var e = this;
         if (this.voiceChannel.playSong.playing) {
             console.log('오류, Autoleave() 가 재생중에 실행됨');
@@ -143,6 +144,7 @@ class voicechannel extends music {
     }
 
     Autoleave_clear() {
+        console.log('Autoleave Clear')
         clearTimeout(this.voiceChannel.autoleave);
     }
 
