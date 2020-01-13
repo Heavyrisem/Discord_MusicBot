@@ -73,7 +73,7 @@ client.on('message', message => {
     server.voiceChannel.fun.funAction('eoajfl');
   }
   if (message.content.startsWith(prefix + '테스트')) {
-    server.voiceChannel.fun.funAction('ㅁㄻㄻ');
+    server.voiceChannel.test();
   }
 
   if (message.content.startsWith(prefix + '핑')) {
