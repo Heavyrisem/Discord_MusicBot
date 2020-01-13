@@ -149,10 +149,6 @@ class voicechannel extends music {
         clearTimeout(this.voiceChannel.autoleave);
     }
 
-    test() {
-        console.log(this.voiceChannel.playSong.queue);
-    }
-
     voiceerrorhandler(msg) {
         const errormsg = new Discord.RichEmbed()
         .setColor('#ff148e')

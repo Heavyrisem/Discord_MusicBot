@@ -65,6 +65,10 @@ class server extends voicechannel {
         this.message = message;
     }
 
+    test() {
+        console.log(this.voiceChannel.playSong.queue);
+    }
+
     errorhandler(msg) {
         const errormsg = new Discord.RichEmbed()
         .setColor('#ff148e')
