@@ -15,6 +15,7 @@ class voicechannel extends music {
             var e = this;
             var mp3;
             this.voiceChannel.join().then(connection => {
+                e.Autoleave_clear();
                 e.voiceChannel.playSong.connection = connection;
 
                 if (input == 'Tick') {
@@ -49,7 +50,9 @@ class voicechannel extends music {
                 e.voiceChannel.playSong.dispatcher.on('end', () => {
                     e.voiceChannel.playSong.playing = false;
                     e.voiceChannel.autoleave_active();
-                })
+
+                    if (e.voiceChannel.playSong.queue[0] != undefined) e.playmusic();
+                });
             }).catch(error => {
                 const errormsg = new Discord.RichEmbed()
                 .setColor('#ff148e')
