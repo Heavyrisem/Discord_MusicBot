@@ -169,7 +169,7 @@ client.on('message', message => {
     message.delete();
     console.log('강제 재시작 : ', message.member.user.username);
     message.channel.send('``⚠️ 강제 재시작을 시작합니다. \n디스코드 봇의 기능이 모두 정지되고, 재시작까지 최대 30초가 소요됩니다.``');
-    client.destroy().then(() => {throw new Error('재시작')});
+    client.destroy().then(() => {process.exit()});
   }
 
 });
