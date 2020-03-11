@@ -68,6 +68,7 @@ class music {
         if (target == '') return this.message.channel.send('``링크가 비었습니다.``');
         if (target.startsWith('https://www.youtube.com') || target.startsWith('http://www.youtube.com'))
             target = this.message.content.substring(36, this.message.content.length);
+        if (target.includes('list') != -1) throw new Error('재생목록은 재생할수 없습니다. URL을 확인해주세요');
         var e = this;
         var video_info;
 
