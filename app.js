@@ -25,7 +25,7 @@ client.on('message', message => {
   if (message.member.id == client.user.id) return;
 
 
-  if (message.content == '오리') {
+  if (message.content.startsWith == '오리') {
     message.channel.send('꽤애액🦆🦆🦆🦆🦆🦆');
   }
 
@@ -64,32 +64,32 @@ client.on('message', message => {
   }
 
   if (message.content.startsWith(prefix + '틱')) {
-    server.voiceChannel.fun.funAction('Tick');
+    server.voiceChannel.fun.funAction('Tick', message);
   }
   if (message.content.startsWith(prefix + '이이')) {
-    server.voiceChannel.fun.funAction('EE');
+    server.voiceChannel.fun.funAction('EE', message);
   }
   if (message.content.startsWith(prefix + '업보킹')) {
-    server.voiceChannel.fun.funAction('eoajfl');
+    server.voiceChannel.fun.funAction('eoajfl', message);
   }
   if (message.content.startsWith(prefix + '테스트')) {
     server.voiceChannel.test();
   }
 
   if (message.content.startsWith(prefix + '핑')) {
-    server.Ping();
+    server.Ping(message);
   }
 
   if (message.content.startsWith(prefix + '참가')) {
-    server.voiceChannel.join();
+    server.voiceChannel.join(message);
   }
 
   if (message.content.startsWith(prefix + '나가')) {
-    server.voiceChannel.leave();
+    server.voiceChannel.leave(message);
   }
 
   if (message.content.startsWith(prefix + '상태')) {
-    server.voiceChannel.now();
+    server.voiceChannel.now(message);
   }
 
   if (message.content.startsWith(prefix + '노래')) {
@@ -97,7 +97,7 @@ client.on('message', message => {
     var keyword = message.content.substring(4, message.content.length);
     if (keyword.startsWith('https://www.youtube.com') || keyword.startsWith('http://www.youtube.com')) {
       try {
-        server.voiceChannel.addmusic_url(keyword);
+        server.voiceChannel.addmusic_url(keyword, message);
       } catch(error) {
         const errormsg = new Discord.RichEmbed()
         .setColor('#ff148e')
@@ -116,22 +116,22 @@ client.on('message', message => {
 
   if (message.content.startsWith(prefix + '스킵')) {
     if (!isNaN(message.content.substring(4, message.content.length))) 
-      server.voiceChannel.skip(message.content.substring(4, message.content.length));
+      server.voiceChannel.skip(message.content.substring(4, message.content.length), message);
     else
-      server.voiceChannel.skip();
+      server.voiceChannel.skip(message);
   }
   
   if (message.content.startsWith(prefix + '정지')) {
-    server.voiceChannel.stop();
+    server.voiceChannel.stop(message);
   }
 
   if (message.content.startsWith(prefix + '큐')) {
-    server.voiceChannel.show_queue();
+    server.voiceChannel.show_queue(message);
   }
 
   if (message.content.startsWith(prefix + '볼륨')) {
     if (isNaN(message.content.substring(4, message.content.length))) return message.channel.send('``사용법 : 볼륨 [숫자]``');
-    server.voiceChannel.setvolume(message.content.substring(4, message.content.length));
+    server.voiceChannel.setvolume(message.content.substring(4, message.content.length), message);
   }
 
   if (message.content.startsWith(prefix + '스팀')) {
@@ -167,8 +167,8 @@ client.on('message', message => {
   
   if (message.content === prefix + '재시작 DHQUDALS') {
     message.delete().then(() => {
-      console.log('강제 재시작 : ', message.member.user.username);
-      message.channel.send('``⚠️ 강제 재시작을 시작합니다. \n디스코드 봇의 기능이 모두 정지되고, 재시작까지 최대 30초가 소요됩니다.``').then(() => {
+      console.log('수동 재시작 : ', message.member.user.username);
+      message.channel.send('``⚠️ 수동 재시작을 시작합니다. \n디스코드 봇 클라이언트가 정지되고, 재시작까지 최대 30초가 소요됩니다.``').then(() => {
       client.destroy().then(() => {process.exit()});
       });
     });
