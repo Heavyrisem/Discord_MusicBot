@@ -86,8 +86,8 @@ class voicechannel extends music {
     Leave() {
         var message = this.message;
         try {
-            if (message.guild.me.voiceChannel == undefined) {
-                message.channel.send('``아무 채널에도 연결되어 있지 않아요.``');
+            if (message.guild.me.voiceChannel == undefined && message.guild.me.voiceChannel != message.member.voiceChannel) {
+                message.channel.send('``연결된 채널을 확인해주세요.``');
             } else {
                 message.guild.me.voiceChannel.leave();
                 message.channel.send('``' + message.guild.me.voiceChannel.name + ' 음성 채널을 떠났어요.``');
