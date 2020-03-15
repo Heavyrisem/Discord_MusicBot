@@ -81,7 +81,7 @@ client.on('message', message => {
 
         client.user.setActivity('CPU: ' + percent);
       })
-    },2500);
+    },5000);
   }
 
   if (message.content.startsWith(prefix + '핑')) {
