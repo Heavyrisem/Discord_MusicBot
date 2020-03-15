@@ -10,6 +10,7 @@ class server extends voicechannel {
             this.client = client;
             this.servername = message.guild.name;
             this.message = message;
+            this.last_message;
             this.getmessage = true;
             this.ping = undefined;
 
@@ -20,13 +21,13 @@ class server extends voicechannel {
 
             this.voiceChannel = {
                 join() {return e.Join()},
-                now() {e.Now()},
-                leave() {e.Leave()},
+                now(m) {e.Now(m)},
+                leave(m) {e.Leave(m)},
                 addmusic(message, keyword) {e.search_music(message, keyword)},
                 addmusic_url(target) {e.Addmusic(target)},
                 skip(n) {e.Skip(n)},
                 stop() {e.Stop()},
-                setvolume(v) {e.Volume(v)},
+                setvolume(v, m) {e.Volume(v, m)},
                 autoleave_active() {e.Autoleave()},
                 autoleave_clear() {e.Autoleave_clear()},
                 autoleave: undefined,

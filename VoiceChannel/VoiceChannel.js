@@ -83,9 +83,10 @@ class voicechannel extends music {
         }
     }
 
-    Leave() {
-        var message = this.message;
+    Leave(message) {
+        // var message = this.message;
         try {
+            this.last_message = message;
             if (message.guild.me.voiceChannel == undefined || message.guild.me.voiceChannel != message.member.voiceChannel) {
                 message.channel.send('``연결된 채널을 확인해주세요.``');
             } else {
@@ -98,8 +99,8 @@ class voicechannel extends music {
         }
     }
 
-    Now() {
-        var message = this.message;
+    Now(message) {
+        // var message = this.message;
         try {
             if (message.guild.me.voiceChannel == undefined)
                 message.channel.send('``아무 채널에도 참가하고 있지 않아요.``');
@@ -110,16 +111,16 @@ class voicechannel extends music {
         }
     }
 
-    Volume(v) {
+    Volume(v, message) {
         try {
-            if (v > 120 || v < 10) return this.message.channel.send('``볼륨은 10 ~ 120 사이에서 정해 주세요.``');
+            if (v > 120 || v < 10) return message.channel.send('``볼륨은 10 ~ 120 사이에서 정해 주세요.``');
             
             this.voiceChannel.playSong.streamOption.volume = v;
             
             if (this.voiceChannel.playSong.playing)
                 this.voiceChannel.playSong.dispatcher.setVolume(this.voiceChannel.playSong.streamOption.volume * 1 / 800);
 
-            this.message.channel.send('``볼륨을 ' + this.voiceChannel.playSong.streamOption.volume + ' 으로 설정했어요.``');
+            message.channel.send('``볼륨을 ' + this.voiceChannel.playSong.streamOption.volume + ' 으로 설정했어요.``');
         } catch(error) {
             this.voiceerrorhandler(error);
         }

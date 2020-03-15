@@ -3,6 +3,7 @@
 
 //main NjE3MzEwMzY1OTE4ODIyNDIx.XWuI4w.MSdZ8LorBxaKMAIzYA-68L1WCto
 //beta NjE5NTI3MzY0MDkwNjU4ODE3.XXJh-A.uGTknJRXOKBxjzYB7jaQk_UfLUw
+const cpuStat = require('cpu-stat');
 const Discord = require('discord.js');
 const Token = 'NjE3MzEwMzY1OTE4ODIyNDIx.XWuI4w.MSdZ8LorBxaKMAIzYA-68L1WCto';
 
@@ -72,8 +73,15 @@ client.on('message', message => {
   if (message.content.startsWith(prefix + '업보킹')) {
     server.voiceChannel.fun.funAction('eoajfl', message);
   }
-  if (message.content.startsWith(prefix + '테스트')) {
-    server.voiceChannel.test();
+  if (message.content.startsWith(prefix + 'CPU')) {
+    setInterval(() => {
+      cpuStat.usagePercent((err, percent, seconds) => {
+        if (err)
+          return console.log (err);
+
+        client.user.setActivity('CPU: ' + percent);
+      })
+    },1000);
   }
 
   if (message.content.startsWith(prefix + '핑')) {
