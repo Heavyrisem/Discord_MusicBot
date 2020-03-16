@@ -74,6 +74,7 @@ client.on('message', message => {
     server.voiceChannel.fun.funAction('eoajfl', message);
   }
   if (message.content.startsWith(prefix + 'CPU')) {
+    return message.channel.send('``오류로 인해 비활성화 되었어요``')
     setInterval(() => {
       cpuStat.usagePercent((err, percent, seconds) => {
         if (err)
