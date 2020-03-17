@@ -84,7 +84,7 @@ class voicechannel extends music {
     }
 
     Leave(message) {
-        // var message = this.message;
+        var message = this.message;
         try {
             this.last_message = message;
             if (message.guild.me.voiceChannel == undefined || message.guild.me.voiceChannel != message.member.voiceChannel) {
