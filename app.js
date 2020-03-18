@@ -23,7 +23,7 @@ client.on('ready', () => {
 
 
 client.on('message', message => {
-  if (message.member.id == client.user.id) return;
+  if (message.member.id == client.user.id) return;  // 자기가 보낸 메세지 무시
 
 
   if (message.content.startsWith == '오리') {
@@ -31,11 +31,11 @@ client.on('message', message => {
   }
 
 
-  if (!message.content.startsWith('!')) return;
-  if (!serverMap.has(message.guild.id)) {
+  if (!message.content.startsWith('!')) return; // prefix 확인
+  if (!serverMap.has(message.guild.id)) { // 서버 맵에 있는지
     try {
-      serverMap.set(message.guild.id, new serverClass(client, message));
-    } catch(error) {
+      serverMap.set(message.guild.id, new serverClass(client, message));  // 없으면 새 클래스 생성
+    } catch(error) {  // 오류 처리
       const errormsg = new Discord.RichEmbed()
       .setColor('#ff148e')
       .setTitle('⚠️ [server Class] 에서 오류가 발생했어요.')
@@ -46,14 +46,14 @@ client.on('message', message => {
     }
   }
 
-  var server = serverMap.get(message.guild.id);
+  var server = serverMap.get(message.guild.id); // 서버맵 가져오기
 
-  if (server.getmessage) {
+  if (server.getmessage) {  // 서버 클래스에 메세지 올리기 (삭제예정)
     server.updateMsg(message);
   }
 
   try {
-    var prefix = server.serversetting.prefix;
+    var prefix = server.serversetting.prefix; //prefix 가져오기
   } catch(error) {
     const errormsg = new Discord.RichEmbed()
     .setColor('#ff148e')
@@ -74,7 +74,7 @@ client.on('message', message => {
     server.voiceChannel.fun.funAction('eoajfl', message);
   }
   if (message.content.startsWith(prefix + 'CPU')) {
-    return message.channel.send('``오류로 인해 비활성화 되었어요``')
+    return message.channel.send('``오류로 인해 비활성화 되었어요``')  // stack 오류
     setInterval(() => {
       cpuStat.usagePercent((err, percent, seconds) => {
         if (err)
@@ -85,7 +85,7 @@ client.on('message', message => {
     },5000);
   }
 
-  if (message.content.startsWith(prefix + '핑')) {
+  if (message.content.startsWith(prefix + '핑')) {  // 한글자 단축어 추가 예정
     server.Ping(message);
   }
 
@@ -102,11 +102,11 @@ client.on('message', message => {
   }
 
   if (message.content.startsWith(prefix + '노래')) {
-    if (message.member.voiceChannel == undefined) return message.channel.send('``먼저 음성 채널에 접속해 주세요.``');
-    var keyword = message.content.substring(4, message.content.length);
-    if (keyword.startsWith('https://www.youtube.com') || keyword.startsWith('http://www.youtube.com')) {
+    if (message.member.voiceChannel == undefined) return message.channel.send('``먼저 음성 채널에 접속해 주세요.``'); // 접속중인 채널 체크
+    var keyword = message.content.substring(4, message.content.length); // 명령어 부분 자르기
+    if (keyword.startsWith('https://www.youtube.com') || keyword.startsWith('http://www.youtube.com')) {  // URL 문자열 검사
       try {
-        server.voiceChannel.addmusic_url(keyword, message);
+        server.voiceChannel.addmusic_url(keyword, message); // URL이면 바로 음악 추가
       } catch(error) {
         const errormsg = new Discord.RichEmbed()
         .setColor('#ff148e')
@@ -116,18 +116,18 @@ client.on('message', message => {
     
         message.channel.send(errormsg);
       }
-    } else if (keyword != '') {
-      server.voiceChannel.addmusic(message, keyword);
+    } else if (keyword != '') { // 공백인지 검사
+      server.voiceChannel.addmusic(message, keyword); // 유튜브 에서 음악 검색후 추가
     } else {
-      message.channel.send('``사용법 : ' + prefix + '노래 [URL 이나 제목]``');
+      message.channel.send('``사용법 : ' + prefix + '노래 [URL 이나 제목]``');  // 키워드가 비었을때
     }
   }
 
   if (message.content.startsWith(prefix + '스킵')) {
-    if (!isNaN(message.content.substring(4, message.content.length))) 
-      server.voiceChannel.skip(message.content.substring(4, message.content.length), message);
+    if (!isNaN(message.content.substring(4, message.content.length))) // 명령어 부분 잘라서 숫자인지 확인
+      server.voiceChannel.skip(message.content.substring(4, message.content.length), message);  // 숫자면 해당 번호 음악 스킵
     else
-      server.voiceChannel.skip(message);
+      server.voiceChannel.skip(message);  // 아니면 현재음악 스킵
   }
   
   if (message.content.startsWith(prefix + '정지')) {
@@ -139,19 +139,19 @@ client.on('message', message => {
   }
 
   if (message.content.startsWith(prefix + '볼륨')) {
-    if (isNaN(message.content.substring(4, message.content.length))) return message.channel.send('``사용법 : 볼륨 [숫자]``');
-    server.voiceChannel.setvolume(message.content.substring(4, message.content.length), message);
+    if (isNaN(message.content.substring(4, message.content.length))) return message.channel.send('``사용법 : 볼륨 [숫자]``'); // 명령어 잘라서 숫자인지 확인
+    server.voiceChannel.setvolume(message.content.substring(4, message.content.length), message); // 볼륨 설정
   }
 
-  if (message.content.startsWith(prefix + '스팀')) {
-    var search = message.content.substring(3, message.content.length);
-    if (search == undefined) return message.channel.send('``스팀 [검색어]``');
-    server.Utility.steamSearch(search).then(result => {
-      if (result == undefined) return message.channel.send('``검색 결과가 없습니다.``');
-      var price;
-      if (result.gameprice[0] == 0) price = '무료';
-      else if (result.gameprice[0] == undefined) price = '미정';
-      else price = result.gameprice[0] + '원';
+  if (message.content.startsWith(prefix + '스팀')) {  // 스팀에서 게임 검색
+    var search = message.content.substring(3, message.content.length);  // 명령어 부분 자르기
+    if (search == undefined) return message.channel.send('``스팀 [검색어]``');  // 검색어가 없으면
+    server.Utility.steamSearch(search).then(result => { // 유틸리티 에서 steamSearh 호출, 검색어 주고 결과값 동기로 받아오기
+      if (result == undefined) return message.channel.send('``검색 결과가 없습니다.``');  // 결과가 비었을때 (오류 있는거같음)
+      var price;  
+      if (result.gameprice[0] == 0) price = '무료'; // 0원일때
+      else if (result.gameprice[0] == undefined) price = '미정';  // 미출시 게임들
+      else price = result.gameprice[0] + '원';  // 화폐단위
       
 
       const steamgame = new Discord.RichEmbed()
@@ -166,19 +166,19 @@ client.on('message', message => {
     });
   }
 
-  if (message.content.startsWith(prefix + '리셋')) {
+  if (message.content.startsWith(prefix + '리셋')) {  // 작동 안됨
     server = '';
   }
 
-  if (message.content.startsWith(prefix + '업타임')) {
+  if (message.content.startsWith(prefix + '업타임')) {  // 계산 제대로 필요
     message.channel.send('``' + client.uptime/60/10 + '``');
   }
   
-  if (message.content === prefix + '재시작 DHQUDALS') {
-    message.delete().then(() => {
+  if (message.content === prefix + '재시작 DHQUDALS') { // forever 필요
+    message.delete().then(() => { // 비밀번호 노출 방지, 메세지 삭제
       console.log('수동 재시작 : ', message.member.user.username);
-      message.channel.send('``⚠️ 수동 재시작을 시작합니다. \n디스코드 봇 클라이언트가 정지되고, 재시작까지 최대 30초가 소요됩니다.``').then(() => {
-      client.destroy().then(() => {process.exit()});
+      message.channel.send('``⚠️ 수동 재시작을 시작합니다. \n디스코드 봇 클라이언트가 정지되고, 재시작까지 최대 30초가 소요됩니다.``').then(() => { // 메세지 보내기
+      client.destroy().then(() => {process.exit()});  // 동기식으로 클라이언트 종료, 코드 종료
       });
     });
   }
@@ -186,4 +186,4 @@ client.on('message', message => {
 });
 
 
-client.login(Token); 
+client.login(Token);  // 클라이언트 로그인

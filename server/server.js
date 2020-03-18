@@ -1,5 +1,5 @@
-const voicechannel = require('../VoiceChannel/VoiceChannel');
-const Utility = require('../utility/utility');
+const voicechannel = require('../VoiceChannel/VoiceChannel');   // 음성채널 관리 로드
+const Utility = require('../utility/utility');  //유틸리티 로드
 
 class server extends voicechannel {
     constructor(client, message) {
@@ -19,7 +19,7 @@ class server extends voicechannel {
                 'autoleave': 60000,
             }
 
-            this.voiceChannel = {
+            this.voiceChannel = {   // 왜했지, 삭제해라
                 join() {return e.Join()},
                 now(m) {e.Now(m)},
                 leave(m) {e.Leave(m)},
@@ -48,21 +48,21 @@ class server extends voicechannel {
                 show_queue() {e.queue_show()}
             };
 
-            this.Utility = new Utility();
+            this.Utility = new Utility();   // 유틸리티 부분
         } catch(error) {
             this.errorhandler(error);
         }
     }
 
-    Ping() {
+    Ping() {    // 핑
         var e = this;
-        if (e.ping != undefined) return;
+        if (e.ping != undefined) return; // ??
 
-        this.message.channel.send('``현재 핑은 ' + this.client.ping + 'ms 입니다.``');
+        this.message.channel.send('``현재 핑은 ' + this.client.ping + 'ms 입니다.``'); // discord.js v12에서 Client.ws.ping으로 변경됨, 새로운 핑 시스템 추가 예정
     }
 
-    updateMsg(message) {
-        if (message == undefined) return;
+    updateMsg(message) {    // 서버 클래스에 메세지 넣는 기능, 마지막 메세지 저장용으로 변경해라
+        if (message == undefined) return;   // 들어온 값 비었으면 리턴
         this.message = message;
     }
 
