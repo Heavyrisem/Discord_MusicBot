@@ -14,19 +14,21 @@ class server extends voicechannel {
             this.getmessage = true;
             this.ping = undefined;
 
+            this.botColor = '#ff148e';
+
             this.serversetting = {
                 'prefix': '!',
                 'autoleave': 60000,
             }
 
-            this.voiceChannel = {   // 왜했지, 삭제해라
-                join() {return e.Join()},
+            this.voiceChannel = {
+                join(m) {return e.Join(m)},
                 now(m) {e.Now(m)},
                 leave(m) {e.Leave(m)},
                 addmusic(message, keyword) {e.search_music(message, keyword)},
                 addmusic_url(target) {e.Addmusic(target)},
-                skip(n) {e.Skip(n)},
-                stop() {e.Stop()},
+                skip(n, m) {e.Skip(n, m)},
+                stop(m) {e.Stop(m)},
                 setvolume(v, m) {e.Volume(v, m)},
                 autoleave_active() {e.Autoleave()},
                 autoleave_clear() {e.Autoleave_clear()},
@@ -43,9 +45,9 @@ class server extends voicechannel {
                     queue: [],
                 },
                 fun : {
-                    funAction(input) {e.FunAction(input)},
+                    funAction(input, m) {e.FunAction(input, m)},
                 },
-                show_queue() {e.queue_show()}
+                show_queue(m) {e.queue_show(m)}
             };
 
             this.Utility = new Utility();   // 유틸리티 부분
@@ -54,11 +56,11 @@ class server extends voicechannel {
         }
     }
 
-    Ping() {    // 핑
+    Ping(message) {    // 핑
         var e = this;
         if (e.ping != undefined) return; // ??
 
-        this.message.channel.send('``현재 핑은 ' + this.client.ping + 'ms 입니다.``'); // discord.js v12에서 Client.ws.ping으로 변경됨, 새로운 핑 시스템 추가 예정
+        message.channel.send('``현재 핑은 ' + this.client.ping + 'ms 입니다.``'); // discord.js v12에서 Client.ws.ping으로 변경됨, 새로운 핑 시스템 추가 예정
     }
 
     updateMsg(message) {    // 서버 클래스에 메세지 넣는 기능, 마지막 메세지 저장용으로 변경해라

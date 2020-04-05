@@ -14,7 +14,7 @@ class voicechannel extends music {
         else {
             var e = this;
             var mp3;
-            this.voiceChannel.join().then(connection => {   // 음성채널 참가
+            this.voiceChannel.join(message).then(connection => {   // 음성채널 참가
                 e.Autoleave_clear();    // 자동 나가기 해제  
                 e.voiceChannel.playSong.connection = connection;    // 연결 정보 저장
 
@@ -26,11 +26,11 @@ class voicechannel extends music {
                     .setDescription('티기틱ㅌㄱ티기ㅣㅌ기ㅣ티긱')
                     .setTimestamp();
                 
-                    e.message.channel.send(errormsg);
+                    message.channel.send(errormsg);
                 }
                 else if (input == 'EE') {
-                    e.message.channel.send('음식이 장난이야?');
-                    e.message.channel.send({
+                    message.channel.send('음식이 장난이야?');
+                    message.channel.send({
                       files: [{
                         attachment: './VoiceChannel/fun/EE.jpg',
                         name: 'EE.jpg'
@@ -51,7 +51,7 @@ class voicechannel extends music {
                     e.voiceChannel.playSong.playing = false;    // 재상 상태 False
                     e.voiceChannel.autoleave_active();  // 자동 떠나기 켜기
 
-                    if (e.voiceChannel.playSong.queue[0] != undefined) e.playmusic();   // 다음 큐 있으면 재생
+                    if (e.voiceChannel.playSong.queue[0] != undefined) e.playmusic(message);   // 다음 큐 있으면 재생
                 });
             }).catch(error => {
                 const errormsg = new Discord.RichEmbed()
@@ -60,33 +60,31 @@ class voicechannel extends music {
                 .setDescription(error)
                 .setTimestamp();
             
-                this.message.channel.send(errormsg);
-                this.voiceChannel.leave();
+                message.channel.send(errormsg);
+                this.voiceChannel.leave(message);
             });
         }
     }
 
-    Join() {    // 음성채널 참가
-        var message = this.message; // 메세지 받는식, 마지막 메세지 처리 식으로 아니면 참가 메세지 저장
-        try {
+    Join(message) {    // 음성채널 참가
+        //var message = this.message; // 메세지 받는식, 마지막 메세지 처리 식으로 아니면 참가 메세지 저장
             if (message.member.voiceChannel != undefined) { // 음성채널 접속확인
                 this.Autoleave_clear(); // 자동 떠나기 해제
                 if (message.guild.me.voiceChannel == undefined) // 현재 봇이 참가한 채널이 없으면
                     message.channel.send('``➡️ ' + message.member.voiceChannel.name + ' 에 연결해요``');    // 참가한다는 메세지 출력
                 this.Autoleave(); // 자동 떠나기 켜기
-                return message.member.voiceChannel.join();  // .then()을 위해 참가 메소드 리턴
+                return message.member.voiceChannel.join()  // .then()을 위해 참가 메소드 리턴
+                .catch((err) => { this.voiceerrorhandler(err) })
+                
             } else {
                 message.channel.send('``먼저 음성 채널에 접속해 주세요.``');    // 음성채널이 없을때
             }
-        } catch(error) {
-            this.voiceerrorhandler(error);
-        }
     }
 
     Leave(message) {    // 음성채널 떠나기   
-        var message = this.message; // Join이랑 같음
         try {
-            this.last_message = message;
+            if (message == undefined)
+                message = this.message;
             if (message.guild.me.voiceChannel == undefined || message.guild.me.voiceChannel != message.member.voiceChannel) {   // 봇의 채널이 없는지, 명령한 사람이 봇과 같이 있는지
                 message.channel.send('``연결된 채널을 확인해주세요.``');
             } else {
@@ -113,7 +111,7 @@ class voicechannel extends music {
 
     Volume(v, message) {    // 볼륨 조절
         try {
-            if (v > 120 || v < 10) return message.channel.send('``볼륨은 10 ~ 120 사이에서 정해 주세요.``');    // 10 ~ 120 제한
+            if (v > 200 || v < 10) return message.channel.send('``볼륨은 10 ~ 200 사이에서 정해 주세요.``');    // 10 ~ 120 제한
             
             this.voiceChannel.playSong.streamOption.volume = v; // 서버 설정에 볼륨 저장
             
@@ -134,11 +132,11 @@ class voicechannel extends music {
         }
         
         this.voiceChannel.autoleave = setTimeout(function() {   // 자동 떠나기 활성화
-            var message = e.message;
+            var last_message = e.message;
             try {
-                if (message.guild.me.voiceChannel) {    // 봇이 접속중인 채널이 있다면
+                if (last_message.guild.me.voiceChannel) {    // 봇이 접속중인 채널이 있다면
                     e.Leave()   // Leave()
-                    message.channel.send('``⬅️ 활동이 없어서 방을 나갔어요.``'); // 자동으로 떠났다는 메세지
+                    last_message.channel.send('``⬅️ 활동이 없어서 방을 나갔어요.``'); // 자동으로 떠났다는 메세지
                 }
             } catch(error) {
                 e.voiceerrorhandler(error);

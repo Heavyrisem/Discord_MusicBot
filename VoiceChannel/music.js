@@ -10,45 +10,45 @@ class music {
     constructor() {
     }
 
-    Skip(n) {   // 음악 스킵
+    Skip(n, message) {   // 음악 스킵
         try {
             if (this.voiceChannel.playSong.queue == '') // 큐가 비었는지 확인
-                this.message.channel.send('``큐가 이미 비어있습니다.``');
-            else if (this.message.member.voiceChannel == null || this.message.member.voiceChannel.id != this.message.guild.me.voiceChannel.id) // 멤버의 음성채널 접속 확인, 같은 음성채팅방에 접속했는지 확인
+                message.channel.send('``큐가 이미 비어있습니다.``');
+            else if (message.member.voiceChannel == null || message.member.voiceChannel.id != message.guild.me.voiceChannel.id) // 멤버의 음성채널 접속 확인, 같은 음성채팅방에 접속했는지 확인
                 this.message.channel.send('``먼저 음성 채팅방에 입장해 주세요.``');
             else if (n == undefined || n <= 1) {    // 스킵 번호가 없거나 1보다 작거나 같은경우
                     this.voiceChannel.playSong.dispatcher.end();    // 현재 음악 스킵
-                    this.message.channel.send('``음악을 스킵했어요.``');
+                    message.channel.send('``음악을 스킵했어요.``');
             } else {    // n 번째 음악 스킵
-                if (this.voiceChannel.playSong.queue[n-1] == undefined) return this.message.channel.send('``큐의 ' + n + ' 번째는 비어 있어요.``'); // 큐의 n 번째가 존재하는지 확인
+                if (this.voiceChannel.playSong.queue[n-1] == undefined) return message.channel.send('``큐의 ' + n + ' 번째는 비어 있어요.``'); // 큐의 n 번째가 존재하는지 확인
                 var deletedsong = this.voiceChannel.playSong.queue.splice(n-1, 1);  // 음악을 큐에서 잘라내서 저장
-                this.message.channel.send('``' + deletedsong[0].title + ' 를 큐에서 제거했어요.``');    // 잘라낸 음악 정보 보여주기
+                message.channel.send('``' + deletedsong[0].title + ' 를 큐에서 제거했어요.``');    // 잘라낸 음악 정보 보여주기
             }
         } catch(error) {
             this.playerrorhandling('Skip', error);
         }
     }
 
-    Stop() {    // 음악 정지
+    Stop(message) {    // 음악 정지
         try {
             if (this.voiceChannel.playSong.playing == false)    // 음악 재생중인지 확인
-                this.message.channel.send('``재생 중이 아닙니다.``');
-            else if (this.message.member.voiceChannel == null || this.message.member.voiceChannel.id != this.message.guild.me.voiceChannel.id)  // 멤버가 응성채널 접속중인지, 같은채널인지
-                this.message.channel.send('``먼저 음성 채팅방에 입장해 주세요.``');
+                message.channel.send('``재생 중이 아닙니다.``');
+            else if (message.member.voiceChannel == null || message.member.voiceChannel.id != message.guild.me.voiceChannel.id)  // 멤버가 응성채널 접속중인지, 같은채널인지
+                message.channel.send('``먼저 음성 채팅방에 입장해 주세요.``');
             else {
                 this.voiceChannel.playSong.queue = '';  // 큐 전체 비우기
                 this.voiceChannel.playSong.dispatcher.end();    // 재생중인 음악 종료
-                this.message.channel.send('``음악 재생을 정지했어요.``');
+                message.channel.send('``음악 재생을 정지했어요.``');
             }
         } catch(error) {
             this.playerrorhandling('Stop', error);
         }
     }
 
-    queue_show() {  // 큐 보야주기
+    queue_show(message) {  // 큐 보야주기
         var e = this;
         if (e.voiceChannel.playSong.queue == '') {  // 큐가 비었을때
-            e.message.channel.send('``큐가 비어있습니다.``');
+            message.channel.send('``큐가 비어있습니다.``');
         } else {
             var queue = e.voiceChannel.playSong.queue;  // 큐 가져오기
             var queuelist = '```Swift\n';   // 디스코드 메세지 마크업 적용
@@ -59,15 +59,15 @@ class music {
             }
             queuelist = queuelist + '```';  // 마크업 마무리
             
-            e.message.channel.send(queuelist);
+            message.channel.send(queuelist);
         }
         
     }
 
-    Addmusic(target) {  // 음악 추가
-        if (target == '') return this.message.channel.send('``비디오 ID 가 비었습니다.``'); // 영상의 ID 유효성 검사
+    Addmusic(target, message) {  // 큐에 음악 추가
+        if (target == '') return message.channel.send('``비디오 ID 가 비었습니다.``'); // 영상의 ID 유효성 검사
         if (target.startsWith('https://www.youtube.com') || target.startsWith('http://www.youtube.com'))    // URL 인지 검사
-            target = this.message.content.substring(36, this.message.content.length);   // 비디오 ID 부분 자르기
+            target = message.content.substring(36, message.content.length);   // 비디오 ID 부분 자르기
         var e = this;
         var video_info;
 
@@ -75,27 +75,27 @@ class music {
             video_info = {
                 'title': info.title,    // 제목
                 'time': e.scTomin(info.duration),   // 재생시간
-                'author': e.message.member.user.username,   // 추가한 사람
+                'author': message.member.user.username,   // 추가한 사람
                 'id': info.videoId  // 영상 ID
             }
 
             
             e.voiceChannel.playSong.queue.push(video_info); // 큐에 넣기, 끝에 붙이기
             if (e.voiceChannel.playSong.playing == false)   // 재생중이 아니면
-                this.playmusic();   // 음악(큐) 재생
+                this.playmusic(message);   // 음악(큐) 재생
             else   
-                e.message.channel.send('``' + video_info.title + ' 을(를) 재생목록에 추가했어요.``');
+                message.channel.send('``' + video_info.title + ' 을(를) 재생목록에 추가했어요.``');
         })
         .catch(function (error) {e.playerrorhandling('ytdl.getInfo', error)});
     }
 
-    playmusic() {   // 큐에서 음악 재생
+    playmusic(message) {   // 큐에서 음악 재생
         var e = this;
         var i = 0;
         var l = 0;
 
-        this.voiceChannel.join().then(connection => {   // 음성 채널 접속, 어디로 접속하는지 특정되지 않음 작업 필요
-            this.voiceChannel.autoleave_clear();    //  자동 떠나기 해제
+        this.voiceChannel.join(message).then(async function(connection) {   // 음성 채널 접속
+            e.voiceChannel.autoleave_clear();    //  자동 떠나기 해제
             var video_info = e.voiceChannel.playSong.queue[0];  // 큐 첫번째의 정보 가져오기
             const streamOption = {  // 재생 옵션
                 volume: e.voiceChannel.playSong.streamOption.volume * 1 / 800,  // 서버 정보에서 볼륨 가져오기 /800으로 큰 소리 방지
@@ -105,8 +105,8 @@ class music {
             //https://www.youtube.com/watch?v=_1scmwn_1VI
             try {
                 e.voiceChannel.playSong.connection = connection;    // 음성채널 연결정보 저장
-                var message = e.message;
-                
+                //var message = e.message;
+                const loading_msg = await message.channel.send('``⌛음악을 로딩중입니다....``');
                 const music_file = ytdl(video_info.id, {filter: 'audioonly', quality: 'lowestaudio'});  // 유튜브에서 음악 불러오기
                 music_file.pipe(fs.createWriteStream('VoiceChannel/temp/'+message.guild.id+'.mp3', { highWaterMark: 128 })); // 유튜브에서 음악 mp3로 다운로드, 한번에 128바이트
                 
@@ -123,8 +123,9 @@ class music {
                     var read = fs.createReadStream('VoiceChannel/temp/'+message.guild.id+'.mp3', { highWaterMark: 256 }); // mp3 파일 로드 시작
                     
 
-                    e.voiceChannel.playSong.dispatcher = connection.playStream(read , streamOption);    // 읽어온 파일을 재샐 옵션을 적용해 재생
+                    e.voiceChannel.playSong.dispatcher = connection.playStream(read , streamOption);    // 읽어온 파일을 재생 옵션을 적용해 재생
                     e.voiceChannel.playSong.playing = true; // 음악 재생 true
+                    loading_msg.delete();
                     console.log('``' + video_info.title + ' 을(를) 재생해요 🎵``', message.channel.name);
                     message.channel.send('``' + video_info.title + ' 을(를) 재생해요 🎵``');
 
@@ -137,11 +138,11 @@ class music {
 
                         e.voiceChannel.autoleave_active();  // 자동 떠나기 활성화
                         if (e.voiceChannel.playSong.queue[0] != undefined)  // 다음 음악이 버이었지 않다면
-                            e.playmusic();  // 음악 재생
+                            e.playmusic(message);  // 음악 재생
                     });
         
                     e.voiceChannel.playSong.dispatcher.on('error', error => {
-                        e.playerrorhandling('dispatcher' ,error);
+                        e.playerrorhandling('dispatcher', error);
                     });
     
                     read.on('data', () => {l++;});  // 데이터 한 조각 읽어들일때, 카운터 증가
@@ -167,8 +168,9 @@ class music {
         var music_list = [];
         var music_selection = '```Swift';   // 마크업 설정
         const request_author = message.member.id;   // 추가하려는 멤버 아이디
-            yt_search(keyword, function(err, r) {   // 유튜브 영상 검색
+            yt_search(keyword, async function(err, r) {   // 유튜브 영상 검색
                 try {
+                    if (err) throw new Error(err);
                     for (var i = 0; i < 5; i++) {   // 최대 5개까지 검색
                         if (r.videos[i] == undefined) break;    // 검색 결과가 적어서 5개 미만일 경우
                         if (r.videos[i].seconds == 0) { // 재생 시간이 0인것 스킵, 광고임
@@ -177,6 +179,9 @@ class music {
                             i--;    // 반복 횟수에서 빼기
                             continue;   // 카운터 1 증가시키고 다시 반복
                         } else {
+                            if (r.videos[i].title == '') {
+                                console.log('err', r.videos);
+                            }
                             music_list[i] = r.videos[i];    // 검색 결과값으로 이동
                         }
                     }
@@ -187,13 +192,14 @@ class music {
                     }
 
                     music_selection = music_selection + '```';
+                    if (music_selection == '```Swift```') throw new Error('API 오류, 결과값이 없습니다. 다시 시도해 주세요'); // 검색 결과가 없는 오류
 
-                    e.message.channel.send(music_selection);    // 보내기
+                    const select_message = await message.channel.send(music_selection);    // 보내기
 
-                    e.select_music(music_list.length, request_author).then(a => {   // 음악 선택 입력받기
+                    e.select_music(music_list.length, request_author, message, select_message).then(a => {   // 음악 선택 입력받기
                         if (a == undefined) throw new Error('선택값을 찾지 못했습니다.');   // 예외처리
                         
-                        e.Addmusic(music_list[a-1].videoId);    // 받아온 영상의 ID 값으로 음악 추가
+                        e.Addmusic(music_list[a-1].videoId, message);    // 받아온 영상의 ID 값으로 음악 추가
                     });
                 } catch(error) {
                     e.playerrorhandling('yt_search', error);
@@ -201,19 +207,33 @@ class music {
             });
     }
 
-    select_music(range_max, request_author) {   // 음악 선택 입력받기
+    select_music(range_max, request_author, message, select_message) {   // 음악 선택 입력받기
+        var input_message = message;
         var e = this;
+        if (e.client.listeners('message')[1] != null) {
+            e.client.removeListener('message', e.client.listeners('message')[1]);
+            message.channel.send('``이전에 입력받던 리스너를 자동 삭제합니다.``');
+        }
         return new Promise(function(resolve, reject) {  // 결과값을 돌려줘야해서 동기 처리
 
             var select_timeout = setTimeout(function() {    // 제한시간
-                e.message.channel.send('``선택 시간이 초과되었어요.``');
+                select_message.delete() // 이전에 검색했던 결과값 메세지 삭제
+                .catch((err) => { console.log('del err', err) });
+
+                if (e.client.listeners('message')[1] == null) return;   // 이미 리스너가 제거되었는지 확인
+                input_message.channel.send('``선택 시간이 초과되었어요.``');    // 리스너가 없다면 실행할 필요 없음
+
+                if (e.client.listeners('message')[1] == null) return;   // 리스너가 있는지 확인
                 e.client.removeListener('message', e.client.listeners('message')[1]);   // 입력받는 리스너 제거
+
+
             }, 10000);
             
 
             e.client.on('message', message => { // 메세지 입력시 이벤트
                 try {
                     if (message.member.id == e.client.user.id) return;    // 봇이 보낸 메세지는 무시
+                    if (message.channel.id != input_message.channel.id) return; // 다른 채널의 메세지 무시
                     //console.log(message.content); // 디버그용, 입력값
 
                     var num;
@@ -227,7 +247,11 @@ class music {
                         message.channel.send('``범위 내에서 선택해 주세요.``');
                         return;
                     }
+
+                    select_message.delete()
+                    .catch((err) => { console.log('msg already deleted') });    // 검색 리스트 삭제
                     message.delete();   // 입력받은 메세지는 삭제
+                    
                     
                     clearTimeout(select_timeout);   // 입력시간 제한 해제
                     e.client.removeListener('message', e.client.listeners('message')[1]);   // 입력 받는용도의 리스너 삭제

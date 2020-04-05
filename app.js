@@ -2,10 +2,10 @@
 // Import the discord.js module
 
 //main NjE3MzEwMzY1OTE4ODIyNDIx.XWuI4w.MSdZ8LorBxaKMAIzYA-68L1WCto
-//beta NjE5NTI3MzY0MDkwNjU4ODE3.XXJh-A.uGTknJRXOKBxjzYB7jaQk_UfLUw
+//beta NjE5NTI3MzY0MDkwNjU4ODE3.XnDOeg.Lh02kxHHjLFBHgfffJg9UcdjrD4
 const cpuStat = require('cpu-stat');
 const Discord = require('discord.js');
-const Token = 'NjE3MzEwMzY1OTE4ODIyNDIx.XWuI4w.MSdZ8LorBxaKMAIzYA-68L1WCto';
+const Token = 'NjE5NTI3MzY0MDkwNjU4ODE3.XnDOeg.Lh02kxHHjLFBHgfffJg9UcdjrD4';
 
 const serverClass = require('./server/server');
 // Create an instance of a Discord client
@@ -22,7 +22,7 @@ client.on('ready', () => {
 
 
 
-client.on('message', message => {
+client.on('message', async function(message) {
   if (message.member.id == client.user.id) return;  // 자기가 보낸 메세지 무시
 
 
@@ -146,7 +146,9 @@ client.on('message', message => {
   if (message.content.startsWith(prefix + '스팀')) {  // 스팀에서 게임 검색
     var search = message.content.substring(3, message.content.length);  // 명령어 부분 자르기
     if (search == undefined) return message.channel.send('``스팀 [검색어]``');  // 검색어가 없으면
-    server.Utility.steamSearch(search).then(result => { // 유틸리티 에서 steamSearh 호출, 검색어 주고 결과값 동기로 받아오기
+    const loading_msg = await message.channel.send('``데이터를 찾는 중입니다.....``');
+    server.Utility.steamSearch(search, message).then(result => { // 유틸리티 에서 steamSearh 호출, 검색어 주고 결과값 동기로 받아오기
+      loading_msg.delete(); // 로딩중 메세지 삭제
       if (result == undefined) return message.channel.send('``검색 결과가 없습니다.``');  // 결과가 비었을때 (오류 있는거같음)
       var price;  
       if (result.gameprice[0] == 0) price = '무료'; // 0원일때
