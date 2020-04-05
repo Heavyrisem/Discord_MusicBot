@@ -21,7 +21,7 @@ class voicechannel extends music {
                 if (input == 'Tick') {
                     mp3 = fs.createReadStream('./VoiceChannel/fun/xlr.mp3');
                     const errormsg = new Discord.RichEmbed()
-                    .setColor('#ff148e')
+                    .setColor('#9147ff')
                     .setTitle('⚠️ 틱장애 발생.')
                     .setDescription('티기틱ㅌㄱ티기ㅣㅌ기ㅣ티긱')
                     .setTimestamp();
@@ -55,7 +55,7 @@ class voicechannel extends music {
                 });
             }).catch(error => {
                 const errormsg = new Discord.RichEmbed()
-                .setColor('#ff148e')
+                .setColor('#9147ff')
                 .setTitle('⚠️ 틱장애 발생.')
                 .setDescription(error)
                 .setTimestamp();
@@ -150,7 +150,7 @@ class voicechannel extends music {
 
     voiceerrorhandler(msg) {
         const errormsg = new Discord.RichEmbed()
-        .setColor('#ff148e')
+        .setColor('#9147ff')
         .setTitle('⚠️ [VoiceChannel Class] 에서 오류가 발생했어요.')
         .setDescription(msg)
         .setTimestamp();

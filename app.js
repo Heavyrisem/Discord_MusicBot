@@ -18,7 +18,7 @@ var serverMap = new Map();
 
 client.on('ready', () => {
   console.log(client.user.username + ' I am ready!');
-  client.user.setActivity('명령어 v2.0');
+  client.user.setActivity('명령어 v2.0.1');
 });
 
 
@@ -38,7 +38,7 @@ client.on('message', async function(message) {
       serverMap.set(message.guild.id, new serverClass(client, message));  // 없으면 새 클래스 생성
     } catch(error) {  // 오류 처리
       const errormsg = new Discord.RichEmbed()
-      .setColor('#ff148e')
+      .setColor('#9147ff')
       .setTitle('⚠️ [server Class] 에서 오류가 발생했어요.')
       .setDescription(error)
       .setTimestamp();
@@ -57,7 +57,7 @@ client.on('message', async function(message) {
     var prefix = server.serversetting.prefix; //prefix 가져오기
   } catch(error) {
     const errormsg = new Discord.RichEmbed()
-    .setColor('#ff148e')
+    .setColor('#9147ff')
     .setTitle('⚠️ [Get Default Setting] 에서 오류가 발생했어요.')
     .setDescription(error)
     .setTimestamp();
@@ -110,7 +110,7 @@ client.on('message', async function(message) {
         server.voiceChannel.addmusic_url(keyword, message); // URL이면 바로 음악 추가
       } catch(error) {
         const errormsg = new Discord.RichEmbed()
-        .setColor('#ff148e')
+        .setColor('#9147ff')
         .setTitle('⚠️ [URL 재생] 에서 오류가 발생했어요.')
         .setDescription(error)
         .setTimestamp();
@@ -158,7 +158,7 @@ client.on('message', async function(message) {
       
 
       const steamgame = new Discord.RichEmbed()
-      .setColor('#ff148e')
+      .setColor('#9147ff')
       .setTitle(result.gametitle[0])
       .setThumbnail(result.gameimgURL[0])
       .addField('출시일자', result.gamerelesed[0])

@@ -290,7 +290,7 @@ class music {
 
       playerrorhandling(msg, err) {
         const errormsg = new Discord.RichEmbed()            
-        .setColor('#ff148e')
+        .setColor('#9147ff')
         .setTitle('⚠️ [' + msg + '] 에서 오류가 발생했어요.')
         .setDescription(err)
         .setTimestamp();

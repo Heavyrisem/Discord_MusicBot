@@ -73,7 +73,7 @@ class server extends voicechannel {
 
     errorhandler(msg) {
         const errormsg = new Discord.RichEmbed()
-        .setColor('#ff148e')
+        .setColor('#9147ff')
         .setTitle('⚠️ [server Class] constructor() 에서 오류가 발생했어요.')
         .setDescription(msg)
         .setTimestamp();
