@@ -18,6 +18,7 @@ var serverMap = new Map();
 
 client.on('ready', () => {
   console.log(client.user.username + ' I am ready!');
+  client.user.setActivity('명령어 v2.0');
 });
 
 
