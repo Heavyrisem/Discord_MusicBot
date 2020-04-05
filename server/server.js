@@ -13,8 +13,7 @@ class server extends voicechannel {
             this.last_message;
             this.getmessage = true;
             this.ping = undefined;
-
-            this.botColor = '#ff148e';
+            
 
             this.serversetting = {
                 'prefix': '!',
