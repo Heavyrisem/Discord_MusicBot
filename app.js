@@ -11,6 +11,7 @@ const serverClass = require('./server/server');
 // Create an instance of a Discord client
 const client = new Discord.Client();
 
+const current_version = '2.0.2';
 
 
 var serverMap = new Map();
@@ -18,7 +19,7 @@ var serverMap = new Map();
 
 client.on('ready', () => {
   console.log(client.user.username + ' I am ready!');
-  client.user.setActivity('명령어 v2.0.1');
+  client.user.setActivity('명령어 v' + current_version);
 });
 
 
@@ -169,8 +170,18 @@ client.on('message', async function(message) {
     });
   }
 
-  if (message.content.startsWith(prefix + '리셋')) {  // 작동 안됨
-    server = '';
+  if (message.content.startsWith(prefix + '정보')) {  // 작동 안됨
+    const info_message = new Discord.RichEmbed()
+    .setColor('#9147ff')
+    .setAuthor(client.user.username)
+    .setTitle('도움말')
+    .setThumbnail('https://images-ext-2.discordapp.net/external/Lbzfl2XV7cgwopCR4_z5ElADp5x-0ebsKWCPnr91GV0/%3Fsize%3D2048/https/cdn.discordapp.com/avatars/619527364090658817/d0236fcaa434b8c75722e85a9cd821a3.png')
+    .setDescription('디스코드 음악 봇 ``' + client.user.username + '``입니다.\n사용할 수 있는 명령어들은 아래와 같아요')
+    .addBlankField()
+    .addField('음악', '``노래`` ``볼륨`` ``스킵`` ``큐`` ``정지`` ``참가`` ``나가``')
+    .addField('유틸리티', '``핑`` ``업타임`` ``스팀(베타)`` ``상태``');
+    
+    message.channel.send(info_message)
   }
 
   if (message.content.startsWith(prefix + '업타임')) {  // 계산 제대로 필요

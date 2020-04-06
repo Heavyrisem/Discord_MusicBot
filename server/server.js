@@ -25,7 +25,7 @@ class server extends voicechannel {
                 now(m) {e.Now(m)},
                 leave(m) {e.Leave(m)},
                 addmusic(message, keyword) {e.search_music(message, keyword)},
-                addmusic_url(target) {e.Addmusic(target)},
+                addmusic_url(target, m) {e.Addmusic(target, m)},
                 skip(n, m) {e.Skip(n, m)},
                 stop(m) {e.Stop(m)},
                 setvolume(v, m) {e.Volume(v, m)},
