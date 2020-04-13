@@ -17,8 +17,11 @@ class music {
             else if (message.member.voiceChannel == null || message.member.voiceChannel.id != message.guild.me.voiceChannel.id) // 멤버의 음성채널 접속 확인, 같은 음성채팅방에 접속했는지 확인
                 this.message.channel.send('``먼저 음성 채팅방에 입장해 주세요.``');
             else if (n == undefined || n <= 1) {    // 스킵 번호가 없거나 1보다 작거나 같은경우
+                if (this.voiceChannel.playSong.playing)    // 음악 재생중일때만 디스패쳐 끝내기
                     this.voiceChannel.playSong.dispatcher.end();    // 현재 음악 스킵
-                    message.channel.send('``음악을 스킵했어요.``');
+                else
+                    this.voiceChannel.playSong.queue.splice(0, 1);  // 음악 재생중이 아닐때 (오류) 첫번째 큐 제거
+                message.channel.send('``음악을 스킵했어요.``');
             } else {    // n 번째 음악 스킵
                 if (this.voiceChannel.playSong.queue[n-1] == undefined) return message.channel.send('``큐의 ' + n + ' 번째는 비어 있어요.``'); // 큐의 n 번째가 존재하는지 확인
                 var deletedsong = this.voiceChannel.playSong.queue.splice(n-1, 1);  // 음악을 큐에서 잘라내서 저장
@@ -158,6 +161,8 @@ class music {
                 
 
             } catch(error) {
+                e.voiceChannel.playSong.playing == false;   // 오류로 음악 재생 중단
+                e.Skip(1, message); // 오류를 일으킨 큐 제거
                 e.playerrorhandling('playStream' ,error);
             }
 
