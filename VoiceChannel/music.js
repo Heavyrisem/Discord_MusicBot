@@ -28,6 +28,7 @@ class music {
                 message.channel.send('``' + deletedsong[0].title + ' 를 큐에서 제거했어요.``');    // 잘라낸 음악 정보 보여주기
             }
         } catch(error) {
+            this.Stop(message);
             this.playerrorhandling('Skip', error);
         }
     }
@@ -39,7 +40,7 @@ class music {
             else if (message.member.voiceChannel == null || message.member.voiceChannel.id != message.guild.me.voiceChannel.id)  // 멤버가 응성채널 접속중인지, 같은채널인지
                 message.channel.send('``먼저 음성 채팅방에 입장해 주세요.``');
             else {
-                this.voiceChannel.playSong.queue = '';  // 큐 전체 비우기
+                this.voiceChannel.playSong.queue = [];  // 큐 전체 비우기
                 this.voiceChannel.playSong.dispatcher.end();    // 재생중인 음악 종료
                 message.channel.send('``음악 재생을 정지했어요.``');
             }
@@ -92,7 +93,7 @@ class music {
             else   
                 message.channel.send('``' + video_info.title + ' 을(를) 재생목록에 추가했어요.``');
         })
-        .catch(function (error) {e.playerrorhandling('ytdl.getInfo', error)});
+        .catch(function (error) {console.log(e.voiceChannel.playSong.queue); e.playerrorhandling('ytdl.getInfo', error)});
     }
 
     playmusic(message) {   // 큐에서 음악 재생

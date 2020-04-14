@@ -11,7 +11,7 @@ const serverClass = require('./server/server');
 // Create an instance of a Discord client
 const client = new Discord.Client();
 
-const current_version = '2.0.2.3';
+const current_version = '2.0.2.4';
 
 
 var serverMap = new Map();
