@@ -11,7 +11,7 @@ const serverClass = require('./server/server');
 // Create an instance of a Discord client
 const client = new Discord.Client();
 
-const current_version = '2.0.2.4';
+const current_version = '2.0.2.5';
 
 
 var serverMap = new Map();
@@ -19,7 +19,7 @@ var serverMap = new Map();
 
 client.on('ready', () => {
   console.log(client.user.username + ' I am ready!');
-  client.user.setActivity('명령어 v' + current_version);
+  client.user.setActivity('!정보, ' +'명령어 v' + current_version);
 });
 
 
@@ -109,9 +109,13 @@ client.on('message', async function(message) {
   if (message.content.startsWith(prefix + '노래')) {
     if (message.member.voiceChannel == undefined) return message.channel.send('``먼저 음성 채널에 접속해 주세요.``'); // 접속중인 채널 체크
     var keyword = message.content.substring(4, message.content.length); // 명령어 부분 자르기
-    if (keyword.startsWith('https://www.youtube.com') || keyword.startsWith('http://www.youtube.com')) {  // URL 문자열 검사
+    const youtube_regex = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;  // youtube URL 정규식
+    var url = keyword.match(youtube_regex); // 정규식 적용
+    if (url) {  // URL 문자열 검사
       try {
-        server.voiceChannel.addmusic_url(keyword, message); // URL이면 바로 음악 추가
+        if (url[0].includes('list')) throw new Error('재생목록은 재생할수 없습니다. URL을 확인해주세요');   // 리스트는 재생 거부
+        console.log('URL, ', url);
+        server.voiceChannel.addmusic_url(url[7], message); // URL이면 바로 음악 추가
       } catch(error) {
         const errormsg = new Discord.RichEmbed()
         .setColor('#9147ff')
@@ -182,7 +186,8 @@ client.on('message', async function(message) {
     .setDescription('디스코드 음악 봇 ``' + client.user.username + '``입니다.\n사용할 수 있는 명령어들은 아래와 같아요')
     .addBlankField()
     .addField('음악', '``노래`` ``볼륨`` ``스킵`` ``큐`` ``정지`` ``참가`` ``나가``')
-    .addField('유틸리티', '``핑`` ``업타임`` ``스팀(베타)`` ``상태``');
+    .addField('유틸리티', '``핑`` ``업타임`` ``스팀(베타)`` ``상태``')
+    .addField('마지막 업데이트 5/7', '유튜브 URL 감지 기능 개선');
     
     message.channel.send(info_message)
   }

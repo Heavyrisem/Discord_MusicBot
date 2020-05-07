@@ -72,9 +72,6 @@ class music {
 
     Addmusic(target, message) {  // 큐에 음악 추가
         if (target == '') return message.channel.send('``비디오 ID 가 비었습니다.``'); // 영상의 ID 유효성 검사
-        if (target.includes('list')) throw new Error('재생목록은 재생할수 없습니다. URL을 확인해주세요');   // 리스트는 재생 거부
-        if (target.startsWith('https://www.youtube.com') || target.startsWith('http://www.youtube.com'))    // URL 인지 검사
-            target = message.content.substring(36, message.content.length);   // 비디오 ID 부분 자르기
         var e = this;
         var video_info;
 
