@@ -136,7 +136,7 @@ class music {
                     e.voiceChannel.playSong.dispatcher.on('end', reason => {    // 음악 재생 끝날때
                         e.voiceChannel.playSong.playing = false;    // 음악 재생 false
                         console.log('dispatcher end : ', reason);   // 디버그용, 디스패쳐가 끝난 이유
-                        if (reason != 'Stream is not generating quickly enough.' || reason != 'user') {
+                        if (reason != 'Stream is not generating quickly enough.' && reason != 'user') {
                             const errormsg = new Discord.RichEmbed()            
                             .setColor('#9147ff')
                             .setTitle('⚠️ [ Dispatcher end ] 에서 오류가 발생했어요.')
