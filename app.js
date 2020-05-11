@@ -11,7 +11,7 @@ const serverClass = require('./server/server');
 // Create an instance of a Discord client
 const client = new Discord.Client();
 
-const current_version = '2.0.2.7';
+const current_version = '2.0.3.0';
 
 
 var serverMap = new Map();
@@ -106,9 +106,15 @@ client.on('message', async function(message) {
     server.voiceChannel.now(message);
   }
 
-  if (message.content.startsWith(prefix + '노래')) {
+  if (message.content.startsWith(prefix + '노래') || message.content.startsWith(prefix + 'p')) {
     if (message.member.voiceChannel == undefined) return message.channel.send('``먼저 음성 채널에 접속해 주세요.``'); // 접속중인 채널 체크
-    var keyword = message.content.substring(4, message.content.length); // 명령어 부분 자르기
+    var keyword;
+    if (message.content.startsWith(prefix +'노래')) {
+      keyword = message.content.substring(4, message.content.length); // 명령어 부분 자르기
+    } else {
+      keyword = message.content.substring(2, message.content.length); // 명령어 부분 자르기
+    }
+
     const youtube_regex = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;  // youtube URL 정규식
     var url = keyword.match(youtube_regex); // 정규식 적용
     if (url) {  // URL 문자열 검사
@@ -133,7 +139,7 @@ client.on('message', async function(message) {
     }
   }
 
-  if (message.content.startsWith(prefix + '스킵')) {
+  if (message.content.startsWith(prefix + '스킵') || message.content.startsWith(prefix + 's')) {
     if (!isNaN(message.content.substring(4, message.content.length))) // 명령어 부분 잘라서 숫자인지 확인
       server.voiceChannel.skip(message.content.substring(4, message.content.length), message);  // 숫자면 해당 번호 음악 스킵
     else
@@ -142,6 +148,14 @@ client.on('message', async function(message) {
   
   if (message.content.startsWith(prefix + '정지')) {
     server.voiceChannel.stop(message);
+  }
+
+  if (message.content.startsWith(prefix + '일시정지') || message.content.startsWith(prefix + 'pause')) {
+    server.voiceChannel.pause(message);
+  }
+
+  if (message.content.startsWith(prefix + '재생') || message.content.startsWith(prefix + '시작') || message.content.startsWith(prefix + 'resume')) {
+    server.voiceChannel.resume(message);
   }
 
   if (message.content.startsWith(prefix + '큐')) {
@@ -186,9 +200,9 @@ client.on('message', async function(message) {
     .setThumbnail('https://images-ext-2.discordapp.net/external/Lbzfl2XV7cgwopCR4_z5ElADp5x-0ebsKWCPnr91GV0/%3Fsize%3D2048/https/cdn.discordapp.com/avatars/619527364090658817/d0236fcaa434b8c75722e85a9cd821a3.png')
     .setDescription('디스코드 음악 봇 ``' + client.user.username + '``입니다.\n사용할 수 있는 명령어들은 아래와 같아요')
     .addBlankField()
-    .addField('음악', '``노래`` ``볼륨`` ``스킵`` ``큐`` ``정지`` ``참가`` ``나가``')
+    .addField('음악', '``노래(p)`` ``볼륨`` ``스킵(s)`` ``큐`` ``정지`` ``참가`` ``나가`` ``일시정지(pause)`` ``재생(resume, 시작)``')
     .addField('유틸리티', '``핑`` ``업타임`` ``스팀(베타)`` ``상태``')
-    .addField('마지막 업데이트 5/11', 'Dispatcher 에서 재생 종료시 오류 발생 해결');
+    .addField('마지막 업데이트 5/11', '일시정지/재생 추가, 명령어의 단축어 추가');
     
     message.channel.send(info_message)
   }

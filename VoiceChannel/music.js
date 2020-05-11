@@ -103,7 +103,8 @@ class music {
             var video_info = e.voiceChannel.playSong.queue[0];  // 큐 첫번째의 정보 가져오기
             const streamOption = {  // 재생 옵션
                 volume: e.voiceChannel.playSong.streamOption.volume * 1 / 800,  // 서버 정보에서 볼륨 가져오기 /800으로 큰 소리 방지
-                seek: 0
+                seek: 0,
+                bitrate: 'auto'
             };
             
             //https://www.youtube.com/watch?v=_1scmwn_1VI
@@ -277,6 +278,42 @@ class music {
                 }
             }); 
         });
+    }
+
+    Pause(message) {
+        try {
+            if (!this.voiceChannel.playSong.playing) {
+                message.channel.send('``재생 중이 아닙니다.``');
+                return;
+            }
+            if (this.message.guild.me.voiceChannel != message.member.voiceChannel) {
+                message.channel.send('``연결된 채널을 확인해 주세요.``');
+                return;
+            }
+            this.voiceChannel.playSong.dispatcher.pause();
+            this.voiceChannel.playSong.paused = true;
+            message.channel.send('``음악을 일시정지 했어요.``');
+        } catch (error) {
+            this.playerrorhandling('Pause', error);
+        }
+    }
+
+    Resume(message) {
+        try {
+            if (!this.voiceChannel.playSong.playing) {
+                message.channel.send('``재생 중이 아닙니다.``');
+                return;
+            }
+            if (this.message.guild.me.voiceChannel != message.member.voiceChannel) {
+                message.channel.send('``연결된 채널을 확인해 주세요.``');
+                return;
+            }
+            this.voiceChannel.playSong.dispatcher.resume();
+            this.voiceChannel.playSong.paused = false;
+            message.channel.send('``음악을 재생해요``');
+        } catch (error) {
+            this.playerrorhandling('Resume', error);
+        }
     }
 
     scTomin(second) {

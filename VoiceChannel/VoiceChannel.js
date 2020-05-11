@@ -89,6 +89,7 @@ class voicechannel extends music {
                 message.channel.send('``연결된 채널을 확인해주세요.``');
             } else {
                 message.guild.me.voiceChannel.leave();  // leave()
+                this.voiceChannel.playSong.playing = false;
                 message.channel.send('``' + message.guild.me.voiceChannel.name + ' 음성 채널을 떠났어요.``');   // 채널을 떠났다는 메세지 출력
                 this.Autoleave_clear(); // 자동 떠나기 해제
             }

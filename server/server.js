@@ -31,16 +31,19 @@ class server extends voicechannel {
                 addmusic_url(target, m) {e.Addmusic(target, m)},
                 skip(n, m) {e.Skip(n, m)},
                 stop(m) {e.Stop(m)},
+                pause(m) {e.Pause(m)},
+                resume(m) {e.Resume(m)},
                 setvolume(v, m) {e.Volume(v, m)},
                 autoleave_active() {e.Autoleave()},
                 autoleave_clear() {e.Autoleave_clear()},
                 autoleave: undefined,
                 playSong: {
                     playing: false,
+                    paused: false,
                     streamOption: {
                         seek: 0,
                         volume: 50,
-                        bitrate: 19200
+                        bitrate: 'auto'
                     },
                     connection: undefined,
                     dispatcher: undefined,
