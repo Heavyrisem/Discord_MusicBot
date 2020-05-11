@@ -11,7 +11,7 @@ const serverClass = require('./server/server');
 // Create an instance of a Discord client
 const client = new Discord.Client();
 
-const current_version = '2.0.2.6';
+const current_version = '2.0.2.7';
 
 
 var serverMap = new Map();
@@ -115,7 +115,8 @@ client.on('message', async function(message) {
       try {
         if (url[0].includes('list')) throw new Error('재생목록은 재생할수 없습니다. URL을 확인해주세요');   // 리스트는 재생 거부
         console.log('URL, ', url);
-        server.voiceChannel.addmusic_url(url[7], message); // URL이면 바로 음악 추가
+        console.log('ID,', url[7].trim())
+        server.voiceChannel.addmusic_url(url[7].trim(), message); // URL이면 바로 음악 추가
       } catch(error) {
         const errormsg = new Discord.RichEmbed()
         .setColor('#9147ff')

@@ -143,7 +143,7 @@ class music {
                             .setDescription('Dispatcher가 정상적으로 종료되지 않았습니다. : ' + reason)
                             .setTimestamp();
                         
-                            this.message.channel.send(errormsg);
+                            message.channel.send(errormsg);
                         }
                         
                         if (e.voiceChannel.playSong.queue != '')    // 큐가 비어있지 않다면
