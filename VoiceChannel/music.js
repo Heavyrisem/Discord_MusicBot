@@ -71,7 +71,7 @@ class music {
 
 
     Addmusic(target, message) {  // 큐에 음악 추가
-        if (target == '') return message.channel.send('``비디오 ID 가 비었습니다.``'); // 영상의 ID 유효성 검사
+        if (target == '' || target == undefined) return message.channel.send('``비디오 ID 가 비었습니다.``'); // 영상의 ID 유효성 검사
         var e = this;
         var video_info;
 
@@ -136,6 +136,15 @@ class music {
                     e.voiceChannel.playSong.dispatcher.on('end', reason => {    // 음악 재생 끝날때
                         e.voiceChannel.playSong.playing = false;    // 음악 재생 false
                         console.log('dispatcher end : ', reason);   // 디버그용, 디스패쳐가 끝난 이유
+                        if (reason != 'Stream is not generating quickly enough.' || reason != 'user') {
+                            const errormsg = new Discord.RichEmbed()            
+                            .setColor('#9147ff')
+                            .setTitle('⚠️ [ Dispatcher end ] 에서 오류가 발생했어요.')
+                            .setDescription('Dispatcher가 정상적으로 종료되지 않았습니다. : ' + reason)
+                            .setTimestamp();
+                        
+                            this.message.channel.send(errormsg);
+                        }
                         
                         if (e.voiceChannel.playSong.queue != '')    // 큐가 비어있지 않다면
                             e.voiceChannel.playSong.queue.shift();  // 재생한 음악 넘기기
@@ -146,7 +155,7 @@ class music {
                     });
         
                     e.voiceChannel.playSong.dispatcher.on('error', error => {
-                        e.playerrorhandling('dispatcher', error);
+                        e.playerrorhandling('dispatcher error', error);
                     });
     
                     read.on('data', () => {l++;});  // 데이터 한 조각 읽어들일때, 카운터 증가

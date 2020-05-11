@@ -11,7 +11,7 @@ const serverClass = require('./server/server');
 // Create an instance of a Discord client
 const client = new Discord.Client();
 
-const current_version = '2.0.2.5';
+const current_version = '2.0.2.6';
 
 
 var serverMap = new Map();
@@ -187,7 +187,7 @@ client.on('message', async function(message) {
     .addBlankField()
     .addField('음악', '``노래`` ``볼륨`` ``스킵`` ``큐`` ``정지`` ``참가`` ``나가``')
     .addField('유틸리티', '``핑`` ``업타임`` ``스팀(베타)`` ``상태``')
-    .addField('마지막 업데이트 5/7', '유튜브 URL 감지 기능 개선');
+    .addField('마지막 업데이트 5/11', 'Dispatcher 에서 재생 종료시 오류 발생 해결');
     
     message.channel.send(info_message)
   }
