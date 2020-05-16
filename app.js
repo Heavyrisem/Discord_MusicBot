@@ -192,7 +192,7 @@ client.on('message', async function(message) {
     });
   }
 
-  if (message.content.startsWith(prefix + '정보')) {  // 작동 안됨
+  if (message.content.startsWith(prefix + '정보')) {
     const info_message = new Discord.RichEmbed()
     .setColor('#9147ff')
     .setAuthor(client.user.username)
@@ -202,7 +202,9 @@ client.on('message', async function(message) {
     .addBlankField()
     .addField('음악', '``노래(p)`` ``볼륨`` ``스킵(s)`` ``큐`` ``정지`` ``참가`` ``나가`` ``일시정지(pause)`` ``재생(resume, 시작)``')
     .addField('유틸리티', '``핑`` ``업타임`` ``스팀(베타)`` ``상태``')
-    .addField('마지막 업데이트 5/16', '볼륨 감도 조절');
+    .addField('마지막 업데이트 5/16', '볼륨 감도 조절')
+    .setTimestamp()
+    .setFooter(client.guilds.size + '개의 서버와 함께하고 있어요.');
     
     message.channel.send(info_message)
   }
@@ -219,6 +221,7 @@ client.on('message', async function(message) {
       });
     });
   }
+
 
 });
 
