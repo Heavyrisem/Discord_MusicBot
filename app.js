@@ -5,13 +5,14 @@ const main = 'NjE3MzEwMzY1OTE4ODIyNDIx.XWuI4w.MSdZ8LorBxaKMAIzYA-68L1WCto';
 const beta = 'NjE5NTI3MzY0MDkwNjU4ODE3.XnDOeg.Lh02kxHHjLFBHgfffJg9UcdjrD4';
 const cpuStat = require('cpu-stat');
 const Discord = require('discord.js');
+const prettyms = require('pretty-ms');
 const Token = main;
 
 const serverClass = require('./server/server');
 // Create an instance of a Discord client
 const client = new Discord.Client();
 
-const current_version = '2.0.3.2';
+const current_version = '2.0.3.3';
 
 
 var serverMap = new Map();
@@ -65,7 +66,7 @@ client.on('message', async function(message) {
 
   if (!message.content.startsWith(prefix)) return; // prefix 확인
 
-  if (server.getmessage) {  // 서버 클래스에 메세지 올리기 (삭제예정)
+  if (server.getmessage) {  // 서버 클래스에 메세지 올리기
     server.updateMsg(message);
   }
 
@@ -202,7 +203,7 @@ client.on('message', async function(message) {
     .addBlankField()
     .addField('음악', '``노래(p)`` ``볼륨`` ``스킵(s)`` ``큐`` ``정지`` ``참가`` ``나가`` ``일시정지(pause)`` ``재생(resume, 시작)``')
     .addField('유틸리티', '``핑`` ``업타임`` ``스팀(베타)`` ``상태``')
-    .addField('마지막 업데이트 5/16', '볼륨 감도 조절, 정보창 수정')
+    .addField('마지막 업데이트 5/16', '정보창 수정, 업타임 계산 개선')
     .setTimestamp()
     .setFooter(client.guilds.size + '개의 서버와 함께하고 있어요.');
     
@@ -210,7 +211,7 @@ client.on('message', async function(message) {
   }
 
   if (message.content.startsWith(prefix + '업타임')) {  // 계산 제대로 필요
-    message.channel.send('``' + client.uptime/60/10 + '``');
+    message.channel.send('``업타임 : ' + prettyms(client.uptime) + '``');
   }
   
   if (message.content === prefix + '재시작 DHQUDALS') { // forever 필요
