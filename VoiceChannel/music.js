@@ -102,7 +102,7 @@ class music {
             e.voiceChannel.autoleave_clear();    //  자동 떠나기 해제
             var video_info = e.voiceChannel.playSong.queue[0];  // 큐 첫번째의 정보 가져오기
             const streamOption = {  // 재생 옵션
-                volume: e.voiceChannel.playSong.streamOption.volume * 1 / 800,  // 서버 정보에서 볼륨 가져오기 /800으로 큰 소리 방지
+                volume: e.voiceChannel.playSong.streamOption.volume * 1 / 500,  // 서버 정보에서 볼륨 가져오기 /800으로 큰 소리 방지
                 seek: 0,
                 bitrate: 'auto'
             };

@@ -5,13 +5,13 @@ const main = 'NjE3MzEwMzY1OTE4ODIyNDIx.XWuI4w.MSdZ8LorBxaKMAIzYA-68L1WCto';
 const beta = 'NjE5NTI3MzY0MDkwNjU4ODE3.XnDOeg.Lh02kxHHjLFBHgfffJg9UcdjrD4';
 const cpuStat = require('cpu-stat');
 const Discord = require('discord.js');
-const Token = main;
+const Token = beta;
 
 const serverClass = require('./server/server');
 // Create an instance of a Discord client
 const client = new Discord.Client();
 
-const current_version = '2.0.3.0';
+const current_version = '2.0.3.1';
 
 
 var serverMap = new Map();
@@ -202,7 +202,7 @@ client.on('message', async function(message) {
     .addBlankField()
     .addField('음악', '``노래(p)`` ``볼륨`` ``스킵(s)`` ``큐`` ``정지`` ``참가`` ``나가`` ``일시정지(pause)`` ``재생(resume, 시작)``')
     .addField('유틸리티', '``핑`` ``업타임`` ``스팀(베타)`` ``상태``')
-    .addField('마지막 업데이트 5/11', '일시정지/재생 추가, 명령어의 단축어 추가');
+    .addField('마지막 업데이트 5/16', '볼륨 감도 조절');
     
     message.channel.send(info_message)
   }
