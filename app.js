@@ -5,7 +5,7 @@ const main = 'NjE3MzEwMzY1OTE4ODIyNDIx.XWuI4w.MSdZ8LorBxaKMAIzYA-68L1WCto';
 const beta = 'NjE5NTI3MzY0MDkwNjU4ODE3.XnDOeg.Lh02kxHHjLFBHgfffJg9UcdjrD4';
 const cpuStat = require('cpu-stat');
 const Discord = require('discord.js');
-const Token = beta;
+const Token = main;
 
 const serverClass = require('./server/server');
 // Create an instance of a Discord client
