@@ -90,7 +90,7 @@ class music {
             else   
                 message.channel.send('``' + video_info.title + ' 을(를) 재생목록에 추가했어요.``');
         })
-        .catch(function (error) {console.log(e.voiceChannel.playSong.queue); e.playerrorhandling('ytdl.getInfo', error)});
+        .catch(function (error) {console.log(e.voiceChannel.playSong.queue); e.playerrorhandling('youtube-info ', error)});
     }
 
     playmusic(message) {   // 큐에서 음악 재생
