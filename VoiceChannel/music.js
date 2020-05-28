@@ -112,6 +112,7 @@ class music {
                 e.voiceChannel.playSong.connection = connection;    // 음성채널 연결정보 저장
                 //var message = e.message;
                 const loading_msg = await message.channel.send('``⌛음악을 로딩중입니다....``');
+                console.log('로딩 정보: ', video_info.id);
                 const music_file = ytdl(video_info.id, {filter: 'audioonly', quality: 'lowestaudio'});  // 유튜브에서 음악 불러오기
                 music_file.pipe(fs.createWriteStream('VoiceChannel/temp/'+message.guild.id+'.mp3', { highWaterMark: 128 })); // 유튜브에서 음악 mp3로 다운로드, 한번에 128바이트
                 
