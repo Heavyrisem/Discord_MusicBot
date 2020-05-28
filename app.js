@@ -108,6 +108,7 @@ client.on('message', async function(message) {
   }
 
   if (message.content.startsWith(prefix + '노래') || message.content.startsWith(prefix + 'p')) {
+    if (message.content.startsWith(prefix + 'pause')) return;
     if (message.member.voiceChannel == undefined) return message.channel.send('``먼저 음성 채널에 접속해 주세요.``'); // 접속중인 채널 체크
     var keyword;
     if (message.content.startsWith(prefix +'노래')) {
