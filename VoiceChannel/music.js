@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const ytdl = require('ytdl-core');
-const youtubeinfo = require('youtube-info');    // 영상 정보 가져오기
+const {getInfo} = require('ytdl-getinfo');    // 영상 정보 가져오기
 const yt_search = require('yt-search');
 const fs = require('fs');   // 유튜브 파일 다운로드용
 
@@ -82,12 +82,12 @@ class music {
         var e = this;
         var video_info;
 
-        youtubeinfo(target).then(info => {  // 영상 정보 가져오기 
+        getInfo(target).then(info => {  // 영상 정보 가져오기 
             video_info = {
-                'title': info.title,    // 제목
-                'time': e.scTomin(info.duration),   // 재생시간
+                'title': info.items[0].title,    // 제목
+                'time': e.scTomin(info.items[0].duration),   // 재생시간
                 'author': message.member.user.username,   // 추가한 사람
-                'id': info.videoId  // 영상 ID
+                'id': info.items[0].id  // 영상 ID
             }
 
             
@@ -97,7 +97,7 @@ class music {
             else   
                 message.channel.send('``' + video_info.title + ' 을(를) 재생목록에 추가했어요.``');
         })
-        .catch(function (error) {console.log(e.voiceChannel.playSong.queue); e.playerrorhandling('youtube-info ', error)});
+        .catch(function (error) {console.log(e.voiceChannel.playSong.queue); e.playerrorhandling('ytdl-getinfo', error)});
     }
 
     playmusic(message) {   // 큐에서 음악 재생
