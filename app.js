@@ -12,7 +12,7 @@ const serverClass = require('./server/server');
 // Create an instance of a Discord client
 const client = new Discord.Client();
 
-const current_version = '2.0.3.5';
+const current_version = '2.0.4.0';
 
 
 var serverMap = new Map();
@@ -204,7 +204,7 @@ client.on('message', async function(message) {
     .addBlankField()
     .addField('음악', '``노래(p)`` ``볼륨`` ``스킵(s)`` ``큐`` ``정지`` ``참가`` ``나가`` ``일시정지(pause)`` ``재생(resume, 시작)``')
     .addField('유틸리티', '``핑`` ``업타임`` ``스팀(베타)`` ``상태``')
-    .addField('마지막 업데이트 6/12', '유튜브 검색 API 업데이트')
+    .addField('마지막 업데이트 6/20', '유튜브 검색 API 변경, 안정성 향상')
     .setTimestamp()
     .setFooter(client.guilds.size + '개의 서버와 함께하고 있어요.');
     

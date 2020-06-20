@@ -2,8 +2,15 @@ const Discord = require('discord.js');
 const ytdl = require('ytdl-core');
 const youtubeinfo = require('youtube-info');    // 영상 정보 가져오기
 const yt_search = require('yt-search');
-
 const fs = require('fs');   // 유튜브 파일 다운로드용
+
+const youtube_search = require('youtube-search');
+
+const youtube_search_opt = {
+    maxResults: 5,
+    key: 'AIzaSyAE3XrR70rvhswQHouLcRHNvBkhHs_Euvo'
+}
+
 
 
 class music {
@@ -184,27 +191,35 @@ class music {
         var music_list = [];
         var music_selection = '```Swift';   // 마크업 설정
         const request_author = message.member.id;   // 추가하려는 멤버 아이디
-            yt_search(keyword, async function(err, r) {   // 유튜브 영상 검색
+            //yt_search(keyword, async function(err, r) {   // 유튜브 영상 검색
+            youtube_search(keyword, youtube_search_opt, async (err, r) => {
                 try {
                     if (err) throw new Error(err);
-                    for (var i = 0; i < 5; i++) {   // 최대 5개까지 검색
-                        if (r.videos[i] == undefined) break;    // 검색 결과가 적어서 5개 미만일 경우
-                        if (r.videos[i].seconds == 0) { // 재생 시간이 0인것 스킵, 광고임
-                            console.log('광고를 건너뜁니다.');
-                            r.videos.splice(i, 1);  // 배열에서 잘라버리기
-                            i--;    // 반복 횟수에서 빼기
-                            continue;   // 카운터 1 증가시키고 다시 반복
-                        } else {
-                            if (r.videos[i].title == '') {
-                                console.log('err', r.videos);
-                            }
-                            music_list[i] = r.videos[i];    // 검색 결과값으로 이동
+                    r.forEach((val, index) => {
+                        music_list[index] = {
+                            title: val.title,
+                            channel_name: val.channelTitle,
+                            videoId: val.id
                         }
-                    }
+                    });
+                    // for (var i = 0; i < 5; i++) {   // 최대 5개까지 검색
+                    //     if (r.videos[i] == undefined) break;    // 검색 결과가 적어서 5개 미만일 경우
+                    //     if (r.videos[i].seconds == 0) { // 재생 시간이 0인것 스킵, 광고임
+                    //         console.log('광고를 건너뜁니다.');
+                    //         r.videos.splice(i, 1);  // 배열에서 잘라버리기
+                    //         i--;    // 반복 횟수에서 빼기
+                    //         continue;   // 카운터 1 증가시키고 다시 반복
+                    //     } else {
+                    //         if (r.videos[i].title == '') {
+                    //             console.log('err', r.videos);
+                    //         }
+                    //         music_list[i] = r.videos[i];    // 검색 결과값으로 이동
+                    //     }
+                    // }
 
                     for (var i = 0; i < 5; i++) {   // 유저 선택 메세지로 만들기
                         if (music_list[i] == undefined) break;
-                        music_selection = music_selection + '\n' + parseInt(i+1) + ': ' + music_list[i].title + ' (' + music_list[i].timestamp + ')'    // 번호 제복 시간
+                        music_selection = music_selection + '\n' + parseInt(i+1) + ': ' + music_list[i].title + ' (' + music_list[i].channel_name + ')'    // 번호 제복 시간
                     }
 
                     music_selection = music_selection + '```';
@@ -218,7 +233,7 @@ class music {
                         e.Addmusic(music_list[a-1].videoId, message);    // 받아온 영상의 ID 값으로 음악 추가
                     });
                 } catch(error) {
-                    e.playerrorhandling('yt_search', error);
+                    e.playerrorhandling('youtube_search', error);
                 }
             });
     }
