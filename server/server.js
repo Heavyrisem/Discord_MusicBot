@@ -67,6 +67,7 @@ class server extends voicechannel {
 
         const m = await message.channel.send("``핑 테스트``");
         message.channel.send('``현재 핑은 ' + this.client.ping + 'ms, 레이턴시는 ' + (m.createdTimestamp - message.createdTimestamp) + 'ms 입니다.``'); // discord.js v12에서 Client.ws.ping으로 변경됨, 새로운 핑 시스템 추가 예정
+        m.delete();
     }
 
     updateMsg(message) {    // 서버 클래스에 메세지 넣는 기능, 마지막 메세지 저장용으로 변경해라
