@@ -107,7 +107,7 @@ client.on('message', async function(message) {
     server.voiceChannel.now(message);
   }
 
-  if (message.content.startsWith(prefix + '노래') || message.content.startsWith(prefix + 'p')) {
+  if (message.content.startsWith(prefix + '노래') || message.content.startsWith(prefix + 'p ')) {
     if (message.content.startsWith(prefix + 'pause')) return;
     if (message.member.voiceChannel == undefined) return message.channel.send('``먼저 음성 채널에 접속해 주세요.``'); // 접속중인 채널 체크
     var keyword;
@@ -204,7 +204,7 @@ client.on('message', async function(message) {
     .addBlankField()
     .addField('음악', '``노래(p)`` ``볼륨`` ``스킵(s)`` ``큐`` ``정지`` ``참가`` ``나가`` ``일시정지(pause)`` ``재생(resume, 시작)``')
     .addField('유틸리티', '``핑`` ``업타임`` ``스팀(베타)`` ``상태``')
-    .addField('마지막 업데이트 7/1', '노래 스킵시 이전 노래와 다음 노래가 섞이는 문제 해결')
+    .addField('마지막 업데이트 7/3', '명령어 인식 범위 수정')
     .setTimestamp()
     .setFooter(client.guilds.size + '개의 서버와 함께하고 있어요.');
     
