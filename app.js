@@ -12,7 +12,7 @@ const serverClass = require('./server/server');
 // Create an instance of a Discord client
 const client = new Discord.Client();
 
-const current_version = '2.0.5.2';
+const current_version = '2.0.6.0';
 
 
 var serverMap = new Map();
@@ -194,6 +194,10 @@ client.on('message', async function(message) {
     });
   }
 
+  if (message.content.startsWith(prefix + '자가진단')) {
+    server.Utility.self_test(message);
+  }
+
   if (message.content.startsWith(prefix + '정보')) {
     const info_message = new Discord.RichEmbed()
     .setColor('#9147ff')
@@ -204,7 +208,7 @@ client.on('message', async function(message) {
     .addBlankField()
     .addField('음악', '``노래(p)`` ``볼륨`` ``스킵(s)`` ``큐`` ``정지`` ``참가`` ``나가`` ``일시정지(pause)`` ``재생(resume, 시작)``')
     .addField('유틸리티', '``핑`` ``업타임`` ``스팀(베타)`` ``상태``')
-    .addField('마지막 업데이트 7/3', '명령어 인식 범위 수정, 핑 명령어 수정')
+    .addField('마지막 업데이트 7/17', '자가진단 자동화 기능 추가')
     .setTimestamp()
     .setFooter(client.guilds.size + '개의 서버와 함께하고 있어요.');
     
