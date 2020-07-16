@@ -8,8 +8,9 @@ class Utility {
     self_test(message) {
         message.delete();
         let msg = message.content.split(' ');
+        
         if (msg.length != 4)
-            return message.channel.send('``!자가진단 학교이름 학생이름 생년월일(YYMMDD)``', msg.length);
+            return message.channel.send('``!자가진단 학교이름 학생이름 생년월일(YYMMDD)``');
             
         let Usr = {
             school: { name: msg[1], code: undefined },
