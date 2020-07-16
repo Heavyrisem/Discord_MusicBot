@@ -207,7 +207,7 @@ client.on('message', async function(message) {
     .setDescription('디스코드 음악 봇 ``' + client.user.username + '``입니다.\n사용할 수 있는 명령어들은 아래와 같아요')
     .addBlankField()
     .addField('음악', '``노래(p)`` ``볼륨`` ``스킵(s)`` ``큐`` ``정지`` ``참가`` ``나가`` ``일시정지(pause)`` ``재생(resume, 시작)``')
-    .addField('유틸리티', '``핑`` ``업타임`` ``스팀(베타)`` ``상태``')
+    .addField('유틸리티', '``핑`` ``업타임`` ``스팀(베타)`` ``자가진단`` ``상태``')
     .addField('마지막 업데이트 7/17', '자가진단 자동화 기능 추가')
     .setTimestamp()
     .setFooter(client.guilds.size + '개의 서버와 함께하고 있어요.');
