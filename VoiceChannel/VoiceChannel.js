@@ -40,7 +40,9 @@ class voicechannel extends music {
                 } 
                 else if (input == 'eoajfl')
                     mp3 = fs.createReadStream('./VoiceChannel/fun/eoajfl.mp3');
-                else throw new Error('틱틱틱틱틱틱틱'); // 진짜 오류 발생
+                else if (input == '2952')
+                    mp3 = fs.createReadStream('./VoiceChannel/fun/2952.mp4');
+                else throw new Error('틱틱틱틱틱틱틱');
 
                 e.voiceChannel.playSong.dispatcher = connection.playStream(mp3);    // 이스터에그 재생
 

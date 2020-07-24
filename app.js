@@ -12,7 +12,7 @@ const serverClass = require('./server/server');
 // Create an instance of a Discord client
 const client = new Discord.Client();
 
-const current_version = '2.0.6.0';
+const current_version = '2.0.6.1';
 
 
 var serverMap = new Map();
@@ -78,6 +78,9 @@ client.on('message', async function(message) {
   }
   if (message.content.startsWith(prefix + '업보킹')) {
     server.voiceChannel.fun.funAction('eoajfl', message);
+  }
+  if (message.content.startsWith(prefix + '2952')) {
+    server.voiceChannel.fun.funAction('2952', message);
   }
   if (message.content.startsWith(prefix + 'CPU')) {
     return message.channel.send('``오류로 인해 비활성화 되었어요``')  // stack 오류
