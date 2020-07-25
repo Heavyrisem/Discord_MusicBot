@@ -1,5 +1,6 @@
 node_modules/
 package-lock.json
 
-VoiceChannel/temp/*
+
 ssh
+VoiceChannel/temp/269848346422804501.mp3
