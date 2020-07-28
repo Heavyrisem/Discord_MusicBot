@@ -187,7 +187,7 @@ class music {
                 
 
             } catch(error) {
-                e.voiceChannel.playSong.playing == false;   // 오류로 음악 재생 중단
+                e.voiceChannel.playSong.playing = false;   // 오류로 음악 재생 중단
                 e.Skip(1, message); // 오류를 일으킨 큐 제거
                 e.playerrorhandling('playStream' ,error);
             }
@@ -367,6 +367,7 @@ class music {
       }
 
       playerrorhandling(msg, err) {
+        console.log(msg, err);
         const errormsg = new Discord.RichEmbed()            
         .setColor('#9147ff')
         .setTitle('⚠️ [' + msg + '] 에서 오류가 발생했어요.')
