@@ -17,6 +17,8 @@ const music = require('./VoiceChannel/music');
 let ServerList = new Map();
 
 
+let muted = false;
+
 let counter = 5;
 
 let Flipflop = 0;
@@ -56,9 +58,6 @@ Client.on('message', async message => {
 
     if (message.content == "핑" || message.content == "ping")
         Server.server.Ping(message);
-    
-    if (message.content.startsWith("자가진단"))
-        Server.server.COVID_check(message);
     
     if (message.content == "정보")
         Server.server.ShowBotinfo(message, Client);
@@ -130,6 +129,14 @@ Client.on('message', async message => {
 
 
     // =========================== TEST ==============================
+    if (message.content == "ㅇㅁ") {
+        message.member.voice.channel.members.forEach(val => {
+            console.log(val.user.);
+        })
+    }
+
+
+
     if (message.content == "테스트") {
         message.delete();
 
