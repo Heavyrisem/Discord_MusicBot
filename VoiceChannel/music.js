@@ -1,6 +1,5 @@
 const Discord = require('discord.js');
 const fs = require('fs');
-const youtube_search = require('youtube-search');
 const ytdl = require('ytdl-core');
 const youtube_api = require('ytsearch_api');
 
