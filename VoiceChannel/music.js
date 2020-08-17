@@ -123,7 +123,7 @@ class music extends VoiceChannel{
                 fs.unlink(`VoiceChannel/temp/${video_info.message.guild.id}.mp3`, () => {
                     music_file = ytdl(video_info.id, {filter: 'audioonly', quality: 'lowestaudio'});
                     music_file.pipe(fs.createWriteStream(`VoiceChannel/temp/${video_info.message.guild.id}.mp3`, { highWaterMark: 128 }));
-                }).catch(err =>{ throw new Error(err) });
+                }).catch(err =>{ throw new Error("download" + err) });
             } catch(err) {
                 music_file = ytdl(video_info.id, {filter: 'audioonly', quality: 'lowestaudio'});  // 유튜브에서 음악 불러오기
                 music_file.pipe(fs.createWriteStream(`VoiceChannel/temp/${video_info.message.guild.id}.mp3`, { highWaterMark: 128 })); // 유튜브에서 음악 mp3로 다운로드, 한번에 128바이트
