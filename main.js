@@ -2,7 +2,6 @@ const Discord = require('discord.js');
 const prettyms = require('pretty-ms');
 
 
-// const DEFAULT_INFO = require('./Default_info.json');
 const TOKEN = process.env.MAIN_TOKEN;
 const YOUTUBEAPIKEY = process.env.YOUTUBEAPI;
 const PREFIX = "!";
