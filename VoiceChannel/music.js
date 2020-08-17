@@ -155,7 +155,7 @@ class music extends VoiceChannel{
                 });
 
             });
-        }).catch(err => { console.log('err'); this.playing = false; this.queue.shift(); this.errorhandler(err, video_info.message) });
+        }).catch(err => { console.log('158error'); this.playing = false; this.queue.shift(); this.errorhandler(err, video_info.message) });
     }
 
     AddMusic(message, musicId) {
