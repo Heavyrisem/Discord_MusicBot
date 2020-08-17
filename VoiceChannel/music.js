@@ -182,10 +182,13 @@ class music extends VoiceChannel{
             
                 
                 
-                if (!this.playing)
-                    this.PlayMusic(message);
-                else
-                    message.channel.send(`\`\`${info[0].title} 를 재생목록에 추가했습니다.\`\``);
+                if (!this.playing) {this.PlayMusic(message);}
+                else {
+                    if (info.length > 1)
+                        message.channel.send(`\`\`${info[0].title} 외 ${info.length-1} 곡을 재생목록에 추가했습니다.\`\``);
+                    else
+                        message.channel.send(`\`\`${info[0].title} 를 재생목록에 추가했습니다.\`\``);
+                }
            });
         } catch(err) {
             this.errorhandler(err, message);
