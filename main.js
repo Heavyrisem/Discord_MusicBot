@@ -2,14 +2,14 @@ const Discord = require('discord.js');
 const prettyms = require('pretty-ms');
 
 
-const TOKEN = process.env.MAIN_TOKEN;
-const YOUTUBEAPIKEY = process.env.YOUTUBEAPI;
-const PREFIX = "!";
+// const TOKEN = process.env.MAIN_TOKEN;
+// const YOUTUBEAPIKEY = process.env.YOUTUBEAPI;
+// const PREFIX = "!";
 
-// const config = require('./config.json');
-// const TOKEN = config.TOKEN_BETA;
-// const YOUTUBEAPIKEY = config.YOUTUBE_API;
-// const PREFIX = '/';
+const config = require('./config.json');
+const TOKEN = config.TOKEN_BETA;
+const YOUTUBEAPIKEY = config.YOUTUBE_API;
+const PREFIX = config.PREFIX;
 
 
 const Client = new Discord.Client();
