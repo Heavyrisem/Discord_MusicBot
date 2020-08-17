@@ -32,7 +32,7 @@ class VoiceChannel{
     }
 
     AutoLeave(message) {
-        console.log('autoleave Activate');
+        // console.log('autoleave Activate');
         this.autoleave = setTimeout(() => {
             if (message.guild.me.voice.channel) {
                 this.Leave(message);

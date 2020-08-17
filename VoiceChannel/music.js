@@ -2,21 +2,18 @@ const Discord = require('discord.js');
 const fs = require('fs');
 const youtube_search = require('youtube-search');
 const ytdl = require('ytdl-core');
-const youtubedl = require('youtube-dl')
-// const {getInfo} = require('ytdl-getinfo');
+const youtube_api = require('ytsearch_api');
 
 const VoiceChannel = require('./VoiceChannel');
 
 class music extends VoiceChannel{
-    constructor(Client, message) {
+    constructor(Client, message, YOUTUBEAPIKEY) {
         super();
+        this.YOUTUBEAPIKEY = YOUTUBEAPIKEY;
+
         this.Client = Client;
         this.connection = message.guild.me.voice.channel == undefined ? undefined : message.guild.me.voice.channel;
 
-        this.youtube_search_opt = {
-            maxResults: 5,
-            key: 'AIzaSyAE3XrR70rvhswQHouLcRHNvBkhHs_Euvo'
-        }
         
         this.playing = false;
         this.dispatcher = undefined;
@@ -25,6 +22,8 @@ class music extends VoiceChannel{
             volume: 0.3,
             bitrate: 'auto'
         };
+
+        this.tempMessage = undefined;
     }
 
     SetVolume(message, v) {
@@ -132,7 +131,7 @@ class music extends VoiceChannel{
             }
 
             music_file.on('data', () => {
-                console.log(tmp);
+                // console.log(tmp);
                 tmp++;
                 if (tmp != 3) return;
                 let read = fs.createReadStream(`VoiceChannel/temp/${video_info.message.guild.id}.mp3`, { highWaterMark: 256 });
@@ -164,22 +163,29 @@ class music extends VoiceChannel{
         try {
             let e = this;
             
-            youtubedl.getInfo(musicId ,(err, info) => {
-                console.log(info);
-                if (err) return this.errorhandler(err, message);
-                let video_info = {
-                   title: info.title,
-                   time: info.duration,
-                   author: message.member.user.username,
-                   id: info.id,
-                   message: message
-                };
+            youtube_api.GetInfo(musicId, this.YOUTUBEAPIKEY).then(info => {
                 
-                this.queue.push(video_info);
+                if (info.error) return this.errorhandler(info.error.message, message);
+                
+                let index = 0;
+                do {               
+                    let video_info = {
+                        title: info[index].title,
+                        time: info[index].duration,
+                        author: message.member.user.username,
+                        id: info[index].id,
+                        message: message
+                    };
+                    this.queue.push(video_info);
+                    index += 1;
+                } while (index < info.length)
+            
+                
+                
                 if (!this.playing)
                     this.PlayMusic(message);
                 else
-                    message.channel.send(`\`\`${video_info.title} 를 재생목록에 추가했습니다.\`\``);
+                    message.channel.send(`\`\`${info[0].title} 를 재생목록에 추가했습니다.\`\``);
            });
         } catch(err) {
             this.errorhandler(err, message);
@@ -190,18 +196,21 @@ class music extends VoiceChannel{
         let music_list = [];
         let music_select_msg = '';
 
-        youtube_search(keyword, this.youtube_search_opt, async (err, result) => {
+        youtube_api.SearchOnYoutube(keyword, this.YOUTUBEAPIKEY).then(async result => {
             try {
-                if (err) throw new Error(err);
+                if (result.error) throw new Error(result.error.message);
 
                 result.forEach((value, index) => {
+
                     let info = {
                         title: value.title,
-                        channel_name: value.channelTitle,
-                        videoId: value.id
+                        channel_name: value.channel,
+                        videoId: value.id,
+                        duration: value.duration
                     }
                     music_list.push(info);
-                    music_select_msg += `${index+1}: ${info.title} - ${info.channel_name}\n`;
+                    music_select_msg += `${index+1}: ${info.title} (${info.duration}) - ${info.channel_name}\n`;
+
                 });
 
 
@@ -224,9 +233,9 @@ class music extends VoiceChannel{
         }
 
         let select_timeout = setTimeout(() => {
-            select_message.delete().catch(err => { this.errorhandler(err, message) });
+            // select_message.delete().catch(err => { this.errorhandler(err, message) });
 
-            message.channel.send(`\`\`선택 시간이 초과되었어요.\`\``);
+            select_message.edit(`\`\`선택 시간이 초과되었어요.\`\``);
             this.Client.listeners('message')[1] != null ? this.Client.removeListener('message', this.Client.listeners('message')[1]) : '';
         }, 10000);
 

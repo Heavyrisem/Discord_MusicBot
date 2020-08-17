@@ -2,24 +2,24 @@ const Discord = require('discord.js');
 const prettyms = require('pretty-ms');
 
 
-const DEFAULT_INFO = require('./Default_info.json');
-const TOKEN = DEFAULT_INFO.TOKEN_BETA;
-const PREFIX = DEFAULT_INFO.PREFIX;
+// const DEFAULT_INFO = require('./Default_info.json');
+const TOKEN = process.env.MAIN_TOKEN;
+const YOUTUBEAPIKEY = process.env.YOUTUBEAPI;
+const PREFIX = "!";
 
 
 const Client = new Discord.Client();
-const current_version = 'v3.2 beta';
+const current_version = 'v3.3';
 
 const server_class = require('./server_class');
 const music = require('./VoiceChannel/music');
 
-
 let ServerList = new Map();
 
 
-let muted = false;
+// let muted = false;
 
-let counter = 5;
+// let counter = 5;
 
 let Flipflop = 0;
 Client.on('ready', () => {
@@ -50,7 +50,7 @@ Client.on('message', async message => {
     if (!ServerList.has(message.guild.id))
         ServerList.set(message.guild.id, {
             server: new server_class(Client, message),
-            music: new music(Client, message)
+            music: new music(Client, message, YOUTUBEAPIKEY)
         });
     let Server = ServerList.get(message.guild.id);
 
@@ -64,6 +64,9 @@ Client.on('message', async message => {
 
     if (message.content == "업타임")
         Server.server.Uptime(message, Client.uptime);
+
+    if (message.content == "버전")
+        Server.server.CurrentVersion(message, current_version);
     
     // ============================ VoiceChannel ============================
 
@@ -90,9 +93,9 @@ Client.on('message', async message => {
         const youtube_regex = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
         let URL = keyword.match(youtube_regex);
         
-        if (URL != null) {            
-            if (URL[0].includes('list')) return message.channel.send('``재생목록은 재생할수 없습니다. URL을 확인해주세요``');   // 리스트는 재생 거부
-            Server.music.AddMusic(message, URL[7].trim());
+        if (URL != null) {
+            message.delete();
+            Server.music.AddMusic(message, keyword);
         } else {
             console.log(keyword);
             Server.music.SearchMusic(message, keyword);
@@ -128,57 +131,57 @@ Client.on('message', async message => {
 
 
 
-    // =========================== TEST ==============================
-    if (message.content == "ㅇㅁ") {
-        message.member.voice.channel.members.forEach(val => {
-            console.log(val.user.);
-        })
-    }
+    // // =========================== TEST ==============================
+    // if (message.content == "ㅇㅁ") {
+    //     message.member.voice.channel.members.forEach(val => {
+    //         console.log(val.user);
+    //     })
+    // }
 
 
 
-    if (message.content == "테스트") {
-        message.delete();
+    // if (message.content == "테스트") {
+    //     message.delete();
 
-        let msg = "==========".split('');
-        msg.splice(counter,0,"#");
-        msg = msg.toString().replace(/,/gi, "")
-        console.log(msg)
+    //     let msg = "==========".split('');
+    //     msg.splice(counter,0,"#");
+    //     msg = msg.toString().replace(/,/gi, "")
+    //     console.log(msg)
 
-        const embedmsg = new Discord.MessageEmbed()            
-        .setColor('#9147ff')
-        .setTitle('현재 재생 중')
-        .setThumbnail('https://i.ytimg.com/vi_webp/HXA9ZL8K5Js/maxresdefault.webp')
-        .addField('Inline field title', 'Some value here', true)
-        .addField('Inline field title', 'Some value here', true)
-        .addField('Inline field title', 'Some value here', true)
-        .addField('Inline field title', 'Some value here', true)
-        // .setDescription(err)
-        .setTimestamp();
+    //     const embedmsg = new Discord.MessageEmbed()            
+    //     .setColor('#9147ff')
+    //     .setTitle('현재 재생 중')
+    //     .setThumbnail('https://i.ytimg.com/vi_webp/HXA9ZL8K5Js/maxresdefault.webp')
+    //     .addField('Inline field title', 'Some value here', true)
+    //     .addField('Inline field title', 'Some value here', true)
+    //     .addField('Inline field title', 'Some value here', true)
+    //     .addField('Inline field title', 'Some value here', true)
+    //     // .setDescription(err)
+    //     .setTimestamp();
         
-        message.channel.send(embedmsg);
+    //     message.channel.send(embedmsg);
 
-        message.channel.send(`\`\`${msg}\`\``).then(message => {
-            message.react("⬅").then(() => {
-                message.react("➡");
-            });
+    //     message.channel.send(`\`\`${msg}\`\``).then(message => {
+    //         message.react("⬅").then(() => {
+    //             message.react("➡");
+    //         });
 
-            Client.on("messageReactionAdd", async (reaction, user) => {
-                if (user == Client.user) return;
+    //         Client.on("messageReactionAdd", async (reaction, user) => {
+    //             if (user == Client.user) return;
 
-                if (reaction.emoji.name == "⬅" && counter > 0) counter--;
-                if (reaction.emoji.name == "➡" && counter < 10) counter++;
+    //             if (reaction.emoji.name == "⬅" && counter > 0) counter--;
+    //             if (reaction.emoji.name == "➡" && counter < 10) counter++;
 
-                let msg = "==========".split('');
-                msg.splice(counter,0,"#");
-                msg = msg.toString().replace(/,/gi, "")
+    //             let msg = "==========".split('');
+    //             msg.splice(counter,0,"#");
+    //             msg = msg.toString().replace(/,/gi, "")
 
-                message.edit(`\`\`${msg}\`\``);
-                reaction.users.remove(user.id);
-            })
-        });
+    //             message.edit(`\`\`${msg}\`\``);
+    //             reaction.users.remove(user.id);
+    //         })
+    //     });
         // message.channel.send(`\`\`${counter} \`\``);
-    }
+//     }
 });
 
 

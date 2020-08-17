@@ -6,6 +6,10 @@ class Utility {
         message.channel.send(`\`\`업타임 ${prettyms(time)}\`\``);
     }
 
+    CurrentVersion(message, ver) {
+        message.channel.send(`\`\`현재 클라이언트 버전은 ${ver} 입니다.\`\``);
+    }
+
     ShowBotinfo(message, Client) {
         const info_message = new Discord.MessageEmbed()
         .setColor('#9147ff')
@@ -15,8 +19,8 @@ class Utility {
         .setDescription('디스코드 음악 봇 ``' + Client.user.username + '``입니다.\n사용할 수 있는 명령어들은 아래와 같아요')
         .addField('\u200B', '\u200B')
         .addField('음악', '``노래(p)`` ``볼륨`` ``스킵`` ``큐`` ``정지`` ``참가`` ``나가`` ``일시정지(pause)`` ``재생(resume)``')
-        .addField('유틸리티', '``핑`` ``업타임`` ``자가진단`` ``정보``')
-        .addField('마지막 업데이트 7/30', 'Youtube 검색 API 개선, 오류 수정')
+        .addField('유틸리티', '``핑`` ``업타임`` ``정보`` ``버전``')
+        .addField('마지막 업데이트 8/17', 'Youtube API 개선, 안정성 향상, 재생목록 감지 기능 추가')
         .setTimestamp()
         .setFooter(Client.guilds.cache.size + '개의 서버와 함께하고 있어요.');
         
