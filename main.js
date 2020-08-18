@@ -8,12 +8,12 @@ const prettyms = require('pretty-ms');
 
 const config = require('./config.json');
 const TOKEN = config.TOKEN_MAIN;
-const YOUTUBEAPIKEY = config.YOUTUBE_API;
+const YOUTUBEAPIKEYS = config.YOUTUBE_API;
 const PREFIX = config.PREFIX;
 
 
 const Client = new Discord.Client();
-const current_version = 'v3.3';
+const current_version = 'v3.4';
 
 const server_class = require('./server_class');
 const music = require('./VoiceChannel/music');
@@ -54,7 +54,7 @@ Client.on('message', async message => {
     if (!ServerList.has(message.guild.id))
         ServerList.set(message.guild.id, {
             server: new server_class(Client, message),
-            music: new music(Client, message, YOUTUBEAPIKEY)
+            music: new music(Client, message, YOUTUBEAPIKEYS)
         });
     let Server = ServerList.get(message.guild.id);
 

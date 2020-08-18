@@ -6,9 +6,10 @@ const youtube_api = require('ytsearch_api');
 const VoiceChannel = require('./VoiceChannel');
 
 class music extends VoiceChannel{
-    constructor(Client, message, YOUTUBEAPIKEY) {
+    constructor(Client, message, YOUTUBEAPIKEYS) {
         super();
-        this.YOUTUBEAPIKEY = YOUTUBEAPIKEY;
+        this.YoutubeAPI = YOUTUBEAPIKEYS;
+    
 
         this.Client = Client;
         this.connection = message.guild.me.voice.channel == undefined ? undefined : message.guild.me.voice.channel;
@@ -158,13 +159,18 @@ class music extends VoiceChannel{
         }).catch(err => { console.log('158 err'); this.playing = false; this.queue.shift(); this.errorhandler(err, video_info.message) });
     }
 
-    AddMusic(message, musicId) {
+    AddMusic(message, musicId, depth) {
         try {
-            let e = this;
+            if (depth == undefined) depth = 0;
+            else message.channel.send(`\`\`${depth} 번째 API키가 작동하지 않습니다. 백업 키로 대체합니다.\`\``);
+            if (this.YoutubeAPI[depth] == undefined) return this.errorhandler("API 쿼리 제한 수를 초과했습니다. "+depth+" 도달", message);
             
-            youtube_api.GetInfo(musicId, this.YOUTUBEAPIKEY).then(info => {
+            youtube_api.GetInfo(musicId, this.YoutubeAPI[depth]).then(info => {
                 
-                if (info.error) return this.errorhandler(info.error.message, message);
+                if (info.error) {
+                    if (info.error.reason == "quotaExceeded") return this.AddMusic(message, musicId, depth);
+                    return this.errorhandler(info.error.message, message);
+                }
                 
                 let index = 0;
                 do {               
@@ -194,13 +200,22 @@ class music extends VoiceChannel{
         }
     }
 
-    async SearchMusic(message, keyword) {
+    async SearchMusic(message, keyword, depth) {
         let music_list = [];
         let music_select_msg = '';
+        if (depth == undefined) depth = 0;
+        else message.channel.send(`\`\`${depth} 번째 API키가 작동하지 않습니다. 백업 키로 대체합니다.\`\``);
+        if (this.YoutubeAPI[depth] == undefined) return this.errorhandler("API 쿼리 제한 수를 초과했습니다. "+depth+" 도달", message);
 
-        youtube_api.SearchOnYoutube(keyword, this.YOUTUBEAPIKEY).then(async result => {
+        youtube_api.SearchOnYoutube(keyword, this.YoutubeAPI[depth]).then(async result => {
             try {
-                if (result.error) throw new Error(result.error.message);
+                if (result.error) {
+                    depth += 1;
+                    if (result.error.reason == 'quotaExceeded') return this.SearchMusic(message, keyword, depth);
+                    throw new Error(result.error.message);
+                }
+                
+                
 
                 result.forEach((value, index) => {
 
