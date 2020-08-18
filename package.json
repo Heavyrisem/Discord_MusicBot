@@ -33,6 +33,6 @@
     "youtube-dl": "^3.0.2",
     "ytdl-core": "^3.1.3",
     "ytdl-getinfo": "^1.1.0",
-    "ytsearch_api": "^1.1.8"
+    "ytsearch_api": "^1.1.10"
   }
 }

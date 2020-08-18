@@ -161,16 +161,20 @@ class music extends VoiceChannel{
 
     AddMusic(message, musicId, depth) {
         try {
+            
             if (depth == undefined) depth = 0;
-            else message.channel.send(`\`\`${depth} 번째 API키가 작동하지 않습니다. 백업 키로 대체합니다.\`\``);
+            // else message.channel.send(`\`\`${depth} 번째 API키가 작동하지 않습니다. 백업 키로 대체합니다.\`\``);
             if (this.YoutubeAPI[depth] == undefined) return this.errorhandler("API 쿼리 제한 수를 초과했습니다. "+depth+" 도달", message);
+            
             
             youtube_api.GetInfo(musicId, this.YoutubeAPI[depth]).then(info => {
                 
                 if (info.error) {
+                    depth += 1;
                     if (info.error.reason == "quotaExceeded") return this.AddMusic(message, musicId, depth);
                     return this.errorhandler(info.error.message, message);
                 }
+                
                 
                 let index = 0;
                 do {               
@@ -187,8 +191,10 @@ class music extends VoiceChannel{
             
                 
                 
-                if (!this.playing) {this.PlayMusic(message);}
-                else {
+                if (!this.playing) {
+                    if (info.length > 1) message.channel.send(`\`\`${info[0].title} 외 ${info.length-1} 곡을 재생목록에 추가했습니다.\`\``);
+                    this.PlayMusic(message);
+                } else {
                     if (info.length > 1)
                         message.channel.send(`\`\`${info[0].title} 외 ${info.length-1} 곡을 재생목록에 추가했습니다.\`\``);
                     else

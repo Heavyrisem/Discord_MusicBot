@@ -96,8 +96,10 @@ Client.on('message', async message => {
 
         const youtube_regex = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
         let URL = keyword.match(youtube_regex);
+        const list_regex = /^.*(youtu.be\/|list=)([^#\&\?]*).*/;
+        let URL_list = keyword.match(list_regex);
         
-        if (URL != null) {
+        if (URL != null || URL_list != null) {
             message.delete();
             Server.music.AddMusic(message, keyword);
         } else {
