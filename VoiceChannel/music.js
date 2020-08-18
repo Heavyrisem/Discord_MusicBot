@@ -161,6 +161,8 @@ class music extends VoiceChannel{
 
     AddMusic(message, musicId, depth) {
         try {
+            if (message.member.voice.channel == null || message.guild.me.voice.channel != message.member.voice.channel)
+            return message.channel.send(`\`\`음성 채널에 접속해 주세요\`\``);
             
             if (depth == undefined) depth = 0;
             // else message.channel.send(`\`\`${depth} 번째 API키가 작동하지 않습니다. 백업 키로 대체합니다.\`\``);
@@ -207,6 +209,9 @@ class music extends VoiceChannel{
     }
 
     async SearchMusic(message, keyword, depth) {
+        if (message.member.voice.channel == null || message.guild.me.voice.channel != message.member.voice.channel)
+        return message.channel.send(`\`\`음성 채널에 접속해 주세요\`\``);
+        
         let music_list = [];
         let music_select_msg = '';
         if (depth == undefined) depth = 0;
