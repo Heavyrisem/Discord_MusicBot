@@ -32,17 +32,20 @@ class VoiceChannel{
     }
 
     AutoLeave(message) {
-        // console.log('autoleave Activate');
+        if (this.autoleave != undefined) return // console.log(`autoleave 중복 활성화 방지`);
         this.autoleave = setTimeout(() => {
             if (message.guild.me.voice.channel) {
                 this.Leave(message);
                 message.channel.send('``⬅️ 활동이 없어서 방을 나갔어요.``');
             }
         }, 10000)
+        // console.log('autoleave Activate');
     }
 
     Autoleave_clear() {
+        // console.log('autoleave Deactivate');
         clearTimeout(this.autoleave);
+        this.autoleave = undefined
     }
 
     errorhandler(msg, message) {
