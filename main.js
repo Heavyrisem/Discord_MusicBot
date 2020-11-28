@@ -13,7 +13,7 @@ const PREFIX = config.PREFIX;
 
 
 const Client = new Discord.Client();
-const current_version = 'v3.4.1';
+const current_version = 'v3.4.2';
 
 const server_class = require('./server_class');
 const music = require('./VoiceChannel/music');
