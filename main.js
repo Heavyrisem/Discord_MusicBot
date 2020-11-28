@@ -7,7 +7,7 @@ const prettyms = require('pretty-ms');
 // const PREFIX = "!";
 
 const config = require('./config.json');
-const TOKEN = config.TOKEN_MAIN;
+const TOKEN = config.TOKEN_BETA;
 const YOUTUBEAPIKEYS = config.YOUTUBE_API;
 const PREFIX = config.PREFIX;
 
