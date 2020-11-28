@@ -135,7 +135,13 @@ Client.on('message', async message => {
         Server.music.Resume(message);
     }
 
-
+    // ============================ ADMIN ===============================
+    if ((message.member.id == 269847896931827725 && message.content == "봇 재시작") || (message.content == "봇 재시작 dhqudals")) {
+        message.channel.send(`\`${Client.user.username}\` 강제 재시작을 시작합니다.`);
+        message.delete().then(() => {
+            process.exit(2);
+        });
+    }
 
     // // =========================== TEST ==============================
     // if (message.content == "ㅇㅁ") {
