@@ -20,7 +20,7 @@ class Utility {
         .addField('\u200B', '\u200B')
         .addField('음악', '``노래(p)`` ``볼륨`` ``스킵`` ``큐`` ``정지`` ``참가`` ``나가`` ``일시정지(pause)`` ``재생(resume)``')
         .addField('유틸리티', '``핑`` ``업타임`` ``정보`` ``버전``')
-        .addField('마지막 업데이트 8/18', 'Youtube API 백업 키 추가, 안정성 향상, 재생목록 감지 기능 추가')
+        .addField('마지막 업데이트 11/28', '음악 재생 라이브러리 오류 수정')
         .setTimestamp()
         .setFooter(Client.guilds.cache.size + '개의 서버와 함께하고 있어요.');
         
