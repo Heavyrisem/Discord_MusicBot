@@ -133,7 +133,7 @@ class music extends VoiceChannel{
             music_file.on('data', () => {
                 // console.log(tmp);
                 tmp++;
-                if (tmp != 3) return;
+                if (tmp != 8) return;
                 let read = fs.createReadStream(`VoiceChannel/temp/${video_info.message.guild.id}.mp3`, { highWaterMark: 256 });
 
                 // console.log(connection);

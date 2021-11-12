@@ -28,6 +28,9 @@ let ServerList = new Map();
 let Flipflop = 0;
 Client.on('ready', () => {
     console.log(Client.user.username + ', 준비 완료');
+    Client.guilds.cache.forEach((v, i) => {
+        console.log(v.name);
+    });
 
     setInterval(() => {
         switch (Flipflop) {
