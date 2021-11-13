@@ -80,10 +80,10 @@ class MusicPlayer {
                 author: interaction.user.username
             });
 
-            if (this.Queue.length <= 1) {
+            if (this.Player.state.status === AudioPlayerStatus.Idle) {
                 this.PlayMusic(interaction);
-                return resolve();
-            }
+            } else (interaction.channel)&& interaction.channel.send(`\`${MusicDetail.videoDetails.title} 를 재생목록에 추가했어요.\``);
+            return resolve();
         })
     }
 
