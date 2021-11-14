@@ -178,7 +178,7 @@ class MusicPlayer {
             // console.log(interaction.client.user);
             if (!interaction.client.user) return reject();
 
-            const ClientVoiceChannel = GetVoiceChannel(interaction, interaction.client.user.id);
+            // const ClientVoiceChannel = GetVoiceChannel(interaction, interaction.client.user.id);
             const UserVoiceChannel = GetVoiceChannel(interaction, interaction.user.id);
             if (!UserVoiceChannel) return reject("JoinVoiceChannel() > 먼저 음성 채널에 참여해 주세요");
             this.Connection = joinVoiceChannel({
@@ -186,6 +186,12 @@ class MusicPlayer {
                 guildId: UserVoiceChannel.guild.id,
                 adapterCreator: UserVoiceChannel.guild.voiceAdapterCreator,
             });
+
+            this.Connection.once(VoiceConnectionStatus.Disconnected, (oldState, newState) => {
+                console.log("disconnected from voice channel");
+                this.Connection = undefined;
+                if (this.Player.state.status === AudioPlayerStatus.Playing) this.Stop(interaction);
+            })
             this.Connection.once("stateChange", (oldState, newState) => {
                 if (newState.status === VoiceConnectionStatus.Disconnected) {
                     console.log("Disconnected from voice channel");
