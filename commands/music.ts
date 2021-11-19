@@ -58,7 +58,7 @@ class MusicPlayer {
                             ExpiredMessage.edit({ content: "`선택 시간이 만료되었습니다.`", components: [] })//.catch(err => console.log("Already Deleted Message"));
                         }
                     }
-                }, 5000);
+                }, 1000 * 10);
     
                 return resolve();
             }, 0);
