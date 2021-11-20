@@ -78,10 +78,10 @@ class MusicPlayer {
                 author: interaction.user.username
             });
             
-            if (this.Player.state.status != AudioPlayerStatus.Playing && !getVoiceConnection(interaction.guildId)) {
+            if (this.Player.state.status != AudioPlayerStatus.Playing) {
                 this.PlayMusic(interaction);
             } else {
-                console.log(this.Player.state.status, !getVoiceConnection(interaction.guildId));
+                // console.log(this.Player.state.status, !getVoiceConnection(interaction.guildId));
                 (interaction.channel)&& interaction.channel.send(`\`${MusicDetail.videoDetails.title} 를 재생목록에 추가했어요.\``);
             }
             return resolve();
