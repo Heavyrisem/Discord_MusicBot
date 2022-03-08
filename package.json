@@ -31,7 +31,7 @@
     "ffmpeg": "0.0.4",
     "fs": "0.0.1-security",
     "pretty-ms": "^7.0.0",
-    "ytdl-core": "^4.1.0",
+    "ytdl-core": "^4.11.0",
     "ytsearch_api": "^1.1.10"
   }
 }
