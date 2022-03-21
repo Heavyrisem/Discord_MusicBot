@@ -1,3 +1,4 @@
 Config.json
 node_modules
 dist
+.env

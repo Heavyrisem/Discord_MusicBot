@@ -1,15 +1,16 @@
-import { Client, Intents } from 'discord.js';
 import { generateDependencyReport } from '@discordjs/voice';
+import { Client, Intents } from 'discord.js';
+import dotenv from 'dotenv';
+import prettyms from 'pretty-ms';
 
 import MusicPlayer from './commands/music';
 
-import { TOKEN, VERSION } from './Config.json';
-import prettyms from 'pretty-ms';
-
+dotenv.config();
 console.log(generateDependencyReport());
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_VOICE_STATES] });
 const MusicManager: { [index: string]: MusicPlayer } = {};
+const { VERSION, TOKEN } = process.env;
 
 client.on('ready', () => {
   let Flipflop = 0;

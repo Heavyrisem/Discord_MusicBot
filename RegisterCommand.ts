@@ -1,7 +1,11 @@
-import { REST } from '@discordjs/rest';
 import { SlashCommandBuilder } from '@discordjs/builders';
+import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
-import { TOKEN, VERSION } from './Config.json';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const { TOKEN, VERSION } = process.env;
+
 const [CLIENT_ID, GUILD_ID] = ['619527364090658817', '269848346422804501'];
 const commands: any[] = [];
 

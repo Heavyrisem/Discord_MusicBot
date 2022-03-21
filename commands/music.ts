@@ -1,6 +1,3 @@
-import ytdl from 'ytdl-core';
-import yts from 'yt-search';
-import { CacheType, Interaction, MessageActionRow, MessageButton } from 'discord.js';
 import {
   AudioPlayer,
   AudioPlayerState,
@@ -12,6 +9,10 @@ import {
   joinVoiceChannel,
   VoiceConnection,
 } from '@discordjs/voice';
+import { CacheType, Interaction, MessageActionRow, MessageButton } from 'discord.js';
+import yts from 'yt-search';
+import ytdl from 'ytdl-core';
+
 import { GetVoiceChannel } from '../utils';
 
 interface Music_T {
