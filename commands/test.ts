@@ -1,7 +1,7 @@
-import ytdl from 'ytdl-core';
+// import ytdl from 'ytdl-core';
 
-(async () => {
-  ytdl.getBasicInfo('xarC5jAiO7w').then((d) => {
-    console.log(d.videoDetails.title, d.videoDetails.videoId);
-  });
-})();
+// (async () => {
+//   ytdl.getBasicInfo('xarC5jAiO7w').then((d) => {
+//     console.log(d.videoDetails.title, d.videoDetails.videoId);
+//   });
+// })();

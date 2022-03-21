@@ -10,8 +10,9 @@ import {
   VoiceConnection,
 } from '@discordjs/voice';
 import { CacheType, Interaction, MessageActionRow, MessageButton } from 'discord.js';
+import playdl from 'play-dl';
 import yts from 'yt-search';
-import ytdl from 'ytdl-core';
+// import ytdl from 'ytdl-core';
 
 import { GetVoiceChannel } from '../utils';
 
@@ -96,12 +97,12 @@ class MusicPlayer {
       const UserVoiceChannel = GetVoiceChannel(interaction, interaction.user.id);
       if (!UserVoiceChannel) return reject('AddMusic() > 먼저 음성 채널에 참여해 주세요');
 
-      const MusicDetail = await ytdl.getBasicInfo(id);
+      const MusicDetail = await playdl.video_basic_info(id);
 
       this.Queue.push({
-        id: MusicDetail.videoDetails.videoId,
-        title: MusicDetail.videoDetails.title,
-        duration: MusicDetail.timestamp,
+        id: MusicDetail.video_details.id ?? '',
+        title: MusicDetail.video_details.title ?? '',
+        duration: MusicDetail.video_details.durationRaw,
         author: interaction.user.username,
       });
 
@@ -109,7 +110,7 @@ class MusicPlayer {
         this.PlayMusic(interaction);
       } else {
         // console.log(this.Player.state.status, !getVoiceConnection(interaction.guildId));
-        interaction.channel && interaction.channel.send(`\`${MusicDetail.videoDetails.title} 를 재생목록에 추가했어요.\``);
+        interaction.channel && interaction.channel.send(`\`${MusicDetail.video_details.title} 를 재생목록에 추가했어요.\``);
       }
       return resolve();
     });
@@ -119,14 +120,14 @@ class MusicPlayer {
     try {
       if (!this.Queue.length) return;
       const Music = this.Queue[0];
-      const MusicStream = await ytdl(Music.id, { filter: 'audioonly', highWaterMark: 1 << 10 });
+      const MusicStream = await playdl.stream(Music.id, { discordPlayerCompatibility: true });
       // MusicStream.pipe(fs.createWriteStream("./test.mp3"));
 
       // const Read = fs.createReadStream("./test.mp3");
 
       const Connection = await this.JoinVoiceChannel(interaction);
 
-      this.Resource = createAudioResource(MusicStream, { inlineVolume: true });
+      this.Resource = createAudioResource(MusicStream.stream, { inlineVolume: true });
       if (this.Resource.volume) this.Resource.volume.setVolume(this.PlayOptions.Volume / 1000);
       else console.log('no vol');
 
