@@ -19,7 +19,7 @@ client.on('ready', async () => {
     if (client.user) {
         await initRegisterCommands(client.user.id);
         console.log(`Logged in as ${client.user.tag}!`);
-        client.guilds.cache.forEach((Guild) => (MusicManager[Guild.id] = new MusicPlayer()));
+        client.guilds.cache.forEach((Guild) => (MusicManager[Guild.id] = new MusicPlayer(Guild.id)));
 
         setInterval(() => {
             if (!client.user) return console.log('ERR');
@@ -40,9 +40,12 @@ client.on('ready', async () => {
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isButton()) return;
 
-    if (!MusicManager[interaction.guildId]) MusicManager[interaction.guildId] = new MusicPlayer();
+    const { guildId } = interaction;
+    if (!guildId) return;
 
-    const GuildMusicPlayer = MusicManager[interaction.guildId];
+    if (!MusicManager[guildId]) MusicManager[guildId] = new MusicPlayer(guildId);
+
+    const GuildMusicPlayer = MusicManager[guildId];
 
     const InteractionData: { videoId?: string; id?: string } = JSON.parse(interaction.customId);
     if (InteractionData.videoId && InteractionData.id) {
@@ -56,8 +59,12 @@ client.on('interactionCreate', async (interaction) => {
 
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isCommand()) return;
-    if (!MusicManager[interaction.guildId]) MusicManager[interaction.guildId] = new MusicPlayer();
-    const GuildMusicPlayer = MusicManager[interaction.guildId];
+
+    const { guildId } = interaction;
+    if (!guildId) return;
+
+    if (!MusicManager[guildId]) MusicManager[guildId] = new MusicPlayer(guildId);
+    const GuildMusicPlayer = MusicManager[guildId];
 
     try {
         switch (interaction.commandName) {

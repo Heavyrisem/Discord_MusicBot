@@ -5,6 +5,7 @@ import {
     AudioResource,
     createAudioPlayer,
     createAudioResource,
+    DiscordGatewayAdapterCreator,
     getVoiceConnection,
     joinVoiceChannel,
     VoiceConnection,
@@ -33,18 +34,18 @@ class MusicPlayer {
 
     Resource: AudioResource<null> | undefined;
 
-    constructor() {
+    constructor(readonly guildId: string) {
         this.Player = createAudioPlayer();
         this.Resource = undefined;
     }
 
-    Search(Keyword: string): Promise<string[]> {
-        return new Promise(async (resolve) => {
-            const SearchResult = await (await yts(Keyword)).videos;
+    // Search(Keyword: string): Promise<string[]> {
+    //     return new Promise(async (resolve) => {
+    //         const SearchResult = await (await yts(Keyword)).videos;
 
-            return resolve(SearchResult.map((V, index) => `${index + 1}: ${V.title} (${V.duration}) - ${V.author}`));
-        });
-    }
+    //         return resolve(SearchResult.map((V, index) => `${index + 1}: ${V.title} (${V.duration}) - ${V.author}`));
+    //     });
+    // }
 
     SendUserSelection(interaction: Interaction<CacheType>): Promise<void> {
         return new Promise(async (resolve, reject) => {
@@ -55,37 +56,40 @@ class MusicPlayer {
 
             // const SearchResult = await this.Search(Keyword.value as string);
 
-            const SearchResult = await (await yts(Keyword.value as string)).videos.slice(0, 5);
+            if (typeof Keyword.value !== 'string') return interaction.reply('입력된 키워드가 잘못되었습니다.');
+            yts(Keyword.value).then(async (SearchResult) => {
+                const Selection = SearchResult.videos.slice(0, 5).map((V, i) =>
+                    new MessageActionRow().addComponents(
+                        new MessageButton()
+                            .setStyle('PRIMARY')
+                            .setLabel(`${i + 1}: ${V.title.slice(0, 50)} (${V.timestamp})`)
+                            .setCustomId(JSON.stringify({ videoId: V.videoId, id: interaction.user.id })),
+                    ),
+                );
+                const MusicSelectMessage = await interaction.reply({
+                    content: '`노래를 선택해 주세요`',
+                    components: Selection,
+                    fetchReply: true,
+                });
 
-            const Selection = SearchResult.map((V, i) =>
-                new MessageActionRow().addComponents(
-                    new MessageButton()
-                        .setStyle('PRIMARY')
-                        .setLabel(`${i + 1}: ${V.title.slice(0, 50)} (${V.timestamp})`)
-                        .setCustomId(JSON.stringify({ videoId: V.videoId, id: interaction.user.id })),
-                ),
-            );
-            const MusicSelectMessage = await interaction.reply({
-                content: '`노래를 선택해 주세요`',
-                components: Selection,
-                fetchReply: true,
-            });
-
-            setTimeout(async () => {
-                // console.log("Delete message", MusicSelectMessage.type);
-                if (MusicSelectMessage.type == 'APPLICATION_COMMAND') {
-                    const ExpiredMessage = await MusicSelectMessage.fetch();
-                    // console.log(ExpiredMessage.createdTimestamp, ExpiredMessage.editedTimestamp)
-                    if (
-                        !ExpiredMessage.deleted &&
-                        ExpiredMessage.deletable &&
-                        (ExpiredMessage.createdTimestamp === ExpiredMessage.editedTimestamp || !ExpiredMessage.editedTimestamp)
-                    ) {
-                        ExpiredMessage.edit({ content: '`선택 시간이 만료되었습니다.`', components: [] }); // .catch(err => console.log("Already Deleted Message"));
+                setTimeout(async () => {
+                    // console.log("Delete message", MusicSelectMessage.type);
+                    if (MusicSelectMessage.type === 'APPLICATION_COMMAND') {
+                        const ExpiredMessage = await MusicSelectMessage.fetch();
+                        // console.log('message debug', ExpiredMessage.createdTimestamp, ExpiredMessage.editedTimestamp);
+                        if (
+                            ExpiredMessage.deletable &&
+                            (ExpiredMessage.createdTimestamp === ExpiredMessage.editedTimestamp ||
+                                !ExpiredMessage.editedTimestamp)
+                        ) {
+                            ExpiredMessage.edit({ content: '`선택 시간이 만료되었습니다.`', components: [] }).catch((err) =>
+                                console.log('Already Deleted Message'),
+                            );
+                        }
                     }
-                }
-            }, 1000 * 10);
-            return resolve();
+                }, 1000 * 10);
+                return resolve();
+            });
         });
     }
 
@@ -106,7 +110,7 @@ class MusicPlayer {
                 author: interaction.user.username,
             });
 
-            if (this.Player.state.status != AudioPlayerStatus.Playing) {
+            if (this.Player.state.status !== AudioPlayerStatus.Playing) {
                 this.PlayMusic(interaction);
             } else {
                 // console.log(this.Player.state.status, !getVoiceConnection(interaction.guildId));
@@ -141,8 +145,8 @@ class MusicPlayer {
                 }
             });
 
-            this.Player.once(AudioPlayerStatus.Idle, (_oldState: AudioPlayerState, newState: AudioPlayerState) => {
-                // console.log("old", oldState.status, "new", newState.status);
+            this.Player.once(AudioPlayerStatus.Idle, (oldState: AudioPlayerState, newState: AudioPlayerState) => {
+                console.log('old', oldState.status, 'new', newState.status);
                 if (newState.status === AudioPlayerStatus.Idle) {
                     this.Queue.shift();
                     this.PlayMusic(interaction);
@@ -168,7 +172,7 @@ class MusicPlayer {
             }
 
             const n = interaction.options.getInteger('n');
-            if (n != null) {
+            if (n !== null) {
                 if (n > this.Queue.length || n <= 1) return reject('잘못된 범위 입니다.');
                 interaction.reply(`\`\`${this.Queue.splice(n - 1, 1)[0].title} 를 재생목록에서 제거했어요.\`\``);
                 return resolve();
@@ -199,7 +203,7 @@ class MusicPlayer {
         return new Promise(async (resolve, reject) => {
             if (!interaction.isCommand()) return reject('Volume() > Something Went Wrong');
 
-            if (interaction.options.getInteger('volume', true) == null) return reject('Volume() > 볼륨을 입력해 주세요');
+            if (interaction.options.getInteger('volume', true) === null) return reject('Volume() > 볼륨을 입력해 주세요');
             if (interaction.options.getInteger('volume', true) < 0) return reject('Volume() > 볼륨은 음수로 설정할 수 없습니다.');
 
             this.PlayOptions.Volume = interaction.options.getInteger('volume', true);
@@ -221,14 +225,28 @@ class MusicPlayer {
             const UserVoiceChannel = GetVoiceChannel(interaction, interaction.user.id);
             if (!UserVoiceChannel) return reject('JoinVoiceChannel() > 먼저 음성 채널에 참여해 주세요');
 
-            const CurrentVoiceChannel = getVoiceConnection(interaction.guildId);
+            const CurrentVoiceChannel = GetVoiceChannel(interaction, interaction.client.user.id);
+            const CurrentVoiceConnection = getVoiceConnection(this.guildId);
+            // console.log("Current Bot's VoiceChannel", CurrentVoiceChannel);
+            if (CurrentVoiceChannel && CurrentVoiceConnection) return resolve(CurrentVoiceConnection);
 
-            if (CurrentVoiceChannel) return resolve(CurrentVoiceChannel);
             const Connection = joinVoiceChannel({
                 channelId: UserVoiceChannel.id,
-                guildId: UserVoiceChannel.guild.id,
-                adapterCreator: UserVoiceChannel.guild.voiceAdapterCreator,
+                guildId: this.guildId,
+                adapterCreator: UserVoiceChannel.guild.voiceAdapterCreator as DiscordGatewayAdapterCreator,
             });
+            return resolve(Connection);
+
+            // const Connection = new VoiceConnection(
+            //     {
+            //         channelId: UserVoiceChannel.id,
+            //         guildId: UserVoiceChannel.guild.id,
+            //         selfDeaf: false,
+            //         selfMute: false,
+            //         group: '',
+            //     },
+            //     { adapterCreator: interaction.client.voice.adapters. },
+            // );
 
             // this.Connection.once(VoiceConnectionStatus.Disconnected, (oldState, newState) => {
             //     console.log("disconnected from voice channel");
@@ -244,7 +262,6 @@ class MusicPlayer {
             // Connection.destroy();
             // }
             // });
-            return resolve(Connection);
         });
     }
 }
