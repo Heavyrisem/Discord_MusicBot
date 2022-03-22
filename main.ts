@@ -14,11 +14,10 @@ const MusicManager: { [index: string]: MusicPlayer } = {};
 const { TOKEN } = process.env;
 const VERSION = '4.0.3';
 
-client.on('ready', () => {
-    initRegisterCommands();
-
+client.on('ready', async () => {
     let Flipflop = 0;
     if (client.user) {
+        await initRegisterCommands(client.user.id);
         console.log(`Logged in as ${client.user.tag}!`);
         client.guilds.cache.forEach((Guild) => (MusicManager[Guild.id] = new MusicPlayer()));
 

@@ -5,13 +5,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const { TOKEN } = process.env;
-
-const [CLIENT_ID, GUILD_ID] = ['619527364090658817', '269848346422804501'];
 const commands: any[] = [];
 
 const rest = new REST({ version: '9' }).setToken(TOKEN);
 
-export async function initRegisterCommands() {
+export async function initRegisterCommands(CLIENT_ID: string) {
+    const GUILD_ID = '269848346422804501';
     try {
         console.log('Started refreshing application (/) commands.');
 
