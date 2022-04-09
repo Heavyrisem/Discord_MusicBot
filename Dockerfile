@@ -8,4 +8,4 @@ RUN apt install ffmpeg -y
 
 RUN npm install
 
-CMD ["npm", "start"]
+CMD ["npm", "start:prod"]
