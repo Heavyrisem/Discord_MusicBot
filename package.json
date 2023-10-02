@@ -23,7 +23,7 @@
         "dotenv": "^16.0.0",
         "libsodium-wrappers": "^0.7.9",
         "node": "^16.13.0",
-        "play-dl": "^1.9.6",
+        "play-dl": "^1.9.7",
         "pretty-ms": "^7.0.1",
         "yt-search": "^2.10.2"
     },
